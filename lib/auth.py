@@ -257,19 +257,22 @@ _LOGIN_CSS = """
   box-shadow: 0 0 0 2px rgba(213,229,71,0.25) !important;
 }
 [data-testid="stForm"] .stFormSubmitButton button {
-  background: linear-gradient(135deg, #D5E547, #E4F26A) !important;
-  color: #0B0B0B !important;
-  border: none !important;
+  background: #000000 !important;
+  color: #D5E547 !important;
+  border: 1px solid rgba(213,229,71,0.65) !important;
   border-radius: 12px !important;
   height: 44px !important;
   font-weight: 800 !important;
   font-family: 'DM Sans', sans-serif !important;
   letter-spacing: 0.02em;
-  transition: transform .15s ease, box-shadow .15s ease;
+  box-shadow: 0 0 18px rgba(213,229,71,0.18) !important;
+  transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
 }
 [data-testid="stForm"] .stFormSubmitButton button:hover {
+  color: #E4F26A !important;
+  border-color: #D5E547 !important;
   transform: translateY(-1px);
-  box-shadow: 0 12px 32px rgba(213,229,71,0.42) !important;
+  box-shadow: 0 12px 32px rgba(213,229,71,0.32), 0 0 24px rgba(213,229,71,0.28) !important;
 }
 [data-testid="stExpander"] {
   background: transparent !important;
