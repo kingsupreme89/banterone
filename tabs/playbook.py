@@ -225,12 +225,13 @@ def render() -> None:
     st.markdown("### Playbook")
     st.caption("Scripts, protocols, and reference material. Everything the district needs, one tap away.")
 
-    query = st.text_input(
-        "Search",
-        placeholder="Search any term across scripts, protocols, promos, talking points…",
-        key="playbook_search",
-        label_visibility="collapsed",
-    )
+    with st.container(key="playbook_search_wrap"):
+        query = st.text_input(
+            "Search",
+            placeholder="Try: piercing, ESA, Vault Rewards, credit, warranty, safety, St. Jude…",
+            key="playbook_search",
+            label_visibility="collapsed",
+        )
 
     if query and query.strip():
         _render_search_results(query.strip())
@@ -339,7 +340,7 @@ def _card(title: str, rows: list) -> None:
         )
     st.markdown(
         f'<div class="glass-card">'
-        f'<h4 style="margin-top:0;letter-spacing:0.2em;">{title.upper()}</h4>'
+        f'<h4 style="margin-top:0;letter-spacing:0.2em;color:var(--lime);">{title.upper()}</h4>'
         f'{body}'
         f'</div>',
         unsafe_allow_html=True,
@@ -362,8 +363,8 @@ def _tier_table() -> None:
     st.markdown(
         (
             '<div class="glass-card" style="padding:0;overflow:hidden;">'
-            '<div style="padding:14px 18px;font-family:\'Instrument Serif\',serif;font-style:italic;'
-            'font-size:22px;color:var(--text);">Commission Tiers</div>'
+            '<div style="padding:14px 18px;font-family:\'DM Sans\',sans-serif;font-weight:700;'
+            'letter-spacing:0.2em;font-size:14px;color:var(--lime);text-transform:uppercase;">FY27 COMMISSION LADDER</div>'
             '<table style="width:100%;border-collapse:collapse;">'
             '<thead><tr style="color:var(--text-dim);font-size:11px;letter-spacing:0.22em;'
             'text-align:left;font-weight:700;">'

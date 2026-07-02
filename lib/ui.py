@@ -423,10 +423,14 @@ p, div, span, li, label {{ color: var(--text); font-family: 'DM Sans', sans-seri
   box-shadow: none !important;
 }}
 
-/* ── Center "Me" — a slightly larger pill inside the island (no floating) ── */
-.st-key-bottom_nav [data-testid="stHorizontalBlock"] > [data-testid="stColumn"]:nth-child(3) .stButton button {{
-  padding: 11px 20px !important;
-  font-size: 14px !important;
+/* ── Center "B" — Bantagachi mark, Instrument Serif italic, only slightly larger ── */
+.st-key-bottom_nav [data-testid="stHorizontalBlock"] > [data-testid="stColumn"]:nth-child(3) .stButton button,
+.st-key-bottom_nav [data-testid="stHorizontalBlock"] > [data-testid="stColumn"]:nth-child(3) .stButton button p {{
+  font-family: 'Instrument Serif', Georgia, serif !important;
+  font-style: italic !important;
+  font-weight: 400 !important;
+  font-size: 16px !important;
+  letter-spacing: -0.01em !important;
 }}
 
 /* Ensure light mode overrides the dark nav bg */
@@ -610,6 +614,20 @@ label[data-baseweb="checkbox"] > div[aria-checked="true"] {{ background: var(--l
 }}
 .st-key-weekly_targets_editor .stButton button[kind="primary"] {{ height: 48px !important; }}
 
+/* Playbook search — pure black bg */
+.st-key-playbook_search_wrap [data-testid="stTextInput"] input {{
+  background: #000000 !important;
+  color: var(--text) !important;
+  border: 1px solid rgba(213,229,71,0.28) !important;
+  border-radius: 12px !important;
+  padding: 12px 16px !important;
+  font-size: 14px !important;
+}}
+.st-key-playbook_search_wrap [data-testid="stTextInput"] input:focus {{
+  border-color: var(--lime) !important;
+  box-shadow: 0 0 0 2px rgba(213,229,71,0.25) !important;
+}}
+
 /* File uploader accent */
 [data-testid="stFileUploader"] section {{
   border-color: rgba(213,229,71,0.28) !important;
@@ -776,7 +794,7 @@ def render_store_badge() -> None:
     # Wrap in a keyed container so we can overlay a transparent button that
     # captures clicks anywhere on the badge and routes to the Store tab.
     with st.container(key="clickable_badge_container"):
-        if st.button(" ", key="badge_click_to_me", help="Open Stylist"):
+        if st.button(" ", key="badge_click_to_me", help="Open Bantagachi"):
             st.session_state["current_tab"] = "me"
             st.rerun()
         st.markdown(
@@ -804,7 +822,7 @@ def render_store_badge() -> None:
 NAV_ITEMS = [
     ("home",     "Home"),
     ("store",    "Store"),
-    ("me",       "Me"),        # center position — iPhone-home-button style
+    ("me",       "B"),          # center — Bantagachi mark, Instrument Serif italic
     ("playbook", "Playbook"),
     ("arena",    "Arena"),
 ]

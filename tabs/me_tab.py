@@ -10,14 +10,14 @@ from lib import db, rpg, stylist
 def render() -> None:
     user = st.session_state.user
 
-    st.markdown("### Stylist")
+    st.markdown("### Bantagachi")
     st.caption(
         f"Level {int(user.get('level', 1))} · {int(user.get('xp', 0)):,} XP · "
         f"Store {user.get('store_id', '—')}"
     )
 
     gender = (
-        st.session_state.get("stylist_gender")
+        st.session_state.get("bantagachi_gender")
         or (user.get("gender") if isinstance(user.get("gender"), str) and user.get("gender") else "")
     )
     if not gender:
@@ -34,28 +34,37 @@ def render() -> None:
     _render_league()
 
 
-# ── Gender picker ────────────────────────────────────────────────────────────
+# ── Type picker (Pokemon-style elemental type) ───────────────────────────────
 def _render_gender_picker() -> None:
     st.markdown(
         '<div class="glass-card" style="margin-bottom:18px;">'
-        '<h4 style="margin-top:0;">Create your Stylist</h4>'
+        '<h4 style="margin-top:0;">Pick your Bantagachi type</h4>'
         '<p style="color:var(--text-dim);margin-bottom:0;">'
-        "Pick your character identity, then customize skin, hair, and outfit."
+        "Every Bantagachi has an elemental type that sets its base look. Pick "
+        "one — you can change colors and evolve later."
         "</p></div>",
         unsafe_allow_html=True,
     )
-    c1, c2, c3 = st.columns(3)
-    picks = [
-        (c1, "MALE",        "pick_m",  "male"),
-        (c2, "FEMALE",      "pick_f",  "female"),
-        (c3, "NON-BINARY",  "pick_nb", "nonbinary"),
-    ]
-    for col, label, key, gender_val in picks:
-        with col:
-            if st.button(label, use_container_width=True, key=key):
-                st.session_state.stylist_gender = gender_val
-                rpg.save_gender(st.session_state.user["email"], gender_val)
-                st.session_state.user["gender"] = gender_val
+    types = list(stylist.TYPES.keys())
+    cols = st.columns(3)
+    for i, t in enumerate(types[:3]):
+        with cols[i]:
+            if st.button(t.upper(), use_container_width=True, key=f"type_pick_{t}"):
+                stylist.save_profile(st.session_state.user["email"],
+                                     {"type": t, "primary_color": stylist.TYPES[t]})
+                st.session_state.bantagachi_gender = t.lower()
+                rpg.save_gender(st.session_state.user["email"], t.lower())
+                st.session_state.user["gender"] = t.lower()
+                st.rerun()
+    cols2 = st.columns(3)
+    for i, t in enumerate(types[3:6]):
+        with cols2[i]:
+            if st.button(t.upper(), use_container_width=True, key=f"type_pick_{t}"):
+                stylist.save_profile(st.session_state.user["email"],
+                                     {"type": t, "primary_color": stylist.TYPES[t]})
+                st.session_state.bantagachi_gender = t.lower()
+                rpg.save_gender(st.session_state.user["email"], t.lower())
+                st.session_state.user["gender"] = t.lower()
                 st.rerun()
 
 
@@ -111,10 +120,10 @@ def _render_customizer(user: dict, gender: str) -> None:
         }
         changed = any(new_profile[k] != profile.get(k) for k in new_profile)
         if changed:
-            if st.button("Save Stylist", type="primary", use_container_width=True,
+            if st.button("Save Bantagachi", type="primary", use_container_width=True,
                          key="stylist_save"):
                 stylist.save_profile(user["email"], new_profile)
-                st.success("Stylist saved.")
+                st.success("Bantagachi saved.")
                 st.rerun()
         st.markdown("</div>", unsafe_allow_html=True)
 
@@ -315,7 +324,7 @@ def _render_scanner() -> None:
             st.info(f"{item['name']} — you already have this piece.")
 
 
-# ── Stylist League drawer ────────────────────────────────────────────────────
+# ── Bantagachi League drawer ────────────────────────────────────────────────────
 def _render_league() -> None:
     with st.expander("The League — District Rankings", expanded=False):
         ranked = rpg.league_ranking()
