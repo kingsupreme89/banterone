@@ -33,26 +33,30 @@ def render() -> None:
 
 def _render_st_jude_counter(user: dict) -> None:
     sj_total = _st_jude_period_total(user)
+    ruby = (
+        '<svg viewBox="0 0 64 64" style="width:26px;height:26px;display:block;" '
+        'xmlns="http://www.w3.org/2000/svg">'
+        '<path d="M32 4 L56 22 L48 54 L16 54 L8 22 Z" fill="#B00020"/>'
+        '<path d="M32 4 L44 22 L32 30 L20 22 Z" fill="#FF4D5E"/>'
+        '<path d="M8 22 L20 22 L16 54 Z" fill="#7A0016"/>'
+        '<path d="M56 22 L44 22 L48 54 Z" fill="#8F001A"/>'
+        '<path d="M20 22 L32 30 L16 54 Z" fill="#D0002A"/>'
+        '<path d="M44 22 L32 30 L48 54 Z" fill="#A80021"/>'
+        '<path d="M20 22 L32 4 L44 22 Z" fill="#FF7A86" opacity=".75"/>'
+        '</svg>'
+    )
     st.markdown(
-        f"""
-        <div style="display:flex;align-items:center;gap:10px;margin:8px 0 18px 0;">
-          <div style="font-size:11px;letter-spacing:0.22em;font-weight:800;color:var(--text-dim);">SJ</div>
-          <div style="width:24px;height:24px;position:relative;filter:drop-shadow(0 0 10px rgba(255,45,64,.55));">
-            <svg viewBox="0 0 64 64" style="width:24px;height:24px;" xmlns="http://www.w3.org/2000/svg">
-              <path d="M32 4 L56 22 L48 54 L16 54 L8 22 Z" fill="#B00020"/>
-              <path d="M32 4 L44 22 L32 30 L20 22 Z" fill="#FF4D5E"/>
-              <path d="M8 22 L20 22 L16 54 Z" fill="#7A0016"/>
-              <path d="M56 22 L44 22 L48 54 Z" fill="#8F001A"/>
-              <path d="M20 22 L32 30 L16 54 Z" fill="#D0002A"/>
-              <path d="M44 22 L32 30 L48 54 Z" fill="#A80021"/>
-              <path d="M20 22 L32 4 L44 22 Z" fill="#FF7A86" opacity=".7"/>
-            </svg>
-          </div>
-          <div style="font-family:'Instrument Serif',serif;font-style:italic;font-size:30px;
-                      color:#FF4D5E;line-height:1;">${sj_total:,.0f}</div>
-          <div style="color:var(--text-dim);font-size:12px;">this period</div>
-        </div>
-        """,
+        (
+            '<div style="display:inline-flex;align-items:center;gap:10px;margin:8px 0 18px 0;'
+            'padding:9px 14px;border-radius:999px;background:rgba(255,45,64,.08);'
+            'border:1px solid rgba(255,45,64,.38);box-shadow:0 0 18px rgba(255,45,64,.15);">'
+            '<span style="font-size:11px;letter-spacing:0.22em;font-weight:900;color:#FF7A86;">SJ</span>'
+            f'<span style="filter:drop-shadow(0 0 10px rgba(255,45,64,.65));">{ruby}</span>'
+            '<span style="font-family:\'Instrument Serif\',serif;font-style:italic;font-size:30px;'
+            f'color:#FF4D5E;line-height:1;">${sj_total:,.0f}</span>'
+            '<span style="color:var(--text-dim);font-size:12px;">this period</span>'
+            '</div>'
+        ),
         unsafe_allow_html=True,
     )
 
