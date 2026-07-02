@@ -27,7 +27,9 @@ ui.inject_theme()
 
 # ── Auth gate ────────────────────────────────────────────────────────────────
 if "user" not in st.session_state:
-    auth.restore_remembered_user()
+    restore = getattr(auth, "restore_remembered_user", None)
+    if restore:
+        restore()
 
 if "user" not in st.session_state:
     auth.render_login_page()
