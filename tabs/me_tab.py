@@ -1,5 +1,7 @@
 import os
 import re
+from datetime import date
+import pandas as pd
 import streamlit as st
 
 from lib import buddy, db, rpg
@@ -13,6 +15,7 @@ def render() -> None:
         f"Level {int(user.get('level', 1))} · {int(user.get('xp', 0)):,} XP · "
         f"Store {user.get('store_id', '—')}"
     )
+    _render_st_jude_counter(user)
 
     buddy_profile = buddy.load_profile(user["email"])
     if not buddy_profile.get("starter"):
@@ -26,6 +29,98 @@ def render() -> None:
     st.markdown("---")
     _render_pfp_upload()
     _render_league()
+
+
+def _render_st_jude_counter(user: dict) -> None:
+    sj_total = _st_jude_period_total(user)
+    st.markdown(
+        f"""
+        <div style="display:flex;align-items:center;gap:10px;margin:8px 0 18px 0;">
+          <div style="font-size:11px;letter-spacing:0.22em;font-weight:800;color:var(--text-dim);">SJ</div>
+          <div style="width:24px;height:24px;position:relative;filter:drop-shadow(0 0 10px rgba(255,45,64,.55));">
+            <svg viewBox="0 0 64 64" style="width:24px;height:24px;" xmlns="http://www.w3.org/2000/svg">
+              <path d="M32 4 L56 22 L48 54 L16 54 L8 22 Z" fill="#B00020"/>
+              <path d="M32 4 L44 22 L32 30 L20 22 Z" fill="#FF4D5E"/>
+              <path d="M8 22 L20 22 L16 54 Z" fill="#7A0016"/>
+              <path d="M56 22 L44 22 L48 54 Z" fill="#8F001A"/>
+              <path d="M20 22 L32 30 L16 54 Z" fill="#D0002A"/>
+              <path d="M44 22 L32 30 L48 54 Z" fill="#A80021"/>
+              <path d="M20 22 L32 4 L44 22 Z" fill="#FF7A86" opacity=".7"/>
+            </svg>
+          </div>
+          <div style="font-family:'Instrument Serif',serif;font-style:italic;font-size:30px;
+                      color:#FF4D5E;line-height:1;">${sj_total:,.0f}</div>
+          <div style="color:var(--text-dim);font-size:12px;">this period</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def _st_jude_period_total(user: dict) -> float:
+    email = str(user.get("email", "")).lower()
+    store_id = str(user.get("store_id", ""))
+    role = str(user.get("role", ""))
+    individual = _individual_st_jude(email)
+    if role != "Store Manager":
+        return individual
+    store_total = _store_st_jude(store_id)
+    team_total = _team_st_jude(store_id, exclude_email=email)
+    # If individual St. Jude does not exist in the current report shape, the
+    # manager receives the store total for demo visibility.
+    if team_total <= 0 and individual <= 0:
+        return store_total
+    return max(store_total - team_total, individual, 0.0)
+
+
+def _individual_st_jude(email: str) -> float:
+    try:
+        metrics = db.read("individual_metrics").copy()
+    except Exception:
+        return 0.0
+    if "employee_email" not in metrics:
+        return 0.0
+    columns = [c for c in metrics.columns if c.lower() in ("stj", "st_jude", "st_jude_sales", "stj_sales")]
+    if not columns:
+        return 0.0
+    if "date" in metrics:
+        dates = pd.to_datetime(metrics["date"], errors="coerce")
+        metrics = metrics[(dates.dt.month == date.today().month) & (dates.dt.year == date.today().year)]
+    metrics = metrics[metrics["employee_email"].astype(str).str.lower() == email]
+    return float(metrics[columns[0]].fillna(0).sum()) if not metrics.empty else 0.0
+
+
+def _team_st_jude(store_id: str, exclude_email: str = "") -> float:
+    try:
+        users = db.read("users")
+        metrics = db.read("individual_metrics")
+    except Exception:
+        return 0.0
+    columns = [c for c in metrics.columns if c.lower() in ("stj", "st_jude", "st_jude_sales", "stj_sales")]
+    if not columns or "employee_email" not in metrics:
+        return 0.0
+    if "date" in metrics:
+        dates = pd.to_datetime(metrics["date"], errors="coerce")
+        metrics = metrics[(dates.dt.month == date.today().month) & (dates.dt.year == date.today().year)]
+    store_emails = users[users["store_id"].astype(str) == str(store_id)]["email"].astype(str).str.lower()
+    rows = metrics[metrics["employee_email"].astype(str).str.lower().isin(store_emails)]
+    if exclude_email:
+        rows = rows[rows["employee_email"].astype(str).str.lower() != exclude_email.lower()]
+    return float(rows[columns[0]].fillna(0).sum()) if not rows.empty else 0.0
+
+
+def _store_st_jude(store_id: str) -> float:
+    try:
+        submissions = db.read("daily_submissions").copy()
+    except Exception:
+        return 0.0
+    if "stj" not in submissions:
+        return 0.0
+    if "timestamp" in submissions:
+        stamps = pd.to_datetime(submissions["timestamp"], errors="coerce")
+        submissions = submissions[(stamps.dt.month == date.today().month) & (stamps.dt.year == date.today().year)]
+    rows = submissions[submissions["store_id"].astype(str) == str(store_id)]
+    return float(rows["stj"].fillna(0).sum()) if not rows.empty else 0.0
 
 
 # ── First-time starter picker ────────────────────────────────────────────────
