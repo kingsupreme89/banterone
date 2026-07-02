@@ -9,7 +9,7 @@ from tabs import home, my_store, leaderboard, playbook, me_tab
 
 st.set_page_config(
     page_title="BanterONE",
-    page_icon="💎",
+    page_icon="assets/banterone-icon.png",
     layout="wide",
     initial_sidebar_state="collapsed",
 )

@@ -696,6 +696,17 @@ label[data-baseweb="checkbox"] > div[aria-checked="true"] {{ background: var(--l
 def inject_theme() -> None:
     mode = st.session_state.get("theme", "dark")
     st.markdown(_base_css(mode), unsafe_allow_html=True)
+    st.markdown(
+        """
+        <link rel="icon" href="assets/banterone-icon.png" />
+        <link rel="apple-touch-icon" href="assets/banterone-icon.png" />
+        <meta name="theme-color" content="#000000" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-title" content="BanterONE" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        """,
+        unsafe_allow_html=True,
+    )
 
 
 def render_header() -> None:
