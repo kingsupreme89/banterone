@@ -1,4 +1,6 @@
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
+from pathlib import Path
+import re
 import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
@@ -46,6 +48,10 @@ def render() -> None:
         _render_conversion_chart(store_id)
 
     _render_mtd_progress(submissions, monthly_plan)
+
+    # ── Daily manager upload for demo reporting ─────────────────────────────
+    st.markdown("---")
+    _render_daily_numbers_upload(store_id, daily_plan)
 
     # ── Weekly Targets + Monday DM Notes (leaders edit; associates read-only) ─
     st.markdown("---")
@@ -203,6 +209,155 @@ def _render_mtd_progress(subs: pd.DataFrame, monthly_plan: float) -> None:
     _apply_chart_theme(fig, f"MTD Progress · ${current:,.0f} vs ${pace_target:,.0f} pace")
     fig.update_layout(height=300)
     st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
+
+
+# ── Daily upload + manual numbers entry ─────────────────────────────────────
+def _render_daily_numbers_upload(store_id: str, daily_plan: float) -> None:
+    st.markdown("#### Daily Numbers Upload")
+    if not auth.is_leader():
+        _render_latest_daily_upload(store_id)
+        return
+
+    today_rows = _daily_rows_for_date(store_id, date.today())
+    latest = today_rows.iloc[-1].to_dict() if not today_rows.empty else {}
+
+    with st.container(key="daily_numbers_upload"):
+        st.markdown(
+            '<div class="glass-card" style="margin-bottom:12px;">'
+            '<div style="color:var(--text-dim);font-size:12px;line-height:1.5;">'
+            'Upload today\'s report screenshot, then enter the headline numbers. '
+            'This keeps the demo accurate while the permanent spreadsheet connection is being built.'
+            '</div></div>',
+            unsafe_allow_html=True,
+        )
+        uploaded = st.file_uploader(
+            "Daily report screenshot",
+            type=["png", "jpg", "jpeg"],
+            key=f"daily_upload_file_{store_id}",
+        )
+
+        c1, c2, c3 = st.columns(3)
+        with c1:
+            plan = st.number_input("Plan ($)", min_value=0.0, value=float(latest.get("plan", daily_plan) or daily_plan),
+                                   step=100.0, key=f"daily_plan_{store_id}")
+            bold = st.number_input("Sales / Bold ($)", min_value=0.0, value=float(latest.get("bold", 0) or 0),
+                                   step=100.0, key=f"daily_bold_{store_id}")
+            trans = st.number_input("Transactions", min_value=0, value=int(float(latest.get("trans", 0) or 0)),
+                                    key=f"daily_trans_{store_id}")
+        with c2:
+            avt_default = float(latest.get("avt", 0) or 0)
+            avt = st.number_input("Average Ticket ($)", min_value=0.0, value=avt_default,
+                                  step=5.0, key=f"daily_avt_{store_id}")
+            ep = st.number_input("Ear Piercings", min_value=0, value=int(float(latest.get("ep", 0) or 0)),
+                                 key=f"daily_ep_{store_id}")
+            esa = st.number_input("Warranty / ESA", min_value=0.0, value=float(latest.get("esa", 0) or 0),
+                                  step=1.0, key=f"daily_esa_{store_id}")
+        with c3:
+            po = st.number_input("Payment Options", min_value=0, value=int(float(latest.get("po", 0) or 0)),
+                                 key=f"daily_po_{store_id}")
+            stj = st.number_input("St. Jude ($)", min_value=0.0, value=float(latest.get("stj", 0) or 0),
+                                  step=1.0, key=f"daily_stj_{store_id}")
+            computed_avt = (bold / trans) if trans else 0
+            st.caption(f"Calculated AVT from sales/trans: ${computed_avt:,.0f}")
+
+        if uploaded is not None:
+            st.image(uploaded, caption="Screenshot preview", use_container_width=True)
+
+        if st.button("Save Today's Numbers", type="primary", use_container_width=True,
+                     key=f"daily_save_{store_id}"):
+            screenshot_path = _save_daily_screenshot(uploaded, store_id)
+            _upsert_daily_submission(
+                store_id=store_id,
+                submitted_by=st.session_state.user["email"],
+                plan=plan,
+                bold=bold,
+                ep=ep,
+                esa=esa,
+                avt=avt or computed_avt,
+                trans=trans,
+                po=po,
+                stj=stj,
+                screenshot_path=screenshot_path or latest.get("screenshot_path", ""),
+            )
+            st.success("Today's numbers were saved.")
+            st.rerun()
+
+
+def _daily_rows_for_date(store_id: str, day: date) -> pd.DataFrame:
+    try:
+        df = db.read("daily_submissions").copy()
+    except (FileNotFoundError, pd.errors.EmptyDataError):
+        return pd.DataFrame()
+    if df.empty:
+        return df
+    df["timestamp"] = pd.to_datetime(df["timestamp"])
+    return df[(df["store_id"].astype(str) == str(store_id)) & (df["timestamp"].dt.date == day)]
+
+
+def _save_daily_screenshot(uploaded, store_id: str) -> str:
+    if uploaded is None:
+        return ""
+    upload_dir = Path("assets/daily_uploads")
+    upload_dir.mkdir(parents=True, exist_ok=True)
+    safe_user = re.sub(r"[^a-z0-9]+", "_", st.session_state.user["email"].lower()).strip("_")
+    ext = ".png" if uploaded.type == "image/png" else ".jpg"
+    path = upload_dir / f"{date.today().isoformat()}_store_{store_id}_{safe_user}{ext}"
+    path.write_bytes(uploaded.getvalue())
+    return str(path)
+
+
+def _upsert_daily_submission(**values) -> None:
+    try:
+        df = db.read("daily_submissions").copy()
+    except (FileNotFoundError, pd.errors.EmptyDataError):
+        df = pd.DataFrame()
+    now = datetime.now().replace(microsecond=0)
+    if not df.empty and "timestamp" in df.columns:
+        stamps = pd.to_datetime(df["timestamp"])
+        window_type = df["window_type"].astype(str) if "window_type" in df.columns else pd.Series("", index=df.index)
+        same_store_day = (
+            (df["store_id"].astype(str) == str(values["store_id"]))
+            & (stamps.dt.date == date.today())
+            & (window_type == "Daily Manager Upload")
+        )
+        df = df[~same_store_day].copy()
+    row = {
+        "sub_id": f"UPLOAD_{values['store_id']}_{date.today().isoformat()}",
+        "timestamp": now.strftime("%Y-%m-%d %H:%M:%S"),
+        "store_id": values["store_id"],
+        "submitted_by": values["submitted_by"],
+        "window_type": "Daily Manager Upload",
+        "plan": values["plan"],
+        "bold": values["bold"],
+        "ep": values["ep"],
+        "esa": values["esa"],
+        "avt": values["avt"],
+        "trans": values["trans"],
+        "po": values["po"],
+        "stj": values["stj"],
+        "screenshot_path": values.get("screenshot_path", ""),
+    }
+    df = pd.concat([df, pd.DataFrame([row])], ignore_index=True)
+    db.write("daily_submissions", df)
+
+
+def _render_latest_daily_upload(store_id: str) -> None:
+    rows = _daily_rows_for_date(store_id, date.today())
+    if rows.empty:
+        st.info("No manager numbers uploaded for today yet.")
+        return
+    latest = rows.iloc[-1]
+    st.markdown(
+        f'<div class="glass-card">'
+        f'<div style="color:var(--text-dim);font-size:11px;letter-spacing:0.18em;font-weight:700;">TODAY UPLOADED</div>'
+        f'<div style="font-family:\'Instrument Serif\',serif;font-style:italic;font-size:28px;color:var(--lime);">'
+        f'${float(latest.get("bold", 0)):,.0f}</div>'
+        f'<div style="color:var(--text-dim);font-size:12px;">'
+        f'{int(float(latest.get("trans", 0) or 0))} transactions · '
+        f'{int(float(latest.get("ep", 0) or 0))} piercings · '
+        f'${float(latest.get("stj", 0) or 0):,.0f} St. Jude</div></div>',
+        unsafe_allow_html=True,
+    )
 
 
 # ── Editable Weekly Targets + Monday DM Notes ────────────────────────────────

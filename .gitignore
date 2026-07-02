@@ -23,6 +23,8 @@ Thumbs.db
 # Uploads (don't commit user avatars — they're user-generated)
 assets/avatars/*
 !assets/avatars/.gitkeep
+assets/daily_uploads/*
+!assets/daily_uploads/.gitkeep
 
 # Local dev
 scratchpad/
