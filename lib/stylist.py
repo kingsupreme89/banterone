@@ -12,7 +12,7 @@ PROFILES_PATH = "data/stylist_profiles.json"
 
 # Persona palettes for the avatar frame/background.
 PALETTES = {
-    "Lime":      "D5E547",
+    "Lime":      "C6FF3A",
     "Gold":      "FFB900",
     "Rose":      "B76E79",
     "Blue":      "0078D4",
@@ -40,7 +40,7 @@ HAIR_COLORS = {
     "Blonde": "D6B370",
     "Auburn": "8A3D2B",
     "Gray": "9CA3AF",
-    "Banter Lime": "D5E547",
+    "Banter Lime": "C6FF3A",
 }
 
 # Backward-compatible alias for older imports.
@@ -50,7 +50,7 @@ HAIR_STYLES = list(AVATAR_STYLES.keys())
 DEFAULT_PROFILE = {
     "style":             "Personas",
     "palette":           "Lime",
-    "primary_color":     "D5E547",
+    "primary_color":     "C6FF3A",
     "skin_tone":         "Medium",
     "skin_color":        "D08B5B",
     "hair_color_name":   "Brown",
@@ -170,11 +170,11 @@ def render_svg(profile: dict, gender: str = "male", size: int = 420,
 
 
 def _fallback_svg(profile: dict) -> str:
-    primary = "#" + profile.get("primary_color", "D5E547").lstrip("#")
+    primary = "#" + profile.get("primary_color", "C6FF3A").lstrip("#")
     return (
         '<div style="width:100%;height:100%;display:flex;align-items:center;'
         'justify-content:center;flex-direction:column;color:var(--text-dim);'
-        'font-family:\'DM Sans\',sans-serif;">'
+        'font-family:\'Inter\',sans-serif;">'
         f'<svg viewBox="0 0 24 24" style="width:140px;height:140px;color:{primary};" '
         'fill="currentColor" xmlns="http://www.w3.org/2000/svg">'
         '<circle cx="12" cy="8" r="4"/>'

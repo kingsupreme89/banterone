@@ -178,7 +178,7 @@ _LOGIN_CSS = """
   background: #000000 !important;
 }
 [data-testid="stAppViewContainer"] { background:
-  radial-gradient(ellipse at 50% 30%, rgba(213,229,71,0.16) 0%, #000 65%) !important;
+  radial-gradient(ellipse at 50% 30%, rgba(198,255,58,0.16) 0%, #000 65%) !important;
 }
 [data-testid="stMainBlockContainer"] { padding-top: 3rem; }
 
@@ -197,9 +197,9 @@ _LOGIN_CSS = """
     100deg,
     #ffffff 0%,
     #F5F3EE 22%,
-    #D5E547 44%,
+    #C6FF3A 44%,
     #E4F26A 50%,
-    #D5E547 56%,
+    #C6FF3A 56%,
     #F5F3EE 78%,
     #ffffff 100%
   );
@@ -207,7 +207,7 @@ _LOGIN_CSS = """
   -webkit-background-clip: text; background-clip: text;
   -webkit-text-fill-color: transparent; color: transparent;
   animation: banterShimmer 3.4s linear infinite;
-  filter: drop-shadow(0 0 32px rgba(213,229,71,0.32));
+  filter: drop-shadow(0 0 32px rgba(198,255,58,0.32));
 }
 .brand-shimmer em { font-style: italic; }
 @keyframes banterShimmer {
@@ -217,7 +217,7 @@ _LOGIN_CSS = """
 .brand-tag {
   margin-top: 14px;
   color: #8B8B8B;
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 12px;
   letter-spacing: 0.32em;
   text-transform: uppercase;
@@ -226,20 +226,20 @@ _LOGIN_CSS = """
 
 [data-testid="stForm"] {
   background: linear-gradient(180deg, rgba(17,17,17,0.9), rgba(11,11,11,0.9));
-  border: 1px solid rgba(213,229,71,0.22) !important;
+  border: 1px solid rgba(198,255,58,0.22) !important;
   border-radius: 20px !important;
   padding: 32px 32px 26px 32px !important;
   backdrop-filter: blur(14px);
-  box-shadow: 0 24px 70px rgba(0,0,0,0.65), 0 0 40px rgba(213,229,71,0.10);
-  font-family: 'DM Sans', -apple-system, sans-serif;
+  box-shadow: 0 24px 70px rgba(0,0,0,0.65), 0 0 40px rgba(198,255,58,0.10);
+  font-family: 'Inter', -apple-system, sans-serif;
 }
 .sso-title {
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 18px; font-weight: 700; text-align: center;
   color: #F5F3EE;
 }
 .sso-sub {
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 12px; text-align: center; color: #8B8B8B;
   margin: 4px 0 22px 0;
   letter-spacing: 0.04em;
@@ -250,29 +250,29 @@ _LOGIN_CSS = """
   border: 1px solid rgba(245,243,238,0.15) !important;
   border-radius: 12px !important;
   padding: 12px 14px !important;
-  font-family: 'DM Sans', sans-serif !important;
+  font-family: 'Inter', sans-serif !important;
 }
 [data-testid="stForm"] [data-testid="stTextInput"] input:focus {
-  border-color: #D5E547 !important;
-  box-shadow: 0 0 0 2px rgba(213,229,71,0.25) !important;
+  border-color: #C6FF3A !important;
+  box-shadow: 0 0 0 2px rgba(198,255,58,0.25) !important;
 }
 [data-testid="stForm"] .stFormSubmitButton button {
   background: #000000 !important;
-  color: #D5E547 !important;
-  border: 1px solid rgba(213,229,71,0.65) !important;
+  color: #C6FF3A !important;
+  border: 1px solid rgba(198,255,58,0.65) !important;
   border-radius: 12px !important;
   height: 44px !important;
   font-weight: 800 !important;
-  font-family: 'DM Sans', sans-serif !important;
+  font-family: 'Inter', sans-serif !important;
   letter-spacing: 0.02em;
-  box-shadow: 0 0 18px rgba(213,229,71,0.18) !important;
+  box-shadow: 0 0 18px rgba(198,255,58,0.18) !important;
   transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
 }
 [data-testid="stForm"] .stFormSubmitButton button:hover {
   color: #E4F26A !important;
-  border-color: #D5E547 !important;
+  border-color: #C6FF3A !important;
   transform: translateY(-1px);
-  box-shadow: 0 12px 32px rgba(213,229,71,0.32), 0 0 24px rgba(213,229,71,0.28) !important;
+  box-shadow: 0 12px 32px rgba(198,255,58,0.32), 0 0 24px rgba(198,255,58,0.28) !important;
 }
 [data-testid="stExpander"] {
   background: transparent !important;

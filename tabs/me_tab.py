@@ -197,7 +197,7 @@ def _render_buddy(user: dict, profile: dict) -> None:
         st.markdown("#### Care")
         _meter("Care", int(profile.get("care", 70)), meta["accent"])
         _meter("Spark", int(profile.get("spark", 60)), meta["secondary"])
-        _meter("Bond", int(profile.get("bond", 50)), "#D5E547")
+        _meter("Bond", int(profile.get("bond", 50)), "#C6FF3A")
         st.markdown(
             f'<div style="color:var(--text-dim);font-size:12px;margin:12px 0;">'
             f'Last action: <b style="color:var(--text);">{profile.get("last_action") or "None yet"}</b></div>',

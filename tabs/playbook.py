@@ -323,7 +323,7 @@ def _highlight(text: str, query: str) -> str:
     esc = "|".join(re.escape(token) for token in sorted(tokens, key=len, reverse=True))
     return re.sub(
         f"({esc})",
-        r'<span style="background:rgba(213,229,71,0.28);color:var(--lime);'
+        r'<span style="background:rgba(198,255,58,0.28);color:var(--lime);'
         r'padding:1px 3px;border-radius:3px;font-weight:700;">\1</span>',
         text,
         flags=re.IGNORECASE,
@@ -421,7 +421,7 @@ def _annual_tier_table() -> None:
     st.markdown(
         (
             '<div class="glass-card" style="padding:0;overflow:hidden;">'
-            '<div style="padding:14px 18px;font-family:\'DM Sans\',sans-serif;font-weight:700;'
+            '<div style="padding:14px 18px;font-family:\'Inter\',sans-serif;font-weight:700;'
             'letter-spacing:0.2em;font-size:14px;color:var(--lime);text-transform:uppercase;">FY27 ANNUAL LEVELS</div>'
             '<table style="width:100%;border-collapse:collapse;">'
             '<thead><tr style="color:var(--text-dim);font-size:11px;letter-spacing:0.22em;'
@@ -456,7 +456,7 @@ def _monthly_tier_table() -> None:
     st.markdown(
         (
             '<div class="glass-card" style="padding:0;overflow-x:auto;">'
-            '<div style="padding:14px 18px;font-family:\'DM Sans\',sans-serif;font-weight:700;'
+            '<div style="padding:14px 18px;font-family:\'Inter\',sans-serif;font-weight:700;'
             'letter-spacing:0.2em;font-size:14px;color:var(--lime);text-transform:uppercase;">12-MONTH COMMISSION TARGETS</div>'
             '<div style="padding:0 18px 12px;color:var(--text-dim);font-size:12px;">'
             'Monthly targets are the annual tier thresholds weighted by the FY27 month percentages.</div>'

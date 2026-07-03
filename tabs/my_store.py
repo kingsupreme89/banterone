@@ -7,7 +7,7 @@ import streamlit as st
 from lib import auth, db, ui
 
 
-LIME = "#D5E547"
+LIME = "#C6FF3A"
 LIME_DIM = "#A8B937"
 INK = "#0B0B0B"
 TEXT_DIM = "#B8B8B8"
@@ -140,7 +140,7 @@ def _apply_chart_theme(fig: go.Figure, title: str) -> go.Figure:
                              size=22, color=LIME)),
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
-        font=dict(family="DM Sans, sans-serif", size=12, color="#F5F3EE"),
+        font=dict(family="Inter, sans-serif", size=12, color="#F5F3EE"),
         margin=dict(l=10, r=10, t=50, b=30),
         height=280,
         xaxis=dict(gridcolor="rgba(245,243,238,0.06)", showline=False, zeroline=False),
@@ -169,7 +169,7 @@ def _render_conversion_chart(store_id: str) -> None:
         line=dict(color=LIME, width=3, shape="spline"),
         marker=dict(size=7, color=LIME, line=dict(color=INK, width=1)),
         fill="tozeroy",
-        fillcolor="rgba(213,229,71,0.10)",
+        fillcolor="rgba(198,255,58,0.10)",
         hovertemplate="<b>%{x|%b %d}</b><br>%{y:.1f}% conv<extra></extra>",
     ))
     _apply_chart_theme(fig, "Conversion — last 14 days")
@@ -196,7 +196,7 @@ def _render_mtd_progress(subs: pd.DataFrame, monthly_plan: float) -> None:
             mode="lines+markers",
             line=dict(color=LIME, width=3),
             marker=dict(size=8, color=LIME),
-            fill="tozeroy", fillcolor="rgba(213,229,71,0.12)",
+            fill="tozeroy", fillcolor="rgba(198,255,58,0.12)",
             name="Cumulative Sales",
         ))
     fig.add_trace(go.Scatter(

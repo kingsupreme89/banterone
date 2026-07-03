@@ -32,7 +32,7 @@ JEWELRY_CATALOG = {
 
 RARITY_COLORS = {
     "legendary": "#E4F26A",  # bright banter lime
-    "epic":      "#D5E547",  # banter lime
+    "epic":      "#C6FF3A",  # banter lime
     "rare":      "#8FA5FF",  # sapphire
     "uncommon":  "#5EEAD4",  # mint
     "common":    "#8B8B8B",  # slate

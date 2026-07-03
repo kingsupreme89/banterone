@@ -211,6 +211,6 @@ def _buddy_icon_html(row: dict) -> str:
     return (
         f'<div style="width:38px;height:38px;border-radius:50%;overflow:hidden;'
         f'background:radial-gradient(circle at 50% 35%, {meta["accent"]}44 0%, #000 70%);'
-        f'border:1px solid rgba(213,229,71,0.55);display:flex;align-items:center;'
+        f'border:1px solid rgba(198,255,58,0.55);display:flex;align-items:center;'
         f'justify-content:center;flex:0 0 auto;">{creature}</div>'
     )

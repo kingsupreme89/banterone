@@ -1,8 +1,8 @@
 """Global BanterONE theme — Banter FY26 rebrand palette + dark/light modes.
 
 - Wordmark: Instrument Serif (matches the new Banter logo character).
-- Body: DM Sans (clean editorial pairing).
-- Accent: lime chartreuse #D5E547 (Banter's new brand accent).
+- Body: Inter (clean editorial pairing).
+- Accent: lime chartreuse #C6FF3A (Banter's new brand accent).
 - Dark:  near-black bg, cream text, lime accents.
 - Light: cream bg, near-black text, lime accents.
 """
@@ -13,7 +13,7 @@ import streamlit as st
 FONT_IMPORT = (
     "@import url('https://fonts.googleapis.com/css2?"
     "family=Instrument+Serif:ital@0;1&"
-    "family=DM+Sans:wght@400;500;600;700;800&display=swap');"
+    "family=Inter:wght@400;500;600;700;800&display=swap');"
 )
 
 
@@ -29,29 +29,33 @@ def _theme_vars(mode: str) -> str:
         --text: #F5F3EE;
         --text-dim: #B8B8B8;
         --border: rgba(245,243,238,0.10);
-        --border-strong: rgba(213,229,71,0.35);
-        --lime: #D5E547;
+        --border-strong: rgba(198,255,58,0.35);
+        --lime: #C6FF3A;
         --lime-2: #E4F26A;
         --lime-dim: #A8B937;
         --ink: #0B0B0B;
         --cream: #FBF8F1;
-        --shadow-glow: 0 0 32px rgba(213,229,71,0.28);
+        --shadow-glow: 0 0 32px rgba(198,255,58,0.28);
         """
     return """
-    --bg: #000000;
-    --bg-2: #0B0B0B;
-    --panel: #111111;
-    --panel-2: #1A1A1A;
-    --text: #F5F3EE;
-    --text-dim: #8B8B8B;
+    --bg: #0A0A0A;
+    --bg-2: #0D0D0D;
+    --panel: #141414;
+    --panel-2: #0F0F0F;
+    --surface-lowest: #070707;
+    --surface-low: rgba(20,20,20,0.72);
+    --surface: rgba(20,20,20,0.86);
+    --surface-high: rgba(28,28,28,0.88);
+    --text: #F5F5F0;
+    --text-dim: #8A8A82;
     --border: rgba(245,243,238,0.10);
-    --border-strong: rgba(213,229,71,0.35);
-    --lime: #D5E547;
-    --lime-2: #E4F26A;
-    --lime-dim: #A8B937;
+    --border-strong: rgba(198,255,58,0.35);
+    --lime: #C6FF3A;
+    --lime-2: #D9FF62;
+    --lime-dim: #95C923;
     --ink: #0B0B0B;
     --cream: #FBF8F1;
-    --shadow-glow: 0 0 40px rgba(213,229,71,0.22);
+    --shadow-glow: 0 0 40px rgba(198,255,58,0.22);
     """
 
 
@@ -62,7 +66,7 @@ def _base_css(mode: str) -> str:
 :root {{ {_theme_vars(mode)} }}
 
 html, body, [data-testid="stAppViewContainer"] {{
-  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   background: var(--bg) !important;
   color: var(--text);
 }}
@@ -74,9 +78,15 @@ html, body {{
 }}
 [data-testid="stAppViewContainer"] {{
   background:
-    radial-gradient(ellipse at 50% -10%, rgba(213,229,71,0.10) 0%, transparent 40%),
+    radial-gradient(ellipse 480px 260px at 50% -70px, rgba(198,255,58,0.13), transparent),
+    radial-gradient(ellipse at 15% 12%, rgba(255,255,255,0.035) 0%, transparent 24%),
     var(--bg) !important;
   min-height: 100vh !important;
+  animation: appGlowPulse 3.2s ease-in-out infinite;
+}}
+@keyframes appGlowPulse {{
+  0%, 100% {{ filter: brightness(0.96); }}
+  50% {{ filter: brightness(1.03); }}
 }}
 [data-testid="stHeader"],
 [data-testid="stToolbar"],
@@ -95,7 +105,7 @@ footer {{
 .block-container {{
   max-width: none !important;
   width: 100% !important;
-  padding: 10px clamp(12px, 2.6vw, 42px) 0 !important;
+  padding: 56px clamp(18px, 2.6vw, 42px) 0 !important;
 }}
 [data-testid="stSidebar"],
 [data-testid="collapsedControl"] {{
@@ -104,8 +114,8 @@ footer {{
 @media (max-width: 760px) {{
   [data-testid="stMainBlockContainer"],
   .block-container {{
-    padding-left: 10px !important;
-    padding-right: 10px !important;
+    padding-left: 18px !important;
+    padding-right: 18px !important;
   }}
   [data-testid="stMain"] {{
     padding-bottom: 104px !important;
@@ -133,37 +143,107 @@ h1, [data-testid="stMarkdown"] h1 {{ font-size: 48px !important; line-height: 1 
 h2, [data-testid="stMarkdown"] h2 {{ font-size: 36px !important; line-height: 1.05 !important; }}
 h3, [data-testid="stMarkdown"] h3 {{ font-size: 30px !important; line-height: 1.1 !important; }}
 h4 {{
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--text-dim);
 }}
-p, div, span, li, label {{ color: var(--text); font-family: 'DM Sans', sans-serif; }}
+p, div, span, li, label {{ color: var(--text); font-family: 'Inter', sans-serif; }}
 
-/* ── Masthead (end-to-end BanterONE header) ─────────────────────────────── */
-.masthead-brand {{
+hr {{
+  border-color: rgba(245,243,238,0.08) !important;
+  margin: 24px 0 !important;
+}}
+
+[data-testid="stAlert"] {{
+  background: rgba(26,26,26,0.72) !important;
+  border: 1px solid rgba(198,255,58,0.18) !important;
+  border-radius: 8px !important;
+  backdrop-filter: blur(12px);
+}}
+
+[data-testid="stMarkdownContainer"] table {{
+  width: 100% !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  overflow: hidden !important;
+  border: 1px solid rgba(245,243,238,0.08) !important;
+  border-radius: 8px !important;
+  background: rgba(17,17,17,0.72) !important;
+  backdrop-filter: blur(12px);
+}}
+[data-testid="stMarkdownContainer"] table thead tr {{
+  background: rgba(255,255,255,0.025) !important;
+}}
+[data-testid="stMarkdownContainer"] table tbody tr {{
+  transition: background .16s ease;
+}}
+[data-testid="stMarkdownContainer"] table tbody tr:hover {{
+  background: rgba(198,255,58,0.045) !important;
+}}
+
+/* ── App header ─────────────────────────────────────────────────────────── */
+.app-header {{
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  margin: -2px 0 14px 0;
+}}
+.st-key-app_header {{
+  margin-bottom: 14px !important;
+}}
+.st-key-app_header [data-testid="stHorizontalBlock"] {{
+  align-items: flex-start !important;
+  flex-wrap: nowrap !important;
+  gap: 8px !important;
+}}
+.st-key-app_header [data-testid="stHorizontalBlock"] > [data-testid="stColumn"]:first-child {{
+  flex: 1 1 auto !important;
+  width: auto !important;
+  min-width: 0 !important;
+}}
+.st-key-app_header [data-testid="stHorizontalBlock"] > [data-testid="stColumn"]:nth-child(2),
+.st-key-app_header [data-testid="stHorizontalBlock"] > [data-testid="stColumn"]:nth-child(3) {{
+  flex: 0 0 38px !important;
+  width: 38px !important;
+  min-width: 38px !important;
+  padding: 0 !important;
+}}
+.st-key-header_bell,
+.st-key-header_settings,
+.st-key-header_bell [data-testid="stElementContainer"],
+.st-key-header_settings [data-testid="stElementContainer"],
+.st-key-header_settings [data-testid="stPopover"] {{
+  width: 38px !important;
+  min-width: 38px !important;
+  margin: 0 !important;
+}}
+.app-wordmark {{
   font-family: 'Instrument Serif', Georgia, serif;
   font-weight: 400;
-  font-size: clamp(56px, 9vw, 96px);
-  letter-spacing: -0.028em;
-  line-height: 0.95;
+  font-size: 32px;
+  letter-spacing: -0.02em;
+  line-height: 1;
   color: var(--text);
-  text-align: center;
-  margin: 12px 0 4px 0;
 }}
-.masthead-brand em {{ font-style: italic; color: var(--lime); font-weight: 400; }}
-.masthead-sub {{
-  font-family: 'DM Sans', sans-serif;
-  font-size: 11px;
+.app-wordmark em {{ font-style: italic; color: var(--lime); font-weight: 400; }}
+.app-userline {{
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
   color: var(--text-dim);
-  text-align: center;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  margin: 0 0 20px 0;
+  margin-top: 6px;
 }}
-.masthead-sub b {{ color: var(--text); }}
+.app-userline b {{ color: var(--text); }}
+.app-header-actions {{
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}}
 .hub-user {{ color: var(--text-dim); font-size: 13px; text-align: right; }}
 .hub-user b {{ color: var(--text); }}
 
@@ -171,9 +251,9 @@ p, div, span, li, label {{ color: var(--text); font-family: 'DM Sans', sans-seri
 .store-badge {{
   position: relative;
   padding: 22px 26px 22px 30px;
-  border-radius: 22px;
-  background: linear-gradient(135deg, rgba(213,229,71,0.10) 0%, var(--panel) 60%);
-  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(198,255,58,0.095) 0%, rgba(17,17,17,0.82) 62%);
+  border: 1px solid rgba(245,243,238,0.08);
   backdrop-filter: blur(12px);
   overflow: hidden;
   margin-bottom: 18px;
@@ -182,8 +262,8 @@ p, div, span, li, label {{ color: var(--text); font-family: 'DM Sans', sans-seri
 }}
 .store-badge:hover {{
   transform: translateY(-2px);
-  box-shadow: 0 12px 30px rgba(0,0,0,0.4), 0 0 20px rgba(213,229,71,0.18);
-  border-color: rgba(213,229,71,0.35);
+  box-shadow: 0 16px 38px rgba(0,0,0,0.38), 0 0 22px rgba(198,255,58,0.14);
+  border-color: rgba(198,255,58,0.35);
 }}
 /* Full-badge clickable overlay — CSS grid places button + markdown in the SAME
    cell so the invisible button fills the visible badge exactly. */
@@ -212,7 +292,7 @@ p, div, span, li, label {{ color: var(--text); font-family: 'DM Sans', sans-seri
   opacity: 0 !important;
   cursor: pointer !important;
   padding: 0 !important;
-  border-radius: 22px !important;
+  border-radius: 20px !important;
   box-shadow: none !important;
   transform: none !important;
 }}
@@ -263,7 +343,7 @@ p, div, span, li, label {{ color: var(--text); font-family: 'DM Sans', sans-seri
 }}
 [class*="st-key-clickable_post_"]:hover .feed-post {{
   transform: translateY(-1px);
-  border-color: rgba(213,229,71,0.25) !important;
+  border-color: rgba(198,255,58,0.25) !important;
 }}
 
 /* Feed reaction chips: small pill buttons under each post */
@@ -280,12 +360,12 @@ p, div, span, li, label {{ color: var(--text); font-family: 'DM Sans', sans-seri
   font-weight: 700 !important;
   border-radius: 999px !important;
   background: rgba(255,255,255,0.04) !important;
-  border: 1px solid rgba(213,229,71,0.15) !important;
+  border: 1px solid rgba(198,255,58,0.15) !important;
   color: var(--text) !important;
   transition: all .15s ease;
 }}
 [class*="st-key-reactions_"] .stButton button:hover {{
-  background: rgba(213,229,71,0.10) !important;
+  background: rgba(198,255,58,0.10) !important;
   border-color: var(--lime) !important;
   color: var(--lime) !important;
   transform: translateY(-1px);
@@ -305,7 +385,7 @@ p, div, span, li, label {{ color: var(--text); font-family: 'DM Sans', sans-seri
   margin-bottom: 4px;
 }}
 .store-badge-id {{
-  font-family: 'DM Sans', sans-serif; font-weight: 800;
+  font-family: 'Inter', sans-serif; font-weight: 800;
   font-size: 12px; letter-spacing: 0.32em;
   color: var(--lime);
 }}
@@ -326,36 +406,50 @@ p, div, span, li, label {{ color: var(--text); font-family: 'DM Sans', sans-seri
   background: linear-gradient(135deg, var(--lime), var(--lime-2));
   display: flex; align-items: center; justify-content: center;
   font-weight: 800; color: var(--ink); font-size: 15px;
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Inter', sans-serif;
 }}
 .store-badge-emp-name {{ font-weight: 700; color: var(--text); font-size: 15px; }}
 .store-badge-emp-role {{ color: var(--text-dim); font-size: 12px; }}
 
 /* ── Perf island + glass cards ──────────────────────────────────────────── */
 .perf-island {{
-  padding: 26px; border-radius: 24px;
-  background: linear-gradient(135deg, rgba(213,229,71,0.10), var(--panel));
-  border: 1px solid var(--border);
-  animation: pulseGlow 4s ease-in-out infinite;
+  padding: 14px; border-radius: 16px;
+  background: rgba(17,17,17,0.72);
+  border: 1px solid rgba(198,255,58,0.18);
+  backdrop-filter: blur(12px);
+  transition: transform .16s ease, border-color .16s ease, box-shadow .16s ease;
+}}
+.perf-island:hover {{
+  transform: translateY(-1px);
+  border-color: rgba(198,255,58,0.42);
+  box-shadow: 0 0 22px rgba(198,255,58,0.10);
 }}
 @keyframes pulseGlow {{
-  0%, 100% {{ box-shadow: 0 0 20px rgba(213,229,71,0.10); }}
-  50%      {{ box-shadow: 0 0 48px rgba(213,229,71,0.35); }}
+  0%, 100% {{ box-shadow: 0 0 20px rgba(198,255,58,0.10); }}
+  50%      {{ box-shadow: 0 0 48px rgba(198,255,58,0.35); }}
 }}
 .glass-card {{
-  padding: 20px; border-radius: 18px;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  backdrop-filter: blur(8px);
+  padding: 16px; border-radius: 16px;
+  background: rgba(26,26,26,0.66);
+  border: 1px solid rgba(245,243,238,0.08);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+  transition: transform .16s ease, border-color .16s ease, background .16s ease;
+}}
+.glass-card:hover {{
+  transform: translateY(-1px);
+  border-color: rgba(198,255,58,0.24);
+  background: rgba(32,31,31,0.74);
 }}
 
 /* ── Buttons (default): all black with lime accents ─────────────────────── */
 .stButton button {{
   background: #000000 !important;
   color: var(--text) !important;
-  border: 1px solid rgba(213,229,71,0.28) !important;
+  border: 1px solid rgba(198,255,58,0.28) !important;
   border-radius: 12px !important;
-  font-family: 'DM Sans', sans-serif !important;
+  font-family: 'Inter', sans-serif !important;
   font-weight: 600 !important;
   transition: all .15s ease;
 }}
@@ -364,7 +458,7 @@ p, div, span, li, label {{ color: var(--text); font-family: 'DM Sans', sans-seri
   border-color: var(--lime) !important;
   color: var(--lime) !important;
   transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(213,229,71,0.18);
+  box-shadow: 0 6px 20px rgba(198,255,58,0.18);
 }}
 .stButton button[kind="primary"] {{
   background: linear-gradient(135deg, var(--lime), var(--lime-2)) !important;
@@ -380,13 +474,13 @@ p, div, span, li, label {{ color: var(--text); font-family: 'DM Sans', sans-seri
   transform: translateX(-50%);
   z-index: 1000;
   background: rgba(0,0,0,0.92);
-  border: 1px solid rgba(213,229,71,0.32);
+  border: 1px solid rgba(198,255,58,0.32);
   border-radius: 999px;
   padding: 6px 10px;
   backdrop-filter: blur(28px);
   box-shadow:
     0 24px 60px rgba(0,0,0,0.55),
-    0 0 40px rgba(213,229,71,0.20),
+    0 0 40px rgba(198,255,58,0.20),
     inset 0 1px 0 rgba(255,255,255,0.04);
   width: auto !important;
   max-width: 96vw;
@@ -414,9 +508,9 @@ p, div, span, li, label {{ color: var(--text); font-family: 'DM Sans', sans-seri
   top: 26%;
   bottom: 26%;
   width: 1px;
-  background: linear-gradient(180deg, transparent 0%, #D5E547 50%, transparent 100%);
+  background: linear-gradient(180deg, transparent 0%, #C6FF3A 50%, transparent 100%);
   opacity: 0.65;
-  box-shadow: 0 0 6px #D5E547, 0 0 12px rgba(213,229,71,0.45);
+  box-shadow: 0 0 6px #C6FF3A, 0 0 12px rgba(198,255,58,0.45);
   pointer-events: none;
 }}
 .st-key-bottom_nav [data-testid="stElementContainer"] {{ margin: 0 !important; }}
@@ -427,7 +521,7 @@ p, div, span, li, label {{ color: var(--text); font-family: 'DM Sans', sans-seri
   border: none !important;
   border-radius: 999px !important;
   padding: 9px 18px !important;
-  font-family: 'DM Sans', sans-serif !important;
+  font-family: 'Inter', sans-serif !important;
   font-size: 13px !important;
   font-weight: 700 !important;
   letter-spacing: 0.02em !important;
@@ -442,7 +536,7 @@ p, div, span, li, label {{ color: var(--text); font-family: 'DM Sans', sans-seri
 .st-key-bottom_nav .stButton button p {{ color: var(--lime) !important; }}
 .st-key-bottom_nav .stButton button:hover {{
   color: var(--lime-2) !important;
-  background: rgba(213,229,71,0.08) !important;
+  background: rgba(198,255,58,0.08) !important;
   transform: none !important;
   box-shadow: none !important;
 }}
@@ -454,7 +548,7 @@ p, div, span, li, label {{ color: var(--text); font-family: 'DM Sans', sans-seri
   background: linear-gradient(135deg, var(--lime), var(--lime-2)) !important;
   color: #000000 !important;
   font-weight: 800 !important;
-  box-shadow: 0 4px 16px rgba(213,229,71,0.42) !important;
+  box-shadow: 0 4px 16px rgba(198,255,58,0.42) !important;
 }}
 .st-key-bottom_nav .stButton button[kind="primary"] p {{
   background: transparent !important;
@@ -470,7 +564,7 @@ p, div, span, li, label {{ color: var(--text); font-family: 'DM Sans', sans-seri
   font-size: 24px !important;
   letter-spacing: -0.01em !important;
   -webkit-text-stroke: 0.35px currentColor !important;
-  text-shadow: 0 0 0 currentColor, 0 0 12px rgba(213,229,71,0.28) !important;
+  text-shadow: 0 0 0 currentColor, 0 0 12px rgba(198,255,58,0.28) !important;
 }}
 .st-key-bottom_nav [data-testid="stHorizontalBlock"] > [data-testid="stColumn"]:nth-child(3) .stButton button {{
   padding-left: 22px !important;
@@ -487,13 +581,14 @@ body[data-theme="light"] .st-key-bottom_nav {{
 .feed-post {{
   padding: 16px 20px;
   border-radius: 16px;
-  background: var(--panel);
-  border: 1px solid var(--border);
+  background: rgba(26,26,26,0.66);
+  border: 1px solid rgba(245,243,238,0.08);
+  backdrop-filter: blur(12px);
   margin-bottom: 12px;
 }}
 .feed-post.pinned {{
-  border: 1px solid var(--lime);
-  background: linear-gradient(135deg, rgba(213,229,71,0.08), var(--panel));
+  border: 1px solid rgba(198,255,58,0.42);
+  background: linear-gradient(135deg, rgba(198,255,58,0.08), rgba(26,26,26,0.72));
 }}
 .feed-post-head {{
   display: flex; align-items: center; gap: 10px; margin-bottom: 8px;
@@ -513,7 +608,7 @@ body[data-theme="light"] .st-key-bottom_nav {{
 .feed-post-reacts span {{ background: var(--panel-2); padding: 3px 8px; border-radius: 999px; }}
 
 /* ── Tabs (for nested tabs inside content, e.g. leaderboard) ────────────── */
-[data-testid="stTabs"] button {{ font-family: 'DM Sans', sans-serif; font-weight: 600; }}
+[data-testid="stTabs"] button {{ font-family: 'Inter', sans-serif; font-weight: 600; }}
 [data-testid="stTabs"] button[aria-selected="true"] {{
   color: var(--lime) !important;
   border-bottom-color: var(--lime) !important;
@@ -523,9 +618,9 @@ body[data-theme="light"] .st-key-bottom_nav {{
 [data-testid="stPopover"] button {{
   background: #000000 !important;
   color: var(--text) !important;
-  border: 1px solid rgba(213,229,71,0.28) !important;
+  border: 1px solid rgba(198,255,58,0.28) !important;
   border-radius: 12px !important;
-  font-family: 'DM Sans', sans-serif !important;
+  font-family: 'Inter', sans-serif !important;
   font-weight: 600 !important;
   padding: 8px 14px !important;
   min-height: 36px !important;
@@ -539,7 +634,7 @@ body[data-theme="light"] .st-key-bottom_nav {{
 [data-baseweb="popover"] > div,
 [data-testid="stPopoverContent"], [data-testid="stPopoverBody"] {{
   background: #0B0B0B !important;
-  border: 1px solid rgba(213,229,71,0.28) !important;
+  border: 1px solid rgba(198,255,58,0.28) !important;
   border-radius: 14px !important;
   padding: 14px !important;
   min-width: 220px !important;
@@ -555,45 +650,63 @@ body[data-theme="light"] .st-key-bottom_nav {{
   text-transform: uppercase !important;
   color: var(--text-dim) !important;
 }}
-[data-testid="stPopoverContent"] hr {{ margin: 6px 0 !important; border-color: rgba(213,229,71,0.15) !important; }}
+[data-testid="stPopoverContent"] hr {{ margin: 6px 0 !important; border-color: rgba(198,255,58,0.15) !important; }}
 [data-testid="stPopoverContent"] label {{ font-size: 12px !important; }}
 
-/* ── Fixed round gear icon top-right ───────────────────────────────────── */
-.st-key-settings_gear {{
-  position: fixed !important;
-  top: 14px;
-  right: 14px;
-  z-index: 900;
-  width: 44px !important;
-  max-width: 44px !important;
-}}
-.st-key-settings_gear [data-testid="stPopover"] > div,
-.st-key-settings_gear [data-testid="stElementContainer"] {{
-  width: 44px !important;
-  min-width: 44px !important;
-  margin: 0 !important;
-}}
-.st-key-settings_gear [data-testid="stPopover"] button {{
-  width: 44px !important;
-  height: 44px !important;
-  min-width: 44px !important;
+/* ── Compact header controls ───────────────────────────────────────────── */
+.st-key-header_bell .stButton button,
+.st-key-header_settings [data-testid="stPopover"] button {{
+  width: 38px !important;
+  height: 38px !important;
+  min-width: 38px !important;
   padding: 0 !important;
-  border-radius: 50% !important;
-  font-size: 18px !important;
-  background: #000000 !important;
+  border-radius: 12px !important;
+  font-size: 15px !important;
+  background: #141414 !important;
+  color: var(--text) !important;
+  border: 1px solid rgba(255,255,255,0.08) !important;
+  box-shadow: none !important;
+  transform: none !important;
+}}
+.st-key-header_bell .stButton button:hover,
+.st-key-header_settings [data-testid="stPopover"] button:hover {{
   color: var(--lime) !important;
-  border: 1px solid rgba(213,229,71,0.42) !important;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.55), 0 0 20px rgba(213,229,71,0.18);
+  border-color: rgba(198,255,58,0.28) !important;
+  box-shadow: 0 0 14px rgba(198,255,58,0.10) !important;
+  transform: none !important;
 }}
-.st-key-settings_gear [data-testid="stPopover"] button:hover {{
-  color: var(--lime-2) !important;
-  border-color: var(--lime) !important;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.55), 0 0 28px rgba(213,229,71,0.42);
-}}
-/* Hide the popover chevron so it's a clean icon-only button */
-.st-key-settings_gear [data-testid="stPopover"] button svg,
-.st-key-settings_gear [data-testid="stPopover"] button [data-testid="stIconMaterial"] {{
+.st-key-header_settings [data-testid="stPopover"] button svg,
+.st-key-header_settings [data-testid="stPopover"] button [data-testid="stIconMaterial"] {{
   display: none !important;
+}}
+
+.st-key-notification_center {{
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 1200 !important;
+  background: #0D0D0D !important;
+  padding: 56px 18px 24px !important;
+  overflow-y: auto !important;
+  box-sizing: border-box !important;
+}}
+.notification-card {{
+  display: flex;
+  gap: 10px;
+  background: #141414;
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 14px;
+  padding: 12px;
+  margin-bottom: 8px;
+}}
+.notification-icon {{
+  width: 30px;
+  height: 30px;
+  border-radius: 10px;
+  background: #0A0A0A;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
 }}
 
 /* ── Radio dots + toggle knob → lime (override Streamlit primary) ───────── */
@@ -604,7 +717,7 @@ body[data-theme="light"] .st-key-bottom_nav {{
 [data-baseweb="radio"] div[role="radio"][aria-checked="true"] > div {{
   background-color: var(--lime) !important;
 }}
-[data-baseweb="radio"] div[role="radio"] {{ border-color: rgba(213,229,71,0.5) !important; }}
+[data-baseweb="radio"] div[role="radio"] {{ border-color: rgba(198,255,58,0.5) !important; }}
 /* Toggle */
 [data-baseweb="checkbox"] [role="checkbox"][aria-checked="true"],
 [data-testid="stCheckbox"] label > div[data-baseweb="checkbox"] > div[aria-checked="true"] {{
@@ -614,7 +727,7 @@ body[data-theme="light"] .st-key-bottom_nav {{
 label[data-baseweb="checkbox"] > div:first-child {{ background: var(--panel-2) !important; }}
 label[data-baseweb="checkbox"] > div[aria-checked="true"] {{ background: var(--lime) !important; }}
 /* Toggle track (st.toggle) */
-[data-testid="stToggle"] label > div > div[role="switch"] {{ background: rgba(213,229,71,0.15) !important; }}
+[data-testid="stToggle"] label > div > div[role="switch"] {{ background: rgba(198,255,58,0.15) !important; }}
 [data-testid="stToggle"] label > div > div[role="switch"][aria-checked="true"] {{ background: var(--lime) !important; }}
 [data-testid="stToggle"] label > div > div[role="switch"] > div {{ background: var(--text) !important; }}
 [data-testid="stToggle"] label > div > div[role="switch"][aria-checked="true"] > div {{ background: var(--ink) !important; }}
@@ -623,7 +736,7 @@ label[data-baseweb="checkbox"] > div[aria-checked="true"] {{ background: var(--l
 .st-key-weekly_targets_editor [data-testid="stNumberInput"] {{
   background: #000000 !important;
   border-radius: 12px !important;
-  border: 1px solid rgba(213,229,71,0.20) !important;
+  border: 1px solid rgba(198,255,58,0.20) !important;
   padding: 4px !important;
 }}
 .st-key-weekly_targets_editor [data-testid="stNumberInput"] input,
@@ -649,7 +762,7 @@ label[data-baseweb="checkbox"] > div[aria-checked="true"] {{ background: var(--l
   color: #000000 !important;
   border: none !important;
   font-weight: 800 !important;
-  box-shadow: 0 8px 24px rgba(213,229,71,0.32);
+  box-shadow: 0 8px 24px rgba(198,255,58,0.32);
 }}
 .st-key-weekly_targets_editor .stButton button[kind="primary"] p {{
   background: transparent !important;
@@ -673,19 +786,19 @@ label[data-baseweb="checkbox"] > div[aria-checked="true"] {{ background: var(--l
 .st-key-playbook_search_wrap [data-testid="stTextInput"] input {{
   background: #000000 !important;
   color: var(--text) !important;
-  border: 1px solid rgba(213,229,71,0.28) !important;
+  border: 1px solid rgba(198,255,58,0.28) !important;
   border-radius: 12px !important;
   padding: 12px 16px !important;
   font-size: 14px !important;
 }}
 .st-key-playbook_search_wrap [data-testid="stTextInput"] input:focus {{
   border-color: var(--lime) !important;
-  box-shadow: 0 0 0 2px rgba(213,229,71,0.25) !important;
+  box-shadow: 0 0 0 2px rgba(198,255,58,0.25) !important;
 }}
 
 /* File uploader accent */
 [data-testid="stFileUploader"] section {{
-  border-color: rgba(213,229,71,0.28) !important;
+  border-color: rgba(198,255,58,0.28) !important;
   background: transparent !important;
 }}
 [data-testid="stFileUploader"] section:hover {{ border-color: var(--lime) !important; }}
@@ -711,20 +824,82 @@ def inject_theme() -> None:
 
 def render_header() -> None:
     user = st.session_state.user
-    # Settings gear — fixed top-right via CSS on .st-key-settings_gear
-    with st.container(key="settings_gear"):
-        _render_settings_popover()
-    # Full-width centered masthead + subtitle
-    st.markdown(
-        '<div class="masthead-brand"><em>Banter</em>ONE</div>',
-        unsafe_allow_html=True,
-    )
-    st.markdown(
-        f'<div class="masthead-sub">'
-        f'<b>{user["full_name"]}</b> · Store <b>{user["store_id"]}</b> · <b>{user["role"]}</b>'
-        f'</div>',
-        unsafe_allow_html=True,
-    )
+    if st.session_state.get("show_notifications"):
+        _render_notification_center(user)
+
+    with st.container(key="app_header"):
+        logo, bell, settings = st.columns([1, 0.13, 0.13])
+        with logo:
+            st.markdown(
+                f"""
+                <div>
+                  <div class="app-wordmark"><em>Banter</em>ONE</div>
+                  <div class="app-userline">
+                    <b>{user["full_name"]}</b> &nbsp;·&nbsp; STORE <b>{user["store_id"]}</b>
+                  </div>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+        with bell:
+            with st.container(key="header_bell"):
+                if st.button("🔔", key="open_notifications", help="Notifications"):
+                    st.session_state["show_notifications"] = True
+                    st.session_state["notifications_unread"] = 0
+                    st.rerun()
+        with settings:
+            with st.container(key="header_settings"):
+                _render_settings_popover()
+
+
+def _render_notification_center(user: dict) -> None:
+    notifications = [
+        (
+            "🎉",
+            "Store milestone",
+            "just now",
+            f"Store {user.get('store_id', '—')} is ready for today’s plan updates. Daily wins will show here.",
+        ),
+        (
+            "🍬",
+            "Buddy charge earned",
+            "today",
+            "Sales, piercings, and ESA wins will become Feed, Train, and Cheer charges for your Banter Buddy.",
+        ),
+        (
+            "📣",
+            "District updates",
+            "pinned",
+            "Company announcements and manager notes can live here instead of getting buried in Teams.",
+        ),
+    ]
+    with st.container(key="notification_center"):
+        top_l, top_r = st.columns([1, 0.18])
+        with top_l:
+            st.markdown(
+                '<div style="font-family:\'Instrument Serif\',serif;font-size:24px;'
+                'color:var(--text);line-height:1;margin-bottom:16px;">Notifications</div>',
+                unsafe_allow_html=True,
+            )
+        with top_r:
+            if st.button("×", key="close_notifications", help="Close notifications"):
+                st.session_state["show_notifications"] = False
+                st.rerun()
+
+        cards = ""
+        for icon, title, when, body in notifications:
+            cards += (
+                '<div class="notification-card">'
+                f'<div class="notification-icon">{icon}</div>'
+                '<div style="min-width:0;">'
+                '<div style="display:flex;gap:8px;align-items:baseline;">'
+                f'<div style="font-size:13px;font-weight:800;color:var(--text);">{title}</div>'
+                f'<div style="font-size:10px;color:var(--text-dim);">{when}</div>'
+                '</div>'
+                f'<div style="font-size:12px;line-height:1.4;color:#D5D5CF;margin-top:3px;">{body}</div>'
+                '</div></div>'
+            )
+        st.markdown(cards, unsafe_allow_html=True)
 
 
 def _render_settings_popover() -> None:
@@ -764,7 +939,7 @@ def _character_img(user: dict, size: int) -> str:
     return (
         f'<div style="width:{size}px;height:{size}px;border-radius:50%;'
         f'overflow:hidden;background:radial-gradient(circle at 50% 35%, {meta["accent"]}44 0%, #000 70%);'
-        f'border:2px solid var(--lime);box-shadow:0 0 12px rgba(213,229,71,0.35);'
+        f'border:2px solid var(--lime);box-shadow:0 0 12px rgba(198,255,58,0.35);'
         f'display:flex;align-items:center;justify-content:center;">'
         f'<div style="width:{int(size * 1.8)}px;height:{int(size * 1.8)}px;'
         f'display:flex;align-items:center;justify-content:center;">{creature}</div></div>'
