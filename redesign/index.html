@@ -685,6 +685,7 @@
       arenaScope: "today",
       individualMetric: "sales",
       train: null,
+      userPhoto: "",
       postMenuId: null,
       editingPostId: null,
       reportsOpen: false,
@@ -1088,7 +1089,7 @@
     const db = firebase.firestore();
 
     // Per-user fields stored in Firestore users/{email}
-    const USER_FIELDS = ["buddy", "charges", "chargesEarned", "rubies", "myReactions", "toggles", "userOverrides", "districtName", "unread"];
+    const USER_FIELDS = ["buddy", "charges", "chargesEarned", "rubies", "myReactions", "toggles", "userOverrides", "districtName", "unread", "userPhoto"];
 
     let saveUserTimer = null;
     function saveUserData() {
@@ -1159,6 +1160,31 @@
         { name: "Brandy A.", initials: "BA", authorEmail: "brandy.a@banter.com", timestamp: firebase.firestore.Timestamp.fromMillis(now.toMillis() - 12*60*1000), flair: "shoutout", pinned: true, text: "Cherry Creek team opened strong today. Natalia landed the first warranty attach before 10 AM.", reactions: { like: 9, heart: 6, laugh: 1, fire: 4, party: 3 } }
       ].forEach(p => batch.set(db.collection("feed").doc(), p));
       batch.commit().catch(console.error);
+    }
+
+    async function compressImage(file, size = 120) {
+      return new Promise(resolve => {
+        const reader = new FileReader();
+        reader.onload = e => {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement("canvas");
+            canvas.width = size; canvas.height = size;
+            const ctx = canvas.getContext("2d");
+            const min = Math.min(img.width, img.height);
+            const sx = (img.width - min) / 2, sy = (img.height - min) / 2;
+            ctx.drawImage(img, sx, sy, min, min, 0, 0, size, size);
+            resolve(canvas.toDataURL("image/jpeg", 0.75));
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function avatarEl(label, photoUrl, size = 36) {
+      if (photoUrl) return `<div class="avatar" style="width:${size}px;height:${size}px;padding:0;overflow:hidden"><img src="${photoUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"></div>`;
+      return `<div class="avatar" style="width:${size}px;height:${size}px">${label}</div>`;
     }
 
     function timeAgo(ts) {
@@ -1345,10 +1371,11 @@
     }
 
     function postCard(post) {
+      const isOwn = post.authorEmail === activeUser().email;
       return `
         <article class="card post">
           <div class="post-head">
-            <div class="avatar">${post.initials}</div>
+            ${avatarEl(post.initials, isOwn ? state.userPhoto : (post.authorPhoto || ""))}
             <div style="flex:1;min-width:0"><div class="post-name">${esc(post.name)}</div><div class="post-time">${post.timestamp ? timeAgo(post.timestamp) : esc(post.time || "just now")}</div></div>
             <span class="flair ${post.flair}">${post.flair.toUpperCase()}</span>
             ${post.pinned ? `<span class="pinned">PINNED</span>` : ""}
@@ -1839,7 +1866,7 @@
 
     function settingsMenu() {
       const user = activeUser();
-      return `<div class="overlay-head"><h2 class="serif" style="font-size:24px;margin:0">Settings</h2><button class="close" data-action="close-settings">×</button></div><div style="display:flex;align-items:center;gap:10px;padding:12px 0 18px"><div class="avatar" style="width:40px;height:40px">${initials(user.name)}</div><div><div style="font-size:14px;font-weight:700">${user.name}</div><div style="font-size:11px;color:var(--muted)">${user.role} · Store ${user.storeId === "DISTRICT" ? "District" : user.storeId}</div></div></div><div class="settings-group-title">Account Settings</div><div class="card settings-group">${accountSettings.map(settingsRow).join("")}</div><div class="settings-group-title">Workplace Admin</div><div class="card settings-group">${adminSettings.map(settingsRow).join("")}</div><button class="secondary" data-action="logout" style="margin-top:24px;color:#e5484d;border-color:rgba(229,72,77,.25)">Sign out</button>`;
+      return `<div class="overlay-head"><h2 class="serif" style="font-size:24px;margin:0">Settings</h2><button class="close" data-action="close-settings">×</button></div><div style="display:flex;align-items:center;gap:10px;padding:12px 0 18px">${avatarEl(initials(user.name), state.userPhoto, 40)}<div><div style="font-size:14px;font-weight:700">${user.name}</div><div style="font-size:11px;color:var(--muted)">${user.role} · Store ${user.storeId === "DISTRICT" ? "District" : user.storeId}</div></div></div><div class="settings-group-title">Account Settings</div><div class="card settings-group">${accountSettings.map(settingsRow).join("")}</div><div class="settings-group-title">Workplace Admin</div><div class="card settings-group">${adminSettings.map(settingsRow).join("")}</div><button class="secondary" data-action="logout" style="margin-top:24px;color:#e5484d;border-color:rgba(229,72,77,.25)">Sign out</button>`;
     }
 
     function settingsRow(item) {
@@ -1861,7 +1888,7 @@
       const info = (label, value) => `<div class="field" style="display:flex;justify-content:space-between;gap:12px"><span style="font-size:13px">${label}</span><strong style="font-size:13px;color:var(--soft);text-align:right">${value}</strong></div>`;
       const text = (label, value, fieldKey) => `<div class="field"><label>${label}</label><input data-field="${fieldKey}" value="${value}"></div>`;
       const map = {
-        profile: [text("Full name", user.name, "name"), text("Email", user.email, "email"), info("Role", user.role), info("Store", userStoreLabel(user))],
+        profile: [`<div class="field" style="text-align:center;padding:16px 0 8px"><div style="position:relative;display:inline-block">${avatarEl(initials(user.name), state.userPhoto, 88)}<label for="photo-upload" style="position:absolute;bottom:2px;right:2px;width:28px;height:28px;border-radius:50%;background:var(--lime);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;color:#000;font-weight:700">📷</label><input type="file" id="photo-upload" accept="image/*" capture="user" style="display:none"></div><div style="font-size:11px;color:var(--muted);margin-top:8px">Tap camera to change photo</div></div>`, text("Full name", user.name, "name"), text("Email", user.email, "email"), info("Role", user.role), info("Store", userStoreLabel(user))],
         notifications: [toggle("notifPush", "Push notifications", "Milestones, charges, shoutouts"), toggle("notifEmail", "Email digest", "Weekly summary email"), toggle("notifAchievements", "Achievement alerts", "When you or your store hit a milestone")],
         appearance: [`<div class="field"><label>Theme</label><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><button class="primary" style="background:var(--panel);color:var(--muted);border:1px solid rgba(255,255,255,.08)">Light</button><button class="primary">Dark</button></div></div>`, toggle("soundOn", "App sounds", "Click sound on taps and reactions")],
         language: [info("Language", "English (US)"), info("Region", "Colorado, US"), info("Time zone", "Mountain Time")],
@@ -1993,6 +2020,18 @@
           state.composeText = event.target.value;
           const send = app.querySelector('[data-action="send-post"]');
           if (send) send.disabled = !state.composeText.trim();
+        });
+      }
+      const photoInput = document.getElementById("photo-upload");
+      if (photoInput) {
+        photoInput.addEventListener("change", async e => {
+          const file = e.target.files[0];
+          if (!file) return;
+          showToast("Saving photo…");
+          state.userPhoto = await compressImage(file, 120);
+          saveUserData();
+          render();
+          showToast("Photo saved");
         });
       }
     }
