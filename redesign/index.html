@@ -678,6 +678,8 @@
       chargesEarned: false,
       buddy: { level: 2, xp: 140, xpNext: 250, care: 72, spark: 45, bond: 61 },
       myReactions: {},
+      userOverrides: {},
+      districtName: "District 4 — Colorado",
       arenaScope: "today",
       individualMetric: "sales",
       train: null,
@@ -1066,7 +1068,7 @@
     const pct = (value) => `${Math.max(0, Math.min(100, value))}%`;
 
     const SAVE_VERSION = 2;
-    const SAVE_KEYS = ["buddy", "charges", "chargesEarned", "feed", "toggles", "selectedUserEmail", "tab", "rubies", "unread", "myReactions"];
+    const SAVE_KEYS = ["buddy", "charges", "chargesEarned", "feed", "toggles", "selectedUserEmail", "tab", "rubies", "unread", "myReactions", "userOverrides", "districtName"];
 
     function saveState() {
       try {
@@ -1108,7 +1110,9 @@
     }
 
     function activeUser() {
-      return users.find(user => user.email === state.selectedUserEmail) || users.find(user => user.email === "brandy.a@banter.com") || users[0];
+      const base = users.find(user => user.email === state.selectedUserEmail) || users.find(user => user.email === "brandy.a@banter.com") || users[0];
+      const overrides = state.userOverrides[base.email] || {};
+      return { ...base, ...overrides };
     }
 
     function activeStore() {
@@ -1677,7 +1681,9 @@
 
     function settingsDetail() {
       const title = [...accountSettings, ...adminSettings].find(i => i[0] === state.settingsView)?.[2] || "Settings";
-      return `<div class="overlay-head"><button class="close" data-action="settings-back">‹</button><h2 class="serif" style="font-size:22px;margin:0;flex:1;text-align:center">${title}</h2><button class="close" data-action="close-settings">×</button></div>${settingsFields(state.settingsView)}`;
+      const saveable = ["profile", "admin-general"];
+      const saveBtn = saveable.includes(state.settingsView) ? `<button class="primary" data-action="save-settings" style="margin-top:24px;width:100%">Save changes</button>` : "";
+      return `<div class="overlay-head"><button class="close" data-action="settings-back">‹</button><h2 class="serif" style="font-size:22px;margin:0;flex:1;text-align:center">${title}</h2><button class="close" data-action="close-settings">×</button></div>${settingsFields(state.settingsView)}${saveBtn}`;
     }
 
     function settingsFields(key) {
@@ -1686,15 +1692,15 @@
       const store = activeStore();
       const toggle = (name, label, sub = "") => `<div class="field" style="display:flex;align-items:center;gap:12px"><div><strong style="font-size:13px">${label}</strong>${sub ? `<div class="post-time" style="margin-top:4px">${sub}</div>` : ""}</div><button class="toggle ${t[name] ? "on" : ""}" data-action="toggle-field" data-key="${name}" aria-label="${label}"><span></span></button></div>`;
       const info = (label, value) => `<div class="field" style="display:flex;justify-content:space-between;gap:12px"><span style="font-size:13px">${label}</span><strong style="font-size:13px;color:var(--soft);text-align:right">${value}</strong></div>`;
-      const text = (label, value) => `<div class="field"><label>${label}</label><input value="${value}"></div>`;
+      const text = (label, value, fieldKey) => `<div class="field"><label>${label}</label><input data-field="${fieldKey}" value="${value}"></div>`;
       const map = {
-        profile: [text("Full name", user.name), text("Email", user.email), info("Role", user.role), info("Store", userStoreLabel(user))],
+        profile: [text("Full name", user.name, "name"), text("Email", user.email, "email"), info("Role", user.role), info("Store", userStoreLabel(user))],
         notifications: [toggle("notifPush", "Push notifications", "Milestones, charges, shoutouts"), toggle("notifEmail", "Email digest", "Weekly summary email"), toggle("notifAchievements", "Achievement alerts", "When you or your store hit a milestone")],
         appearance: [`<div class="field"><label>Theme</label><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><button class="primary" style="background:var(--panel);color:var(--muted);border:1px solid rgba(255,255,255,.08)">Light</button><button class="primary">Dark</button></div></div>`, toggle("soundOn", "App sounds", "Click sound on taps and reactions")],
         language: [info("Language", "English (US)"), info("Region", "Colorado, US"), info("Time zone", "Mountain Time")],
         security: [toggle("twoFactor", "Two-factor authentication", "Require a code at sign-in"), info("Change password", "Update"), info("Last sign-in", "Today, 9:41 AM")],
         connected: [info("Microsoft", "Connected"), info("Point of sale", "Connect")],
-        "admin-general": [text("District name", "District 4 — Colorado"), info("Default time zone", "Mountain Time")],
+        "admin-general": [text("District name", state.districtName, "districtName"), info("Default time zone", "Mountain Time")],
         "admin-members": [info("Active members", "24"), info("Invite a member", "Invite")],
         "admin-teams": [info("Teams", "5 stores"), info("Create a team", "New team")],
         "admin-roles": [toggle("roleManagerEdit", "Managers can edit playbook"), toggle("roleAssocView", "Associates can view district data")],
@@ -1864,6 +1870,19 @@
       }
       if (action === "settings-back") setState({ settingsView: "menu" });
       if (action === "settings-item") setState({ settingsView: el.dataset.key });
+      if (action === "save-settings") {
+        const inputs = {};
+        overlayWrap.querySelectorAll("[data-field]").forEach(inp => { inputs[inp.dataset.field] = inp.value.trim(); });
+        if (state.settingsView === "profile") {
+          const email = activeUser().email;
+          state.userOverrides[email] = { ...state.userOverrides[email], name: inputs.name };
+        } else if (state.settingsView === "admin-general") {
+          state.districtName = inputs.districtName || state.districtName;
+        }
+        saveState();
+        render();
+        showToast("Changes saved");
+      }
       if (action === "toggle-field") {
         state.toggles[el.dataset.key] = !state.toggles[el.dataset.key];
         saveState(); render();
