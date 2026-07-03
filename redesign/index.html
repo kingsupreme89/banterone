@@ -10,6 +10,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#0a0a0a">
   <link rel="manifest" href="manifest.json">
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
@@ -1075,27 +1077,97 @@
     const esc = (value) => String(value).replace(/[&<>"']/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]));
     const pct = (value) => `${Math.max(0, Math.min(100, value))}%`;
 
-    const SAVE_VERSION = 2;
-    const SAVE_KEYS = ["buddy", "charges", "chargesEarned", "feed", "toggles", "selectedUserEmail", "tab", "rubies", "unread", "myReactions", "userOverrides", "districtName", "disciplinaryReports"];
+    firebase.initializeApp({
+      apiKey: "AIzaSyBk_XKrmjCtLfFchehupDMaGLvvl19Dj6g",
+      authDomain: "banterone-5cb2c.firebaseapp.com",
+      projectId: "banterone-5cb2c",
+      storageBucket: "banterone-5cb2c.firebasestorage.app",
+      messagingSenderId: "255126232489",
+      appId: "1:255126232489:web:7c9d4d3b230966b11978b8"
+    });
+    const db = firebase.firestore();
+
+    // Per-user fields stored in Firestore users/{email}
+    const USER_FIELDS = ["buddy", "charges", "chargesEarned", "rubies", "myReactions", "toggles", "userOverrides", "districtName", "unread"];
+
+    let saveUserTimer = null;
+    function saveUserData() {
+      clearTimeout(saveUserTimer);
+      saveUserTimer = setTimeout(() => {
+        if (!state.selectedUserEmail || state.tab === "login") return;
+        const data = {};
+        USER_FIELDS.forEach(k => data[k] = state[k]);
+        db.collection("users").doc(state.selectedUserEmail).set(data, { merge: true }).catch(console.error);
+      }, 600);
+    }
+
+    async function loadUserData(email) {
+      try {
+        const doc = await db.collection("users").doc(email).get();
+        if (doc.exists) {
+          const data = doc.data();
+          USER_FIELDS.forEach(k => { if (data[k] !== undefined) state[k] = data[k]; });
+        }
+      } catch (e) { console.error("loadUserData:", e); }
+    }
 
     function saveState() {
-      try {
-        const data = { _v: SAVE_VERSION };
-        SAVE_KEYS.forEach(k => data[k] = state[k]);
-        data.customCalEvents = customCalEvents;
-        localStorage.setItem("banterone_state", JSON.stringify(data));
-      } catch (e) {}
+      try { localStorage.setItem("banterone_session", JSON.stringify({ email: state.selectedUserEmail, tab: state.tab })); } catch(e) {}
+      saveUserData();
     }
 
     function restoreState() {
       try {
-        const raw = localStorage.getItem("banterone_state");
+        const raw = localStorage.getItem("banterone_session");
         if (!raw) return;
-        const data = JSON.parse(raw);
-        if (data._v !== SAVE_VERSION) { localStorage.removeItem("banterone_state"); return; }
-        SAVE_KEYS.forEach(k => { if (data[k] !== undefined) state[k] = data[k]; });
-        if (data.customCalEvents) customCalEvents = data.customCalEvents;
-      } catch (e) {}
+        const d = JSON.parse(raw);
+        if (d.email) state.selectedUserEmail = d.email;
+        if (d.tab && d.tab !== "login") state.tab = d.tab;
+      } catch(e) {}
+      // Clear old localStorage format
+      localStorage.removeItem("banterone_state");
+    }
+
+    // Firestore real-time listeners
+    let unsubFeed = null, unsubReports = null;
+
+    function subscribeToSharedData() {
+      if (unsubFeed) unsubFeed();
+      if (unsubReports) unsubReports();
+      unsubFeed = db.collection("feed").orderBy("timestamp", "desc").limit(50).onSnapshot(snap => {
+        state.feed = snap.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+        render();
+      }, e => console.error("feed:", e));
+      unsubReports = db.collection("reports").orderBy("createdAt", "desc").onSnapshot(snap => {
+        state.disciplinaryReports = snap.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+        if (state.reportsOpen) render();
+      }, e => console.error("reports:", e));
+    }
+
+    function unsubscribeAll() {
+      if (unsubFeed) { unsubFeed(); unsubFeed = null; }
+      if (unsubReports) { unsubReports(); unsubReports = null; }
+    }
+
+    async function seedFeedIfEmpty() {
+      const snap = await db.collection("feed").limit(1).get();
+      if (!snap.empty) return;
+      const batch = db.batch();
+      const now = firebase.firestore.Timestamp.now();
+      [
+        { name: "District Retail", initials: "DR", authorEmail: "dm@banter.com", timestamp: firebase.firestore.Timestamp.fromMillis(now.toMillis() - 34*60*1000), flair: "news", pinned: false, text: "Reminder: St. Jude points reset Sunday night. Celebrate every add-on and keep the customer story front and center.", reactions: { like: 12, heart: 8, laugh: 0, fire: 5, party: 4 } },
+        { name: "Brandy A.", initials: "BA", authorEmail: "brandy.a@banter.com", timestamp: firebase.firestore.Timestamp.fromMillis(now.toMillis() - 12*60*1000), flair: "shoutout", pinned: true, text: "Cherry Creek team opened strong today. Natalia landed the first warranty attach before 10 AM.", reactions: { like: 9, heart: 6, laugh: 1, fire: 4, party: 3 } }
+      ].forEach(p => batch.set(db.collection("feed").doc(), p));
+      batch.commit().catch(console.error);
+    }
+
+    function timeAgo(ts) {
+      if (!ts || !ts.toMillis) return "just now";
+      const s = Math.floor((Date.now() - ts.toMillis()) / 1000);
+      if (s < 60) return "just now";
+      if (s < 3600) return `${Math.floor(s/60)}m ago`;
+      if (s < 86400) return `${Math.floor(s/3600)}h ago`;
+      return `${Math.floor(s/86400)}d ago`;
     }
 
     restoreState();
@@ -1277,7 +1349,7 @@
         <article class="card post">
           <div class="post-head">
             <div class="avatar">${post.initials}</div>
-            <div style="flex:1;min-width:0"><div class="post-name">${esc(post.name)}</div><div class="post-time">${esc(post.time)}</div></div>
+            <div style="flex:1;min-width:0"><div class="post-name">${esc(post.name)}</div><div class="post-time">${post.timestamp ? timeAgo(post.timestamp) : esc(post.time || "just now")}</div></div>
             <span class="flair ${post.flair}">${post.flair.toUpperCase()}</span>
             ${post.pinned ? `<span class="pinned">PINNED</span>` : ""}
             <button class="icon-button" data-action="open-post-menu" data-id="${post.id}" style="font-size:18px;width:30px;height:30px">⋯</button>
@@ -1945,7 +2017,14 @@
         const feedCharges = Math.min(3, Math.floor(sub.bold / 500));
         const trainCharges = Math.min(2, sub.ep);
         const cheerCharges = Math.min(3, sub.esa);
-        setState({ tab: "home", loginError: "", charges: { feed: feedCharges, train: trainCharges, cheer: cheerCharges }, chargesEarned: true });
+        state.tab = "home"; state.loginError = "";
+        state.charges = { feed: feedCharges, train: trainCharges, cheer: cheerCharges };
+        state.chargesEarned = true;
+        render();
+        loadUserData(user.email).then(() => render());
+        subscribeToSharedData();
+        seedFeedIfEmpty();
+        saveState();
       }
       if (action === "toggle-pw") setState({ pwVisible: !state.pwVisible });
       if (action === "stay") setState({ staySignedIn: !state.staySignedIn });
@@ -1960,8 +2039,10 @@
       if (action === "open-settings") setState({ settingsOpen: true, settingsView: "menu" });
       if (action === "close-settings") setState({ settingsOpen: false });
       if (action === "logout") {
-        localStorage.removeItem("banterone_state");
-        setState({ tab: "login", settingsOpen: false, charges: { feed: 0, train: 0, cheer: 0 }, chargesEarned: false, myReactions: {} });
+        unsubscribeAll();
+        localStorage.removeItem("banterone_session");
+        Object.assign(state, { tab: "login", settingsOpen: false, feed: [], disciplinaryReports: [], charges: { feed: 0, train: 0, cheer: 0 }, chargesEarned: false, myReactions: {}, buddy: { level: 2, xp: 140, xpNext: 250, care: 72, spark: 45, bond: 61 } });
+        render();
       }
       if (action === "settings-back") setState({ settingsView: "menu" });
       if (action === "settings-item") setState({ settingsView: el.dataset.key });
@@ -1983,29 +2064,33 @@
         saveState(); render();
       }
       if (action === "react") {
-        const post = state.feed.find(p => p.id === Number(el.dataset.id));
-        const rKey = `${el.dataset.id}_${el.dataset.key}`;
+        const postId = el.dataset.id;
+        const key = el.dataset.key;
+        const rKey = `${postId}_${key}`;
+        const post = state.feed.find(p => p.id === postId);
         if (post) {
           if (state.myReactions[rKey]) {
-            post.reactions[el.dataset.key] -= 1;
+            post.reactions[key] = (post.reactions[key] || 1) - 1;
             delete state.myReactions[rKey];
+            db.collection("feed").doc(postId).update({ [`reactions.${key}`]: firebase.firestore.FieldValue.increment(-1) }).catch(console.error);
           } else {
-            post.reactions[el.dataset.key] += 1;
+            post.reactions[key] = (post.reactions[key] || 0) + 1;
             state.myReactions[rKey] = true;
+            db.collection("feed").doc(postId).update({ [`reactions.${key}`]: firebase.firestore.FieldValue.increment(1) }).catch(console.error);
           }
+          saveUserData(); render();
         }
-        saveState(); render();
       }
       if (action === "go-store") setState({ tab: "store" });
       if (action === "go-arena") setState({ tab: "arena" });
-      if (action === "open-post-menu") setState({ postMenuId: Number(el.dataset.id) });
+      if (action === "open-post-menu") setState({ postMenuId: el.dataset.id });
       if (action === "close-post-menu" || action === "close-post-menu-bg") setState({ postMenuId: null });
       if (action === "delete-post") {
-        state.feed = state.feed.filter(p => p.id !== Number(el.dataset.id));
-        saveState(); render(); showToast("Post deleted");
+        db.collection("feed").doc(el.dataset.id).delete().catch(console.error);
+        setState({ postMenuId: null }); showToast("Post deleted");
       }
       if (action === "edit-post") {
-        const post = state.feed.find(p => p.id === Number(el.dataset.id));
+        const post = state.feed.find(p => p.id === el.dataset.id);
         if (post) setState({ postMenuId: null, editingPostId: post.id, composeText: post.text, composeOpen: true });
       }
       if (action === "report-post") {
@@ -2017,24 +2102,21 @@
       if (action === "open-new-report") setState({ newReportOpen: true });
       if (action === "cancel-new-report") setState({ newReportOpen: false });
       if (action === "submit-report") {
-        const form = overlayWrap.querySelector("[data-field='rep-name']");
         const name = overlayWrap.querySelector("[data-field='rep-name']")?.value.trim();
         const type = overlayWrap.querySelector("[data-field='rep-type']")?.value;
         const notes = overlayWrap.querySelector("[data-field='rep-notes']")?.value.trim();
         if (name && notes) {
           const user = activeUser();
-          state.disciplinaryReports.unshift({ id: Date.now(), employeeEmail: "", employeeName: name, storeId: user.storeId === "DISTRICT" ? "DISTRICT" : user.storeId, type, date: new Date().toISOString().slice(0,10), notes, issuedBy: user.name });
-          saveState(); render(); showToast("Report saved");
+          db.collection("reports").add({ employeeEmail: "", employeeName: name, storeId: user.storeId, type, date: new Date().toISOString().slice(0,10), createdAt: firebase.firestore.FieldValue.serverTimestamp(), notes, issuedBy: user.name }).catch(console.error);
+          setState({ newReportOpen: false }); showToast("Report saved");
         } else { showToast("Please fill in all fields"); }
       }
       if (action === "open-compose") setState({ composeOpen: true, editingPostId: null });
       if (action === "close-compose") setState({ composeOpen: false, composeText: "", editingPostId: null });
       if (action === "send-post" && state.composeText.trim()) {
         if (state.editingPostId !== null) {
-          const post = state.feed.find(p => p.id === state.editingPostId);
-          if (post) post.text = state.composeText.trim();
-          saveState(); render(); showToast("Post updated");
-          setState({ editingPostId: null, composeOpen: false, composeText: "" });
+          db.collection("feed").doc(state.editingPostId).update({ text: state.composeText.trim() }).catch(console.error);
+          setState({ editingPostId: null, composeOpen: false, composeText: "" }); showToast("Post updated");
         } else {
           setState({ composeOpen: false, flairOpen: true });
         }
@@ -2043,7 +2125,7 @@
       if (action === "publish-post" || action === "skip-flair") {
         const flair = action === "skip-flair" ? "update" : state.pendingFlair;
         const user = activeUser();
-        state.feed.unshift({ id: Date.now(), initials: initials(user.name), name: user.name, authorEmail: user.email, time: "now", flair, pinned: false, text: state.composeText.trim(), reactions: { like: 0, heart: 0, laugh: 0, fire: 0, party: 0 } });
+        db.collection("feed").add({ name: user.name, initials: initials(user.name), authorEmail: user.email, timestamp: firebase.firestore.FieldValue.serverTimestamp(), flair, pinned: false, text: state.composeText.trim(), reactions: { like: 0, heart: 0, laugh: 0, fire: 0, party: 0 } }).catch(console.error);
         setState({ flairOpen: false, composeText: "", pendingFlair: "shoutout" });
       }
       if (action === "feed-buddy" && state.charges.feed > 0) {
@@ -2111,7 +2193,15 @@
       }
     });
 
-    render();
+    // Auto-resume session from localStorage
+    if (state.selectedUserEmail && state.tab !== "login") {
+      render();
+      subscribeToSharedData();
+      seedFeedIfEmpty();
+      loadUserData(state.selectedUserEmail).then(() => render());
+    } else {
+      render();
+    }
   </script>
 </body>
 </html>
