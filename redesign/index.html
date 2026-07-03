@@ -683,9 +683,17 @@
       arenaScope: "today",
       individualMetric: "sales",
       train: null,
+      postMenuId: null,
+      editingPostId: null,
+      reportsOpen: false,
+      newReportOpen: false,
+      disciplinaryReports: [
+        { id: 1, employeeEmail: "cc_assoc1@banter.com", employeeName: "Cherry Creek Associate 1", storeId: "3922", type: "coaching", date: "2026-06-28", notes: "Discussed punctuality and attendance expectations. Associate committed to improvement.", issuedBy: "Brandy A." },
+        { id: 2, employeeEmail: "cc_piercer@banter.com", employeeName: "Cherry Creek Piercer", storeId: "3922", type: "written-warning", date: "2026-06-10", notes: "Second conversation regarding register variance. Written warning issued per policy.", issuedBy: "Brandy A." }
+      ],
       feed: [
-        { id: 1, initials: "BA", name: "Brandy A.", time: "12m ago", flair: "shoutout", pinned: true, text: "Cherry Creek team opened strong today. Natalia landed the first warranty attach before 10 AM.", reactions: { like: 9, heart: 6, laugh: 1, fire: 4, party: 3 } },
-        { id: 2, initials: "DR", name: "District Retail", time: "34m ago", flair: "news", pinned: false, text: "Reminder: St. Jude points reset Sunday night. Celebrate every add-on and keep the customer story front and center.", reactions: { like: 12, heart: 8, laugh: 0, fire: 5, party: 4 } }
+        { id: 1, initials: "BA", name: "Brandy A.", authorEmail: "brandy.a@banter.com", time: "12m ago", flair: "shoutout", pinned: true, text: "Cherry Creek team opened strong today. Natalia landed the first warranty attach before 10 AM.", reactions: { like: 9, heart: 6, laugh: 1, fire: 4, party: 3 } },
+        { id: 2, initials: "DR", name: "District Retail", authorEmail: "dm@banter.com", time: "34m ago", flair: "news", pinned: false, text: "Reminder: St. Jude points reset Sunday night. Celebrate every add-on and keep the customer story front and center.", reactions: { like: 12, heart: 8, laugh: 0, fire: 5, party: 4 } }
       ],
       notifications: [
         { icon: "🎉", title: "Cherry Creek hit 50%", time: "5m ago", body: "Everyone on the team earned +10 Buddy XP." },
@@ -1068,7 +1076,7 @@
     const pct = (value) => `${Math.max(0, Math.min(100, value))}%`;
 
     const SAVE_VERSION = 2;
-    const SAVE_KEYS = ["buddy", "charges", "chargesEarned", "feed", "toggles", "selectedUserEmail", "tab", "rubies", "unread", "myReactions", "userOverrides", "districtName"];
+    const SAVE_KEYS = ["buddy", "charges", "chargesEarned", "feed", "toggles", "selectedUserEmail", "tab", "rubies", "unread", "myReactions", "userOverrides", "districtName", "disciplinaryReports"];
 
     function saveState() {
       try {
@@ -1091,6 +1099,13 @@
     }
 
     restoreState();
+
+    // Patch authorEmail into feed posts that predate that field
+    (function migrateAuthorEmails() {
+      const nameToEmail = {};
+      users.forEach(u => { nameToEmail[u.name] = u.email; });
+      state.feed.forEach(p => { if (!p.authorEmail) p.authorEmail = nameToEmail[p.name] || ""; });
+    })();
 
     function setState(patch) {
       Object.assign(state, patch);
@@ -1226,18 +1241,21 @@
             <div>${wordmark()}<div class="muted-kicker">${user.name} · ${store.id === "DISTRICT" ? "District" : `Store ${store.id}`}</div></div>
             ${topCluster()}
           </div>
-          <div class="card store-card" style="position:relative">
-            <div class="eyebrow">${store.id === "DISTRICT" ? "District" : `Store ${store.id}`}</div>
-            <div class="serif store-title">${store.name}</div>
-            <div class="caption">${store.mall}${store.state ? ` · ${store.state}` : ""}</div>
-            <div class="store-card-cal"><button class="cal-icon-btn" data-action="open-calendar" aria-label="Calendar">📅</button></div>
+          <div class="card store-card" style="position:relative;display:flex;align-items:center;gap:12px">
+            <div style="width:54px;height:54px;border-radius:12px;background:linear-gradient(135deg,rgba(198,255,58,.15),rgba(198,255,58,.04));border:1px solid rgba(198,255,58,.2);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0">🏪</div>
+            <div style="flex:1;min-width:0">
+              <div class="eyebrow">${store.id === "DISTRICT" ? "District" : `Store ${store.id}`}</div>
+              <div class="serif store-title">${store.name}</div>
+              <div class="caption">${store.mall}${store.state ? ` · ${store.state}` : ""}</div>
+            </div>
+            <div class="store-card-cal" style="position:static;margin-left:auto"><button class="cal-icon-btn" data-action="open-calendar" aria-label="Calendar">📅</button></div>
           </div>
           <div class="neon-spacer compact"></div>
           <div class="kpis">
-            ${kpi("District Today", money(districtActual), `of ${money(districtPlan)} · ${districtPct}%`, true)}
-            ${kpi("Store Today", money(submission.bold), `of ${money(store.dailyPlan)} · ${storePct}%`)}
-            ${kpi("MTD", money(submission.bold * 2), `vs ${money(store.dailyPlan * 2)} pace`)}
-            ${kpi("District Rank", rankText, store.id === "DISTRICT" ? "all stores" : "of 11 stores", true)}
+            ${kpi("District Today", money(districtActual), `of ${money(districtPlan)} · ${districtPct}%`, true, "go-arena")}
+            ${kpi("Store Today", money(submission.bold), `of ${money(store.dailyPlan)} · ${storePct}%`, false, "go-store")}
+            ${kpi("MTD", money(submission.bold * 2), `vs ${money(store.dailyPlan * 2)} pace`, false, "go-store")}
+            ${kpi("District Rank", rankText, store.id === "DISTRICT" ? "all stores" : "of 11 stores", true, "go-arena")}
           </div>
           <div class="neon-spacer left"></div>
           <div class="section-row">
@@ -1249,8 +1267,9 @@
         </section>`;
     }
 
-    function kpi(label, value, note, lime = false) {
-      return `<div class="card kpi"><div class="kpi-label">${label}</div><div class="kpi-value ${lime ? "lime" : ""}">${value}</div><div class="kpi-note">${note}</div></div>`;
+    function kpi(label, value, note, lime = false, action = "") {
+      const attrs = action ? `data-action="${action}" style="cursor:pointer;-webkit-tap-highlight-color:transparent"` : "";
+      return `<div class="card kpi" ${attrs}><div class="kpi-label">${label}</div><div class="kpi-value ${lime ? "lime" : ""}">${value}</div><div class="kpi-note">${note}</div></div>`;
     }
 
     function postCard(post) {
@@ -1261,6 +1280,7 @@
             <div style="flex:1;min-width:0"><div class="post-name">${esc(post.name)}</div><div class="post-time">${esc(post.time)}</div></div>
             <span class="flair ${post.flair}">${post.flair.toUpperCase()}</span>
             ${post.pinned ? `<span class="pinned">PINNED</span>` : ""}
+            <button class="icon-button" data-action="open-post-menu" data-id="${post.id}" style="font-size:18px;width:30px;height:30px">⋯</button>
           </div>
           <div class="post-body">${esc(post.text)}</div>
           <div class="reactions">
@@ -1430,6 +1450,18 @@
             ${metricRow("ESA Attach Rate", esaPct, 30, "")}
             ${metricRow("Conversion Rate", convRate, 38, "")}
           </div>
+
+          <div class="neon-spacer left"></div>
+          <div class="section-row"><div class="section-title">Manager Tools</div></div>
+          <button class="card" data-action="open-reports" style="width:100%;text-align:left;padding:16px;display:flex;align-items:center;gap:12px;margin-bottom:8px">
+            <span style="font-size:22px">📋</span>
+            <div>
+              <div style="font-size:14px;font-weight:700">Disciplinary Reports</div>
+              <div style="font-size:12px;color:var(--muted);margin-top:2px">${user.storeId === "DISTRICT" ? "All stores · " : `Store ${user.storeId} · `}${state.disciplinaryReports.filter(r => user.storeId === "DISTRICT" || r.storeId === user.storeId).length} on file</div>
+            </div>
+            <span style="margin-left:auto;color:var(--muted)">›</span>
+          </button>
+          <div style="height:12px"></div>
         </section>`;
     }
 
@@ -1637,6 +1669,66 @@
       return `<button class="nav-btn ${state.tab === tab ? "active" : ""}" data-action="tab" data-tab="${tab}">${label}</button>`;
     }
 
+    function postMenuSheet() {
+      const post = state.feed.find(p => p.id === state.postMenuId);
+      if (!post) return "";
+      const user = activeUser();
+      const isOwn = post.authorEmail === user.email;
+      return `<div class="overlay" data-action="close-post-menu-bg"><section class="sheet" data-stop>
+        <div class="overlay-head"><h2 class="serif" style="font-size:20px;margin:0">Post options</h2><button class="close" data-action="close-post-menu">×</button></div>
+        ${isOwn
+          ? `<button class="lesson" data-action="edit-post" data-id="${post.id}"><span style="margin-right:8px">✏️</span>Edit my post</button>
+             <button class="lesson" data-action="delete-post" data-id="${post.id}" style="color:#e5484d"><span style="margin-right:8px">🗑</span>Delete my post</button>`
+          : `<button class="lesson" data-action="report-post" data-id="${post.id}" style="color:#f5a524"><span style="margin-right:8px">⚠️</span>Report this post</button>`}
+      </section></div>`;
+    }
+
+    function reportsOverlay() {
+      const user = activeUser();
+      const isDM = user.storeId === "DISTRICT";
+      const reports = isDM
+        ? state.disciplinaryReports
+        : state.disciplinaryReports.filter(r => r.storeId === user.storeId);
+      const typeBadge = t => {
+        const map = { coaching: ["#5b8def","#1a2540","Coaching"], "written-warning": ["#f5a524","#241a08","Written Warning"], "final-warning": ["#e5484d","#240a0b","Final Warning"], pip: ["#c6ff3a","#0a1500","PIP"] };
+        const [clr, bg, label] = map[t] || ["#888","#111",t];
+        return `<span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;background:${bg};color:${clr};border:1px solid ${clr}33">${label}</span>`;
+      };
+      const storeLabel = sid => { const s = stores.find(x => x.id === sid); return s ? s.name : sid; };
+      const reportRows = reports.length
+        ? reports.map(r => `<div class="card" style="margin-bottom:10px;padding:14px 16px">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+              ${typeBadge(r.type)}
+              ${isDM ? `<span style="font-size:10px;color:var(--muted)">${storeLabel(r.storeId)}</span>` : ""}
+              <span style="font-size:10px;color:var(--muted);margin-left:auto">${r.date}</span>
+            </div>
+            <div style="font-size:13px;font-weight:700;margin-bottom:4px">${esc(r.employeeName)}</div>
+            <div style="font-size:12px;color:var(--body);line-height:1.45">${esc(r.notes)}</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:6px">Issued by ${esc(r.issuedBy)}</div>
+          </div>`).join("")
+        : `<div style="text-align:center;padding:40px 0;color:var(--muted);font-size:13px">No reports on file</div>`;
+      const newForm = state.newReportOpen ? `
+        <div class="card" style="padding:14px 16px;margin-top:4px" data-stop>
+          <div style="font-size:13px;font-weight:700;margin-bottom:12px">New Report</div>
+          <div class="field"><label>Employee name</label><input data-field="rep-name" placeholder="Full name"></div>
+          <div class="field"><label>Type</label><select data-field="rep-type" style="width:100%;padding:10px 12px;background:var(--panel);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:var(--text);font-size:13px">
+            <option value="coaching">Coaching</option>
+            <option value="written-warning">Written Warning</option>
+            <option value="final-warning">Final Warning</option>
+            <option value="pip">Performance Improvement Plan</option>
+          </select></div>
+          <div class="field"><label>Notes</label><textarea data-field="rep-notes" style="width:100%;min-height:80px;background:var(--bg);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:var(--text);padding:10px 12px;resize:none;font:13px Inter" placeholder="Summary of conversation..."></textarea></div>
+          <button class="primary" data-action="submit-report" style="width:100%;margin-top:4px">Save report</button>
+          <button class="secondary" data-action="cancel-new-report" style="width:100%;margin-top:8px">Cancel</button>
+        </div>` : `<button class="primary" data-action="open-new-report" style="width:100%;margin-top:4px">+ New report</button>`;
+      return `<section class="full-overlay">
+        <div class="overlay-head"><h2 class="serif" style="font-size:24px;margin:0">${isDM ? "District Reports" : "Store Reports"}</h2><button class="close" data-action="close-reports">×</button></div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:14px">${isDM ? "All stores · District 4" : `Store ${user.storeId} · ${activeStore().name}`}</div>
+        ${reportRows}
+        ${newForm}
+      </section>`;
+    }
+
     function overlays() {
       return [
         state.notifOpen ? notificationsOverlay() : "",
@@ -1646,6 +1738,8 @@
         state.settingsOpen ? settingsOverlay() : "",
         state.calendarOpen ? calendarOverlay() : "",
         state.train ? trainOverlay() : "",
+        state.postMenuId !== null ? postMenuSheet() : "",
+        state.reportsOpen ? reportsOverlay() : "",
         state.toast ? `<div class="toast">${esc(state.toast)}</div>` : ""
       ].join("");
     }
@@ -1659,7 +1753,8 @@
     }
 
     function composeSheet() {
-      return `<div class="overlay"><section class="sheet"><div class="overlay-head"><h2 class="serif" style="font-size:24px;margin:0">New post</h2><button class="close" data-action="close-compose">×</button></div><textarea id="composeText" style="width:100%;min-height:116px;background:var(--bg);border:1px solid rgba(255,255,255,.1);border-radius:14px;color:var(--text);padding:12px;resize:none;font:13px Inter" placeholder="Share a win, update, or shoutout...">${esc(state.composeText)}</textarea><button class="primary" data-action="send-post" style="margin-top:12px" ${state.composeText.trim() ? "" : "disabled"}>Send</button></section></div>`;
+      const editing = state.editingPostId !== null;
+      return `<div class="overlay"><section class="sheet"><div class="overlay-head"><h2 class="serif" style="font-size:24px;margin:0">${editing ? "Edit post" : "New post"}</h2><button class="close" data-action="close-compose">×</button></div><textarea id="composeText" style="width:100%;min-height:116px;background:var(--bg);border:1px solid rgba(255,255,255,.1);border-radius:14px;color:var(--text);padding:12px;resize:none;font:13px Inter" placeholder="Share a win, update, or shoutout...">${esc(state.composeText)}</textarea><button class="primary" data-action="send-post" style="margin-top:12px" ${state.composeText.trim() ? "" : "disabled"}>${editing ? "Save changes" : "Send"}</button></section></div>`;
     }
 
     function flairSheet() {
@@ -1901,14 +1996,54 @@
         }
         saveState(); render();
       }
-      if (action === "open-compose") setState({ composeOpen: true });
-      if (action === "close-compose") setState({ composeOpen: false, composeText: "" });
-      if (action === "send-post" && state.composeText.trim()) setState({ composeOpen: false, flairOpen: true });
+      if (action === "go-store") setState({ tab: "store" });
+      if (action === "go-arena") setState({ tab: "arena" });
+      if (action === "open-post-menu") setState({ postMenuId: Number(el.dataset.id) });
+      if (action === "close-post-menu" || action === "close-post-menu-bg") setState({ postMenuId: null });
+      if (action === "delete-post") {
+        state.feed = state.feed.filter(p => p.id !== Number(el.dataset.id));
+        saveState(); render(); showToast("Post deleted");
+      }
+      if (action === "edit-post") {
+        const post = state.feed.find(p => p.id === Number(el.dataset.id));
+        if (post) setState({ postMenuId: null, editingPostId: post.id, composeText: post.text, composeOpen: true });
+      }
+      if (action === "report-post") {
+        setState({ postMenuId: null });
+        showToast("Post reported");
+      }
+      if (action === "open-reports") setState({ reportsOpen: true });
+      if (action === "close-reports") setState({ reportsOpen: false, newReportOpen: false });
+      if (action === "open-new-report") setState({ newReportOpen: true });
+      if (action === "cancel-new-report") setState({ newReportOpen: false });
+      if (action === "submit-report") {
+        const form = overlayWrap.querySelector("[data-field='rep-name']");
+        const name = overlayWrap.querySelector("[data-field='rep-name']")?.value.trim();
+        const type = overlayWrap.querySelector("[data-field='rep-type']")?.value;
+        const notes = overlayWrap.querySelector("[data-field='rep-notes']")?.value.trim();
+        if (name && notes) {
+          const user = activeUser();
+          state.disciplinaryReports.unshift({ id: Date.now(), employeeEmail: "", employeeName: name, storeId: user.storeId === "DISTRICT" ? "DISTRICT" : user.storeId, type, date: new Date().toISOString().slice(0,10), notes, issuedBy: user.name });
+          saveState(); render(); showToast("Report saved");
+        } else { showToast("Please fill in all fields"); }
+      }
+      if (action === "open-compose") setState({ composeOpen: true, editingPostId: null });
+      if (action === "close-compose") setState({ composeOpen: false, composeText: "", editingPostId: null });
+      if (action === "send-post" && state.composeText.trim()) {
+        if (state.editingPostId !== null) {
+          const post = state.feed.find(p => p.id === state.editingPostId);
+          if (post) post.text = state.composeText.trim();
+          saveState(); render(); showToast("Post updated");
+          setState({ editingPostId: null, composeOpen: false, composeText: "" });
+        } else {
+          setState({ composeOpen: false, flairOpen: true });
+        }
+      }
       if (action === "select-flair") setState({ pendingFlair: el.dataset.flair });
       if (action === "publish-post" || action === "skip-flair") {
         const flair = action === "skip-flair" ? "update" : state.pendingFlair;
         const user = activeUser();
-        state.feed.unshift({ id: Date.now(), initials: initials(user.name), name: user.name, time: "now", flair, pinned: false, text: state.composeText.trim(), reactions: { like: 0, heart: 0, laugh: 0, fire: 0, party: 0 } });
+        state.feed.unshift({ id: Date.now(), initials: initials(user.name), name: user.name, authorEmail: user.email, time: "now", flair, pinned: false, text: state.composeText.trim(), reactions: { like: 0, heart: 0, laugh: 0, fire: 0, party: 0 } });
         setState({ flairOpen: false, composeText: "", pendingFlair: "shoutout" });
       }
       if (action === "feed-buddy" && state.charges.feed > 0) {
