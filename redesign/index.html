@@ -75,16 +75,18 @@
       z-index: 0;
     }
 
-    .screen {
+    #screen-wrap {
       position: relative;
       z-index: 1;
       height: 100%;
       overflow: auto;
-      padding: 56px 18px 96px;
       scrollbar-width: none;
     }
+    #screen-wrap::-webkit-scrollbar { display: none; }
+    .screen {
+      padding: 56px 18px 96px;
+    }
 
-    .screen::-webkit-scrollbar { display: none; }
     .screen.top-space { padding-top: 56px; }
     .login { padding: 64px 22px 40px; display: flex; flex-direction: column; }
 
@@ -631,7 +633,12 @@
   </style>
 </head>
 <body>
-  <main class="phone" id="app"></main>
+  <main class="phone" id="app">
+    <div class="glow"></div>
+    <div id="screen-wrap"></div>
+    <div id="nav-wrap"></div>
+    <div id="overlay-wrap"></div>
+  </main>
 
   <script>
     const state = {
@@ -1050,11 +1057,12 @@
     const esc = (value) => String(value).replace(/[&<>"']/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]));
     const pct = (value) => `${Math.max(0, Math.min(100, value))}%`;
 
+    const SAVE_VERSION = 2;
     const SAVE_KEYS = ["buddy", "charges", "chargesEarned", "feed", "toggles", "selectedUserEmail", "tab", "rubies", "unread"];
 
     function saveState() {
       try {
-        const data = {};
+        const data = { _v: SAVE_VERSION };
         SAVE_KEYS.forEach(k => data[k] = state[k]);
         data.customCalEvents = customCalEvents;
         localStorage.setItem("banterone_state", JSON.stringify(data));
@@ -1066,6 +1074,7 @@
         const raw = localStorage.getItem("banterone_state");
         if (!raw) return;
         const data = JSON.parse(raw);
+        if (data._v !== SAVE_VERSION) { localStorage.removeItem("banterone_state"); return; }
         SAVE_KEYS.forEach(k => { if (data[k] !== undefined) state[k] = data[k]; });
         if (data.customCalEvents) customCalEvents = data.customCalEvents;
       } catch (e) {}
@@ -1653,9 +1662,24 @@
       return `<section class="full-overlay" style="display:grid;place-items:center;text-align:center"><div><div style="font-size:42px">${tr.perfect ? "🌟" : tr.passed ? "🎉" : "📖"}</div><h2 class="serif" style="font-size:28px;margin:8px 0">${tr.perfect ? "Perfect score!" : tr.passed ? "Training complete!" : "Not quite — review and retry"}</h2><p style="font-size:13px;color:var(--body);line-height:1.45">${tr.passed ? `Scored ${tr.correct}/3 · +${tr.xp} XP${tr.perfect ? " (double!)" : ""}, Bond +${tr.perfect ? 12 : 8}%` : `Scored ${tr.correct}/3 — need at least 2/3 to pass.`}</p><button class="primary" data-action="${tr.passed ? "close-train" : "retry-train"}">${tr.passed ? "Done" : "Retry quiz"}</button></div></section>`;
     }
 
+    const screenWrap = document.getElementById("screen-wrap");
+    const navWrap = document.getElementById("nav-wrap");
+    const overlayWrap = document.getElementById("overlay-wrap");
+
     function render() {
       const screens = { login: loginScreen, home: homeScreen, store: storeScreen, buddy: buddyScreen, playbook: playbookScreen, arena: arenaScreen };
-      app.innerHTML = `<div class="glow"></div>${screens[state.tab]()}${nav()}${overlays()}`;
+      const prevTab = screenWrap.dataset.tab;
+      const savedScroll = screenWrap.scrollTop;
+      screenWrap.innerHTML = screens[state.tab]();
+      screenWrap.dataset.tab = state.tab;
+      if (state.tab === prevTab && savedScroll) {
+        screenWrap.scrollTop = savedScroll;
+        requestAnimationFrame(() => { screenWrap.scrollTop = savedScroll; });
+      } else if (state.tab !== prevTab) {
+        screenWrap.scrollTop = 0;
+      }
+      navWrap.innerHTML = nav();
+      overlayWrap.innerHTML = overlays();
       const compose = document.getElementById("composeText");
       if (compose) {
         compose.focus();
