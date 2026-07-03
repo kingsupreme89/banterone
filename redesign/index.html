@@ -1,0 +1,1753 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BanterONE</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --panel: #141414;
+      --sheet: #0d0d0d;
+      --disabled: #0f0f0f;
+      --lime: #C6FF3A;
+      --blue: #5b8def;
+      --red: #e5484d;
+      --text: #f5f5f0;
+      --body: #d5d5cf;
+      --soft: #c9c9c0;
+      --muted: #8a8a82;
+      --eyebrow: #7a7a72;
+      --off: #4a4a46;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; background: #e9e9e4; color: var(--text); font-family: Inter, system-ui, sans-serif; }
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+
+    .phone {
+      width: min(100vw, 390px);
+      height: min(100vh, 844px);
+      margin: 0 auto;
+      background: var(--bg);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 40px 80px rgba(0,0,0,0.22);
+    }
+
+    @media (min-width: 520px) {
+      body { min-height: 100vh; display: grid; place-items: center; }
+      .phone { border-radius: 46px; border: 10px solid #060606; }
+      .phone:before {
+        content: "";
+        position: absolute;
+        top: 11px;
+        left: 50%;
+        width: 126px;
+        height: 37px;
+        transform: translateX(-50%);
+        border-radius: 24px;
+        background: #000;
+        z-index: 30;
+      }
+    }
+
+    @keyframes glowPulse { 0%, 100% { opacity: .6; } 50% { opacity: 1; } }
+    @keyframes toastIn { from { opacity: 0; transform: translate(-50%, 8px); } to { opacity: 1; transform: translate(-50%, 0); } }
+
+    .glow {
+      position: absolute;
+      inset: 0 0 auto;
+      height: 280px;
+      pointer-events: none;
+      background: radial-gradient(ellipse 480px 260px at 50% -70px, rgba(198,255,58,.13), transparent);
+      animation: glowPulse 3.2s ease-in-out infinite;
+      z-index: 0;
+    }
+
+    .screen {
+      position: relative;
+      z-index: 1;
+      height: 100%;
+      overflow: auto;
+      padding: 56px 18px 96px;
+      scrollbar-width: none;
+    }
+
+    .screen::-webkit-scrollbar { display: none; }
+    .screen.top-space { padding-top: 104px; }
+    .login { padding: 64px 22px 40px; display: flex; flex-direction: column; }
+
+    .wordmark { font-family: "Instrument Serif", serif; font-size: 32px; line-height: 1; }
+    .wordmark strong { color: var(--lime); font-style: italic; font-weight: 400; }
+    .wordmark span { color: var(--text); }
+    .muted-kicker { margin-top: 6px; font-size: 10px; letter-spacing: .12em; color: var(--eyebrow); text-transform: uppercase; }
+
+    .top-cluster {
+      position: absolute;
+      top: 56px;
+      right: 18px;
+      z-index: 18;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .icon-button, .points-badge {
+      height: 38px;
+      border-radius: 12px;
+      background: var(--panel);
+      border: 1px solid rgba(255,255,255,.08);
+      color: var(--text);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .icon-button { width: 38px; }
+    .points-badge {
+      gap: 6px;
+      padding: 0 10px;
+      border-color: rgba(198,255,58,.2);
+      text-align: left;
+    }
+    .points-dot {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--lime);
+      color: var(--bg);
+      display: grid;
+      place-items: center;
+      font-size: 10px;
+      font-weight: 800;
+    }
+    .points-value { display: block; font-size: 12px; font-weight: 800; line-height: 1; }
+    .points-label { display: block; font-size: 7px; letter-spacing: .08em; color: var(--eyebrow); line-height: 1.2; margin-top: 2px; }
+    .badge {
+      position: absolute;
+      top: -3px;
+      right: -3px;
+      min-width: 16px;
+      height: 16px;
+      border-radius: 8px;
+      padding: 0 3px;
+      display: grid;
+      place-items: center;
+      background: var(--red);
+      color: #fff;
+      font-size: 9px;
+      font-weight: 800;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid rgba(255,255,255,.07);
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0,0,0,.5);
+    }
+
+    .store-card {
+      border-radius: 20px;
+      padding: 18px;
+      margin: 14px 0;
+      box-shadow: 0 10px 28px rgba(0,0,0,.55);
+    }
+
+    .eyebrow { font-size: 10px; letter-spacing: .12em; color: var(--lime); font-weight: 700; text-transform: uppercase; }
+    .serif { font-family: "Instrument Serif", serif; font-weight: 400; }
+    .store-title { margin-top: 2px; font-size: 24px; color: var(--text); }
+    .caption { margin-top: 2px; color: var(--muted); font-size: 12px; }
+
+    .kpis { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px; }
+    .kpi { padding: 14px; min-height: 103px; }
+    .kpi-label { font-size: 9px; letter-spacing: .1em; color: var(--eyebrow); text-transform: uppercase; }
+    .kpi-value { margin-top: 4px; font-family: "Instrument Serif", serif; font-size: 26px; color: var(--text); }
+    .kpi-value.lime { color: var(--lime); }
+    .kpi-note { font-size: 10px; color: var(--eyebrow); }
+
+    .section-row { display: flex; align-items: center; justify-content: space-between; margin: 0 0 8px; }
+    .section-title { font-size: 14px; font-weight: 700; }
+    .link-action { border: 0; background: transparent; color: var(--lime); font-size: 11px; font-weight: 700; padding: 0; }
+    .neon-spacer {
+      height: 1px;
+      margin: 16px 0;
+      border-radius: 999px;
+      background: linear-gradient(90deg, transparent, rgba(198,255,58,.28), rgba(198,255,58,.9), rgba(198,255,58,.28), transparent);
+      box-shadow: 0 0 12px rgba(198,255,58,.22);
+      position: relative;
+    }
+    .neon-spacer:after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: -2px;
+      width: 34px;
+      height: 5px;
+      transform: translateX(-50%);
+      border-radius: 999px;
+      background: rgba(198,255,58,.2);
+      filter: blur(5px);
+    }
+    .neon-spacer.compact { margin: 12px 0; opacity: .82; }
+    .neon-spacer.left {
+      width: 118px;
+      margin: 12px 0 14px;
+      background: linear-gradient(90deg, rgba(198,255,58,.95), rgba(198,255,58,.18), transparent);
+    }
+    .neon-spacer.left:after { left: 18px; width: 42px; transform: none; }
+    .plus {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--lime);
+      color: var(--bg);
+      display: inline-grid;
+      place-items: center;
+      margin-left: 5px;
+      font-weight: 800;
+      font-size: 12px;
+    }
+
+    .post { padding: 14px; margin-bottom: 10px; }
+    .post-head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .avatar {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--lime);
+      color: var(--bg);
+      display: grid;
+      place-items: center;
+      font-size: 10px;
+      font-weight: 800;
+      flex: 0 0 auto;
+    }
+    .post-name { font-size: 12px; font-weight: 700; }
+    .post-time { font-size: 10px; color: var(--eyebrow); }
+    .post-body { color: var(--body); font-size: 13px; line-height: 1.4; margin-bottom: 10px; }
+    .reactions { display: flex; gap: 6px; flex-wrap: wrap; }
+    .reaction {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--bg);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 999px;
+      padding: 5px 9px;
+      color: var(--soft);
+      font-size: 11px;
+    }
+    .flair {
+      border-radius: 999px;
+      padding: 3px 8px;
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: .06em;
+    }
+    .flair.news { color: var(--blue); background: rgba(91,141,239,.14); border: 1px solid rgba(91,141,239,.3); }
+    .flair.shoutout { color: var(--lime); background: rgba(198,255,58,.12); border: 1px solid rgba(198,255,58,.3); }
+    .flair.update { color: #f5a524; background: rgba(245,165,36,.14); border: 1px solid rgba(245,165,36,.3); }
+    .pinned { margin-left: auto; color: var(--lime); font-size: 9px; font-weight: 800; letter-spacing: .08em; }
+
+    .leader-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+      box-shadow: none;
+      border-radius: 14px;
+    }
+    .rank { width: 26px; height: 26px; border-radius: 8px; background: var(--bg); color: var(--eyebrow); display: grid; place-items: center; font-size: 11px; font-weight: 700; }
+    .store-chip { background: var(--bg); border: 1px solid rgba(198,255,58,.25); border-radius: 8px; color: var(--lime); padding: 5px 7px; font-family: "JetBrains Mono", monospace; font-size: 10px; font-weight: 700; }
+
+    .charges { display: flex; gap: 8px; margin-bottom: 14px; }
+    .charge { flex: 1; text-align: center; padding: 8px 4px; border-radius: 12px; box-shadow: none; }
+    .charge span { display: block; color: var(--eyebrow); font-size: 9px; }
+    .charge strong { display: block; color: var(--lime); font-size: 15px; margin-top: 2px; }
+    .helper-link { border: 0; background: transparent; color: var(--eyebrow); width: 100%; text-align: center; font-size: 11px; margin-bottom: 14px; }
+    .helper-link span { color: var(--lime); }
+
+    .buddy-card {
+      overflow: hidden;
+      border-radius: 22px;
+      border-color: rgba(198,255,58,.16);
+      box-shadow: 0 0 22px rgba(198,255,58,.08), 0 10px 28px rgba(0,0,0,.5);
+      margin-bottom: 14px;
+    }
+    .buddy-art {
+      height: 190px;
+      background: repeating-linear-gradient(135deg, #17170f, #17170f 10px, #121208 10px, #121208 20px);
+      display: grid;
+      place-items: center;
+      position: relative;
+      color: var(--lime);
+      font-family: "JetBrains Mono", monospace;
+      font-size: 11px;
+      letter-spacing: .08em;
+    }
+    .level-pill { position: absolute; top: 12px; left: 12px; border: 1px solid var(--lime); border-radius: 999px; padding: 4px 10px; background: var(--bg); color: var(--lime); font-size: 10px; font-weight: 800; font-family: Inter, sans-serif; }
+    .buddy-inner { padding: 16px; }
+    .stat { margin-bottom: 8px; }
+    .stat-row { display: flex; justify-content: space-between; color: var(--soft); font-size: 11px; margin-bottom: 3px; }
+    .track { height: 5px; border-radius: 3px; background: #232320; overflow: hidden; }
+    .fill { height: 100%; border-radius: 3px; background: var(--lime); }
+    .fill.blue { background: var(--blue); }
+    .buddy-actions { display: flex; gap: 8px; margin-top: 14px; }
+    .buddy-actions button {
+      flex: 1;
+      border-radius: 12px;
+      padding: 9px;
+      color: var(--text);
+      background: transparent;
+      border: 1px solid rgba(255,255,255,.16);
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .buddy-actions button:disabled { color: var(--off); background: var(--disabled); border-color: rgba(255,255,255,.06); cursor: default; }
+
+    .evolution { padding: 14px; margin-bottom: 18px; }
+    .pill-nav {
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      bottom: 16px;
+      z-index: 20;
+    }
+    .pill-nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 2px;
+      background: #131313e8;
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255,255,255,.09);
+      border-radius: 28px;
+      padding: 8px 8px;
+      box-shadow: 0 16px 34px rgba(0,0,0,.65), inset 0 1px 0 rgba(255,255,255,.04);
+    }
+    .nav-slot {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .nav-btn {
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 7px 12px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+    .nav-btn.active { background: var(--lime); color: var(--bg); }
+    .buddy-slot {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .buddy-nav {
+      width: 56px;
+      height: 56px;
+      margin-top: -8px;
+      border-radius: 50%;
+      border: 1px solid rgba(198,255,58,.3);
+      background: #1c1c1a;
+      color: var(--lime);
+      font-family: 'Instrument Serif', serif;
+      font-style: italic;
+      font-size: 24px;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 0 4px #131313, 0 6px 16px rgba(0,0,0,.5);
+    }
+    .buddy-nav.active { background: var(--lime); color: var(--bg); border: 0; box-shadow: 0 0 0 4px #131313, 0 6px 18px rgba(198,255,58,.5); }
+
+    .overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 40;
+      background: rgba(0,0,0,.58);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+    .full-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 38;
+      background: var(--sheet);
+      padding: 56px 18px 24px;
+      overflow: auto;
+    }
+    .sheet {
+      max-height: 78%;
+      overflow: auto;
+      background: var(--sheet);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 24px 24px 0 0;
+      padding: 18px;
+      box-shadow: 0 -20px 50px rgba(0,0,0,.55);
+    }
+    .modal-card {
+      width: calc(100% - 36px);
+      margin: auto 18px;
+      align-self: center;
+      background: var(--sheet);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 22px;
+      padding: 18px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.7);
+    }
+    .overlay-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+    .close { width: 30px; height: 30px; border-radius: 50%; border: 1px solid rgba(255,255,255,.12); background: transparent; color: var(--text); }
+    .primary {
+      width: 100%;
+      border: 0;
+      border-radius: 12px;
+      padding: 13px;
+      background: var(--lime);
+      color: var(--bg);
+      font-weight: 800;
+      font-size: 13px;
+    }
+    .primary:disabled { background: #232320; color: #5a5a56; cursor: default; }
+    .secondary {
+      width: 100%;
+      border-radius: 12px;
+      padding: 12px;
+      background: var(--panel);
+      color: var(--text);
+      border: 1px solid rgba(255,255,255,.1);
+      font-size: 13px;
+      text-align: left;
+    }
+    .field, .lesson, .answer, .notif {
+      border-radius: 14px;
+      background: var(--panel);
+      border: 1px solid rgba(255,255,255,.08);
+      padding: 12px;
+      margin-bottom: 8px;
+    }
+    .lesson { text-align: left; width: 100%; color: var(--text); }
+    .answer { width: 100%; color: var(--text); text-align: left; }
+    .answer.selected { background: #1c2410; border-color: var(--lime); color: var(--lime); }
+    .field label { display: block; color: var(--eyebrow); font-size: 9px; font-weight: 800; letter-spacing: .1em; margin-bottom: 6px; }
+    .field input {
+      width: 100%;
+      color: var(--text);
+      background: var(--bg);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 10px;
+      padding: 11px 12px;
+      font-size: 13px;
+    }
+    .row-item {
+      width: 100%;
+      border: 0;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      background: transparent;
+      color: var(--text);
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-align: left;
+      padding: 0;
+    }
+    .row-item:last-child { border-bottom: 0; }
+    .row-icon { width: 28px; height: 28px; border-radius: 8px; display: grid; place-items: center; background: var(--bg); }
+    .chev { margin-left: auto; color: var(--eyebrow); }
+    .toggle {
+      width: 44px;
+      height: 24px;
+      border: 0;
+      border-radius: 999px;
+      background: #30302c;
+      padding: 2px;
+      margin-left: auto;
+    }
+    .toggle span { display: block; width: 20px; height: 20px; border-radius: 50%; background: #8b8b83; transition: transform .16s; }
+    .toggle.on { background: var(--lime); }
+    .toggle.on span { transform: translateX(20px); background: var(--bg); }
+    .settings-group { padding: 4px 14px 8px; margin-bottom: 14px; }
+    .settings-group-title { margin: 18px 0 8px; color: var(--eyebrow); font-size: 10px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+
+    .login-logo { text-align: center; margin-bottom: 34px; }
+    .login-logo .wordmark { font-size: 44px; }
+    .login-card {
+      border-color: rgba(198,255,58,.16);
+      border-radius: 22px;
+      box-shadow: 0 0 22px rgba(198,255,58,.08), 0 10px 28px rgba(0,0,0,.55);
+      padding: 22px;
+      margin-bottom: 14px;
+    }
+    .login-input {
+      width: 100%;
+      background: var(--bg);
+      color: var(--text);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 12px;
+      padding: 13px 14px;
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+    .login-select {
+      width: 100%;
+      appearance: none;
+      background: var(--bg);
+      color: var(--text);
+      border: 1px solid rgba(198,255,58,.22);
+      border-radius: 12px;
+      padding: 13px 38px 13px 14px;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      outline: none;
+    }
+    .select-wrap {
+      position: relative;
+    }
+    .select-wrap:after {
+      content: "⌄";
+      position: absolute;
+      right: 14px;
+      top: 11px;
+      color: var(--lime);
+      font-size: 16px;
+      pointer-events: none;
+    }
+    .checkbox-row { display: flex; align-items: center; gap: 8px; margin: 0 0 18px; color: var(--soft); font-size: 12px; cursor: pointer; }
+    .check { width: 18px; height: 18px; border-radius: 5px; border: 1px solid rgba(255,255,255,.2); display: grid; place-items: center; color: var(--bg); font-size: 11px; font-weight: 800; }
+    .check.on { background: var(--lime); border-color: var(--lime); }
+    .toast {
+      position: absolute;
+      z-index: 60;
+      left: 50%;
+      bottom: 86px;
+      transform: translateX(-50%);
+      background: var(--lime);
+      color: var(--bg);
+      border-radius: 999px;
+      padding: 9px 14px;
+      font-size: 12px;
+      font-weight: 800;
+      animation: toastIn .18s ease both;
+      white-space: nowrap;
+    }
+    .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; }
+    .cal-head { font-size: 9px; font-weight: 700; letter-spacing: .1em; color: var(--muted); text-align: center; padding: 6px 0; }
+    .cal-cell {
+      min-height: 52px;
+      background: rgba(20,20,20,.5);
+      border-radius: 4px;
+      padding: 3px;
+      position: relative;
+    }
+    .cal-cell.today { background: rgba(198,255,58,.08); }
+    .cal-cell.empty { background: transparent; }
+    .cal-day { font-size: 10px; font-weight: 700; color: var(--soft); margin-bottom: 2px; }
+    .cal-cell.today .cal-day { color: var(--lime); }
+    .cal-dots { display: flex; flex-wrap: wrap; gap: 2px; }
+    .cal-dot { width: 5px; height: 5px; border-radius: 50%; flex: 0 0 5px; }
+    .cal-month-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .cal-month-bar button {
+      border: 0; background: transparent; color: var(--lime); font-size: 16px; font-weight: 700;
+      padding: 4px 10px;
+    }
+    .cal-month-title { font-size: 16px; font-weight: 800; color: var(--text); }
+    .cal-day-detail { margin-top: 12px; }
+    .cal-event-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      background: rgba(20,20,20,.6);
+      border-radius: 8px;
+      margin-bottom: 4px;
+    }
+    .cal-event-dot { width: 8px; height: 8px; border-radius: 50%; flex: 0 0 8px; }
+    .cal-event-text { font-size: 12px; color: var(--text); flex: 1; }
+    .cal-event-cat { font-size: 9px; color: var(--muted); letter-spacing: .06em; }
+    .cal-legend { display: flex; flex-wrap: wrap; gap: 6px 12px; margin-top: 14px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,.06); }
+    .cal-legend-item { display: flex; align-items: center; gap: 4px; font-size: 9px; color: var(--muted); }
+    .cal-legend-dot { width: 6px; height: 6px; border-radius: 50%; flex: 0 0 6px; }
+    .cal-add-btn {
+      border: 1px dashed rgba(198,255,58,.3);
+      background: transparent;
+      color: var(--lime);
+      border-radius: 8px;
+      padding: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      width: 100%;
+      margin-top: 8px;
+    }
+    .cal-form { margin-top: 10px; }
+    .cal-form input, .cal-form select {
+      width: 100%;
+      background: rgba(30,30,30,.8);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 8px;
+      color: var(--text);
+      padding: 8px 10px;
+      font-size: 12px;
+      margin-bottom: 6px;
+    }
+    .cal-form-actions { display: flex; gap: 6px; margin-top: 4px; }
+    .cal-form-actions button { flex: 1; border-radius: 8px; padding: 8px; font-size: 12px; font-weight: 700; border: 0; }
+    .store-card-cal { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); }
+    .cal-icon-btn {
+      border: 0;
+      background: rgba(198,255,58,.1);
+      color: var(--lime);
+      width: 34px; height: 34px;
+      border-radius: 8px;
+      font-size: 16px;
+      display: grid; place-items: center;
+    }
+  </style>
+</head>
+<body>
+  <main class="phone" id="app"></main>
+
+  <script>
+    const state = {
+      tab: "login",
+      selectedUserEmail: "brandy.a@banter.com",
+      loginError: "",
+      pwVisible: false,
+      staySignedIn: true,
+      demoOpen: false,
+      rubies: "$128",
+      unread: 4,
+      settingsOpen: false,
+      settingsView: "menu",
+      infoOpen: false,
+      notifOpen: false,
+      composeOpen: false,
+      flairOpen: false,
+      composeText: "",
+      pendingFlair: "shoutout",
+      toast: "",
+      calendarOpen: false,
+      calendarMonth: 6,
+      calendarYear: 2026,
+      calendarEditEvent: null,
+      calendarSelectedDay: null,
+      toggles: {
+        notifPush: true, notifEmail: true, notifAchievements: true, soundOn: false,
+        twoFactor: true, roleManagerEdit: false, roleAssocView: true, adminReq2fa: false,
+        intPos: true, intSlack: false, compRetention: true, wfAutoCharges: true, wfAutoPost: true
+      },
+      charges: { feed: 0, train: 0, cheer: 0 },
+      chargesEarned: false,
+      buddy: { level: 2, xp: 140, xpNext: 250, care: 72, spark: 45, bond: 61 },
+      arenaScope: "today",
+      individualMetric: "sales",
+      train: null,
+      feed: [
+        { id: 1, initials: "BA", name: "Brandy A.", time: "12m ago", flair: "shoutout", pinned: true, text: "Cherry Creek team opened strong today. Natalia landed the first warranty attach before 10 AM.", reactions: { like: 9, heart: 6, laugh: 1, fire: 4, party: 3 } },
+        { id: 2, initials: "DR", name: "District Retail", time: "34m ago", flair: "news", pinned: false, text: "Reminder: St. Jude points reset Sunday night. Celebrate every add-on and keep the customer story front and center.", reactions: { like: 12, heart: 8, laugh: 0, fire: 5, party: 4 } }
+      ],
+      notifications: [
+        { icon: "🎉", title: "Cherry Creek hit 50%", time: "5m ago", body: "Everyone on the team earned +10 Buddy XP." },
+        { icon: "🍬", title: "Feed charge earned", time: "22m ago", body: "You can now Feed your Buddy." },
+        { icon: "📣", title: "Commission update pinned", time: "1h ago", body: "FY27 ladder details are available in Playbook." },
+        { icon: "❤️", title: "Natalia reacted", time: "2h ago", body: "Your Daily Feed post picked up a heart reaction." }
+      ]
+    };
+
+    const calCategories = {
+      comm:       { label: "Communications", color: "#00838F" },
+      store_evt:  { label: "Store Events", color: "#C62828" },
+      holiday:    { label: "Holidays", color: "#880E4F" },
+      damage:     { label: "Monthly Damage Box", color: "#6A1B9A" },
+      payday:     { label: "Pay Day", color: "#2E7D32" },
+      weekend:    { label: "Weekend Sales & Events", color: "#616161" },
+      project:    { label: "Projects", color: "#827717" },
+      promo:      { label: "Store Promotions", color: "#E65100" },
+      payroll:    { label: "View Payroll Hours", color: "#37474F" },
+      shipment:   { label: "Shipments", color: "#1565C0" },
+      stjude:     { label: "St. Jude Color for a Cause", color: "#AD1457" },
+      offers:     { label: "Other Offers & Promotions", color: "#00695C" },
+      marketing:  { label: "Marketing Events", color: "#B71C1C" },
+      cycle:      { label: "Cycle Categories", color: "#283593" }
+    };
+
+    const calEvents = [
+      { day: 1, cat: "promo", text: "20% off Clearance" },
+      { day: 1, cat: "promo", text: "Diamond and Gemstone Event" },
+      { day: 1, cat: "promo", text: "Clearance Outlet" },
+      { day: 2, cat: "promo", text: "Diamond and Gemstone Event" },
+      { day: 2, cat: "promo", text: "Clearance Outlet" },
+      { day: 2, cat: "comm", text: "Communications posted" },
+      { day: 2, cat: "promo", text: "$1 Leasing In-Store" },
+      { day: 2, cat: "promo", text: "25% off $100+" },
+      { day: 2, cat: "shipment", text: "All Store Shipments" },
+      { day: 3, cat: "promo", text: "Diamond and Gemstone Event" },
+      { day: 3, cat: "promo", text: "Clearance Outlet" },
+      { day: 3, cat: "promo", text: "$1 Leasing In-Store" },
+      { day: 3, cat: "promo", text: "25% off $100+" },
+      { day: 3, cat: "stjude", text: "Color For A Cause" },
+      { day: 3, cat: "holiday", text: "Independence Day Eve" },
+      { day: 3, cat: "payroll", text: "Review Payroll Hours" },
+      { day: 4, cat: "promo", text: "Clearance Outlet" },
+      { day: 4, cat: "promo", text: "$1 Leasing In-Store" },
+      { day: 4, cat: "promo", text: "25% off $100+" },
+      { day: 4, cat: "stjude", text: "Color For A Cause" },
+      { day: 5, cat: "promo", text: "Clearance Outlet" },
+      { day: 5, cat: "promo", text: "$1 Leasing In-Store" },
+      { day: 5, cat: "promo", text: "25% off $100+" },
+      { day: 5, cat: "stjude", text: "Color For A Cause" },
+      { day: 6, cat: "promo", text: "Clearance Outlet" },
+      { day: 6, cat: "comm", text: "Communications posted" },
+      { day: 6, cat: "promo", text: "20% off Clearance" },
+      { day: 6, cat: "promo", text: "Other Silver sale" },
+      { day: 7, cat: "promo", text: "Clearance Outlet" },
+      { day: 7, cat: "promo", text: "20% off Clearance" },
+      { day: 7, cat: "project", text: "Piercing University" },
+      { day: 7, cat: "comm", text: "Communications posted" },
+      { day: 8, cat: "promo", text: "Clearance Outlet" },
+      { day: 8, cat: "promo", text: "20% off Clearance" },
+      { day: 8, cat: "project", text: "Piercing University" },
+      { day: 9, cat: "promo", text: "Clearance Outlet" },
+      { day: 9, cat: "project", text: "Piercing University" },
+      { day: 9, cat: "comm", text: "Communications posted" },
+      { day: 9, cat: "shipment", text: "All Store Shipments" },
+      { day: 10, cat: "promo", text: "Clearance Outlet" },
+      { day: 10, cat: "project", text: "Piercing University" },
+      { day: 10, cat: "promo", text: "Buy 1 Get up to 3" },
+      { day: 10, cat: "payday", text: "Pay Date" },
+      { day: 11, cat: "promo", text: "Clearance Outlet" },
+      { day: 11, cat: "project", text: "Piercing University" },
+      { day: 11, cat: "promo", text: "Buy 1 Get up to 3" },
+      { day: 11, cat: "payroll", text: "Review Payroll Hours" },
+      { day: 12, cat: "promo", text: "Clearance Outlet" },
+      { day: 12, cat: "project", text: "Piercing University" },
+      { day: 12, cat: "promo", text: "Buy 1 Get up to 3" },
+      { day: 13, cat: "promo", text: "Clearance Outlet" },
+      { day: 13, cat: "project", text: "Piercing University" },
+      { day: 13, cat: "comm", text: "Communications posted" },
+      { day: 13, cat: "marketing", text: "Northeast regional" },
+      { day: 13, cat: "promo", text: "Silver Chains sale" },
+      { day: 14, cat: "promo", text: "Clearance Outlet" },
+      { day: 14, cat: "project", text: "Piercing University" },
+      { day: 14, cat: "promo", text: "20% Off Clearance" },
+      { day: 14, cat: "comm", text: "Communications posted" },
+      { day: 15, cat: "promo", text: "Clearance Outlet" },
+      { day: 15, cat: "project", text: "Piercing University" },
+      { day: 15, cat: "promo", text: "20% Off Clearance" },
+      { day: 15, cat: "marketing", text: "Top Door Store visits" },
+      { day: 16, cat: "promo", text: "Clearance Outlet" },
+      { day: 16, cat: "project", text: "Piercing University" },
+      { day: 16, cat: "comm", text: "Communications posted" },
+      { day: 16, cat: "promo", text: "Buy 1 Get up to 3" },
+      { day: 17, cat: "promo", text: "Clearance Outlet" },
+      { day: 17, cat: "project", text: "Piercing University" },
+      { day: 17, cat: "promo", text: "Buy 1 Get up to 3" },
+      { day: 17, cat: "comm", text: "Communications posted" },
+      { day: 18, cat: "promo", text: "Clearance Outlet" },
+      { day: 18, cat: "promo", text: "Buy 1 Get up to 3" },
+      { day: 18, cat: "payroll", text: "Review Payroll Hours" },
+      { day: 19, cat: "promo", text: "Clearance Outlet" },
+      { day: 19, cat: "promo", text: "Buy 1 Get up to 3" },
+      { day: 20, cat: "promo", text: "Clearance Outlet" },
+      { day: 20, cat: "comm", text: "Communications posted" },
+      { day: 20, cat: "marketing", text: "Mid-Atlantic regional" },
+      { day: 20, cat: "marketing", text: "Non-Gold Bonanza" },
+      { day: 21, cat: "promo", text: "Clearance Outlet" },
+      { day: 21, cat: "comm", text: "Communications posted" },
+      { day: 22, cat: "promo", text: "Clearance Outlet" },
+      { day: 23, cat: "promo", text: "Clearance Outlet" },
+      { day: 23, cat: "comm", text: "Communications posted" },
+      { day: 23, cat: "shipment", text: "All Stores Meeting" },
+      { day: 24, cat: "promo", text: "Clearance Outlet" },
+      { day: 24, cat: "payday", text: "Pay Date" },
+      { day: 25, cat: "promo", text: "Clearance Outlet" },
+      { day: 25, cat: "payroll", text: "Review Payroll Hours" },
+      { day: 26, cat: "promo", text: "Clearance Outlet" },
+      { day: 27, cat: "promo", text: "Clearance Outlet" },
+      { day: 27, cat: "comm", text: "Communications posted" },
+      { day: 27, cat: "marketing", text: "South regionals" },
+      { day: 28, cat: "promo", text: "Clearance Outlet" },
+      { day: 28, cat: "comm", text: "Communications posted" },
+      { day: 29, cat: "promo", text: "Clearance Outlet" },
+      { day: 30, cat: "promo", text: "Clearance Outlet" },
+      { day: 30, cat: "comm", text: "Communications posted" },
+      { day: 30, cat: "shipment", text: "All Stores Meeting" },
+      { day: 31, cat: "promo", text: "Clearance Outlet" }
+    ];
+
+    let customCalEvents = [];
+
+    const lessons = [
+      {
+        id: "rewards",
+        title: "Vault Rewards 101",
+        meta: "3 min · Customer loyalty",
+        body: "Vault Rewards works best when the invite feels like service, not a script. Start by naming what the guest already cares about: birthdays, cleaning visits, repair reminders, and offers tied to jewelry they actually love. Then make the next step feel simple: confirm the phone number, explain the benefit, and connect it to today's purchase.",
+        quiz: [
+          { q: "What should the Rewards pitch start with?", options: ["A generic discount line", "What the guest already cares about", "A manager approval"], correct: 1 },
+          { q: "Rewards should feel like...", options: ["Service", "Pressure", "Paperwork"], correct: 0 },
+          { q: "What is a good next step?", options: ["Skip contact info", "Confirm the phone number", "Ask them to return tomorrow"], correct: 1 }
+        ]
+      },
+      {
+        id: "piercing",
+        title: "Piercing Safety & Aftercare",
+        meta: "4 min · Piercing desk",
+        pdf: "Exceptional Piercing Experience.pdf",
+        body: "Every piercing conversation should cover comfort, cleanliness, and aftercare. Confirm the guest understands the placement, explain the sterile process before beginning, and finish with a clear care routine. The goal is calm confidence: no rushed language, no vague instructions, and no skipped consent checks.",
+        quiz: [
+          { q: "What should happen before beginning?", options: ["Skip straight to payment", "Explain the sterile process", "Avoid placement details"], correct: 1 },
+          { q: "Aftercare should be...", options: ["Clear", "Optional", "Hidden in fine print"], correct: 0 },
+          { q: "The desired tone is...", options: ["Rushed", "Calm confidence", "Playful uncertainty"], correct: 1 }
+        ]
+      },
+      {
+        id: "esa",
+        title: "ESA Warranty Program",
+        meta: "3 min · Protection plans",
+        body: "A strong ESA explanation connects protection to real life. Use the piece in front of you: daily wear, travel, gifting, resizing, or cleaning. Keep it specific and brief, then pause. The best warranty attach often comes from making the value concrete instead of reading a long list of features.",
+        quiz: [
+          { q: "ESA should connect to...", options: ["Real life use", "A long feature list", "Only the receipt"], correct: 0 },
+          { q: "After explaining value, you should...", options: ["Keep talking forever", "Pause", "Change the subject"], correct: 1 },
+          { q: "The best explanation is...", options: ["Specific and brief", "Vague and long", "Hidden until checkout"], correct: 0 }
+        ]
+      },
+      {
+        id: "connect",
+        title: "Connect — Opening the Sale",
+        meta: "3 min · Sales process",
+        pdf: "Connect Job Aid.pdf",
+        body: "Connect is about making a genuine first impression. Greet every guest within 10 seconds, make eye contact, and use open-ended questions to understand what brought them in. The goal is to build rapport before product — learn their story, occasion, or style preference so you can guide them naturally.",
+        quiz: [
+          { q: "How quickly should you greet a guest?", options: ["Within 10 seconds", "After they browse for 5 minutes", "Only if they ask for help"], correct: 0 },
+          { q: "The best opening questions are...", options: ["Closed yes/no questions", "Open-ended", "About the weather"], correct: 1 },
+          { q: "Connect is about building...", options: ["Pressure", "Rapport", "A sales script"], correct: 1 }
+        ]
+      },
+      {
+        id: "curate",
+        title: "Curate — Building the Selection",
+        meta: "3 min · Sales process",
+        pdf: "Curate Job Aid.pdf",
+        body: "Curate means presenting the right pieces based on what you learned in Connect. Show 2-3 options that match their story. Use the triangle method: one below budget, one at budget, one aspirational. Let the jewelry speak and keep your language focused on how the piece fits their life.",
+        quiz: [
+          { q: "How many options should you show?", options: ["Everything in the case", "2-3 targeted pieces", "Only the cheapest item"], correct: 1 },
+          { q: "The triangle method includes...", options: ["Three identical pieces", "Below, at, and above budget", "Only sale items"], correct: 1 },
+          { q: "Your language should focus on...", options: ["Technical specs", "How the piece fits their life", "Store policies"], correct: 1 }
+        ]
+      },
+      {
+        id: "close",
+        title: "Close — Completing the Sale",
+        meta: "3 min · Sales process",
+        pdf: "Close Job Aid.pdf",
+        body: "Close is about confidence, not pressure. When the guest shows buying signals — holding the piece, asking about sizing, imagining someone wearing it — transition smoothly. Summarize what makes it right for them, offer wrapping or protection, and confirm the purchase with warmth.",
+        quiz: [
+          { q: "When should you start closing?", options: ["Immediately", "When you see buying signals", "Never — let them decide alone"], correct: 1 },
+          { q: "Closing should feel like...", options: ["Confidence", "Pressure", "Indifference"], correct: 0 },
+          { q: "What should you always offer at close?", options: ["A discount", "ESA and Vault Rewards", "A different product"], correct: 1 }
+        ]
+      },
+      {
+        id: "continue",
+        title: "Continue — After the Sale",
+        meta: "3 min · Customer retention",
+        pdf: "Continue Job Aid.pdf",
+        body: "Continue turns a one-time buyer into a lifelong guest. Thank them genuinely, explain care instructions, remind them of Vault Rewards benefits, and set the expectation for follow-up. A handwritten note or follow-up text within 48 hours drives repeat visits and referrals.",
+        quiz: [
+          { q: "When should follow-up happen?", options: ["Within 48 hours", "After 6 months", "Never"], correct: 0 },
+          { q: "Continue is about turning buyers into...", options: ["One-time customers", "Lifelong guests", "Email subscribers"], correct: 1 },
+          { q: "A handwritten note creates...", options: ["Extra paperwork", "Service that drives referrals", "Nothing meaningful"], correct: 1 }
+        ]
+      },
+      {
+        id: "power",
+        title: "Power Phrases",
+        meta: "5 min · Communication",
+        pdf: "Power Phrases.pdf",
+        body: "Power Phrases are tested language patterns that move conversations forward. Replace 'Can I help you?' with 'What brings you in today?' Replace 'It’s on sale' with 'This is an incredible value right now.' The right words make the difference between a browse and a purchase.",
+        quiz: [
+          { q: "Instead of 'Can I help you?', say...", options: ["'Just looking?'", "'What brings you in today?'", "'We have a sale'"], correct: 1 },
+          { q: "Power Phrases should feel...", options: ["Scripted", "Natural", "Aggressive"], correct: 1 },
+          { q: "The right words turn a browse into...", options: ["A complaint", "A purchase", "An argument"], correct: 1 }
+        ]
+      },
+      {
+        id: "gold",
+        title: "Gold University",
+        meta: "8 min · Product knowledge",
+        pdf: "Gold University.pdf",
+        body: "Gold University covers karat differences, gold types (yellow, white, rose), plating vs. solid, and care instructions. Understanding these details lets you answer guest questions with authority and match the right metal to their lifestyle.",
+        quiz: [
+          { q: "Higher karat gold is...", options: ["Harder and cheaper", "Softer and more pure", "Always plated"], correct: 1 },
+          { q: "Daily-wear pieces need advice about...", options: ["Durability", "Only price", "Color trends"], correct: 0 },
+          { q: "Knowing gold types helps you...", options: ["Avoid questions", "Match metal to lifestyle", "Sell only one type"], correct: 1 }
+        ]
+      },
+      {
+        id: "values",
+        title: "Core Values",
+        meta: "4 min · Culture",
+        pdf: "Core Values.pdf",
+        body: "Banter’s core values define how we show up every day: Guest First, Own It, Win Together, and Be Bold. These aren’t posters on a wall — they’re the lens for every decision, from how you greet a guest to how you support your team.",
+        quiz: [
+          { q: "Core values should guide...", options: ["Only managers", "Every decision", "Only big events"], correct: 1 },
+          { q: "'Own It' means...", options: ["Blame others", "Take responsibility", "Ignore problems"], correct: 1 },
+          { q: "Values are about consistency between...", options: ["Saying and doing", "Work and vacation", "Morning and evening"], correct: 0 }
+        ]
+      },
+      {
+        id: "balanced",
+        title: "Running A Balanced Business",
+        meta: "5 min · Business operations",
+        pdf: "Comm TK-107 Running A Balanced Business in FY27.pdf",
+        body: "A balanced business hits across all metrics — not just sales. Track piercings, ESA attach rate, Vault Rewards sign-ups, and St. Jude participation alongside revenue. When one metric lags, coach into it specifically rather than pushing harder on total sales.",
+        quiz: [
+          { q: "A balanced business tracks...", options: ["Only sales", "Multiple metrics", "Only piercings"], correct: 1 },
+          { q: "When a metric lags, you should...", options: ["Ignore it", "Coach into it specifically", "Push harder on total sales"], correct: 1 },
+          { q: "Balance drives...", options: ["Burnout", "Sustainable performance", "Lower sales"], correct: 1 }
+        ]
+      }
+    ];
+
+    const stores = [
+      { id: "3922", name: "Cherry Creek", manager: "Brandy A.", city: "Cherry Creek", state: "CO", mall: "Cherry Creek Shopping Center", phone: "(720) 445-6025", dailyPlan: 4600 },
+      { id: "123", name: "Santa Fe", manager: "Trinity B.", city: "Santa Fe", state: "NM", mall: "Santa Fe Place", phone: "(505) 438-2066", dailyPlan: 3200 },
+      { id: "242", name: "Aurora", manager: "Hannah F.", city: "Aurora", state: "CO", mall: "Town Center At Aurora", phone: "(303) 341-2116", dailyPlan: 3800 },
+      { id: "907", name: "Cottonwood", manager: "Estrella M.", city: "Albuquerque", state: "NM", mall: "Cottonwood Mall", phone: "(505) 792-0932", dailyPlan: 3400 },
+      { id: "1026", name: "Citadel", manager: "Claudia G.", city: "Colorado Springs", state: "CO", mall: "Citadel Mall", phone: "(719) 574-6865", dailyPlan: 3600 },
+      { id: "1241", name: "Chapel Hills", manager: "Steven V.", city: "Colorado Springs", state: "CO", mall: "Chapel Hills Mall", phone: "(719) 264-9159", dailyPlan: 3500 },
+      { id: "1332", name: "Coronado North", manager: "Marlena R.", city: "Albuquerque", state: "NM", mall: "Coronado Center", phone: "(505) 880-1301", dailyPlan: 3300 },
+      { id: "2595", name: "Flatiron", manager: "Evyn J.", city: "Broomfield", state: "CO", mall: "Flatiron Crossing", phone: "(303) 404-0528", dailyPlan: 4200 },
+      { id: "3709", name: "Mesa Mall", manager: "Dionne F.", city: "Grand Junction", state: "CO", mall: "Mesa Mall", phone: "(970) 609-4036", dailyPlan: 2800 },
+      { id: "3739", name: "Coronado South", manager: "Emily M.", city: "Albuquerque", state: "NM", mall: "Coronado Center", phone: "(505) 418-5862", dailyPlan: 3300 },
+      { id: "3905", name: "Park Meadows", manager: "Gina G.", city: "Littleton", state: "CO", mall: "Park Meadows", phone: "(234) 206-3202", dailyPlan: 4400 }
+    ];
+
+    const dailySubmissions = [
+      { storeId: "3922", bold: 1780, ep: 4, esa: 3, avt: 165, trans: 11, po: 2, stj: 25 },
+      { storeId: "3905", bold: 1620, ep: 3, esa: 2, avt: 158, trans: 10, po: 2, stj: 22 },
+      { storeId: "242", bold: 1380, ep: 2, esa: 2, avt: 144, trans: 10, po: 1, stj: 18 },
+      { storeId: "1241", bold: 1240, ep: 2, esa: 1, avt: 138, trans: 9, po: 1, stj: 15 },
+      { storeId: "907", bold: 1310, ep: 3, esa: 2, avt: 146, trans: 9, po: 2, stj: 20 },
+      { storeId: "3739", bold: 1420, ep: 2, esa: 3, avt: 158, trans: 9, po: 2, stj: 32 },
+      { storeId: "2595", bold: 1490, ep: 3, esa: 2, avt: 152, trans: 10, po: 2, stj: 18 },
+      { storeId: "1332", bold: 1180, ep: 2, esa: 1, avt: 142, trans: 8, po: 1, stj: 14 },
+      { storeId: "1026", bold: 1260, ep: 2, esa: 2, avt: 145, trans: 9, po: 2, stj: 16 },
+      { storeId: "3709", bold: 1050, ep: 2, esa: 1, avt: 135, trans: 8, po: 1, stj: 22 },
+      { storeId: "123", bold: 980, ep: 1, esa: 1, avt: 140, trans: 7, po: 1, stj: 12 }
+    ];
+
+    const users = [
+      { email: "dm@banter.com", name: "Tasha Gerold", storeId: "DISTRICT", role: "District Manager" },
+      { email: "brandy.a@banter.com", name: "Brandy A.", storeId: "3922", role: "Store Manager" },
+      { email: "trinity.b@banter.com", name: "Trinity B.", storeId: "123", role: "Store Manager" },
+      { email: "hannah.f@banter.com", name: "Hannah F.", storeId: "242", role: "Store Manager" },
+      { email: "estrella.m@banter.com", name: "Estrella M.", storeId: "907", role: "Store Manager" },
+      { email: "claudia.g@banter.com", name: "Claudia G.", storeId: "1026", role: "Store Manager" },
+      { email: "steven.v@banter.com", name: "Steven V.", storeId: "1241", role: "Store Manager" },
+      { email: "marlena.r@banter.com", name: "Marlena R.", storeId: "1332", role: "Store Manager" },
+      { email: "evyn.j@banter.com", name: "Evyn J.", storeId: "2595", role: "Store Manager" },
+      { email: "dionne.f@banter.com", name: "Dionne F.", storeId: "3709", role: "Store Manager" },
+      { email: "emily.m@banter.com", name: "Emily M.", storeId: "3739", role: "Store Manager" },
+      { email: "gina.g@banter.com", name: "Gina G.", storeId: "3905", role: "Store Manager" },
+      { email: "cc_assoc1@banter.com", name: "Cherry Creek Associate 1", storeId: "3922", role: "Key Sales Associate" },
+      { email: "cc_assoc2@banter.com", name: "Cherry Creek Associate 2", storeId: "3922", role: "Key Sales Associate" },
+      { email: "cc_piercer@banter.com", name: "Cherry Creek Piercer", storeId: "3922", role: "Body Piercer" },
+      { email: "pm_assoc1@banter.com", name: "Park Meadows Associate 1", storeId: "3905", role: "Key Sales Associate" },
+      { email: "pm_assoc2@banter.com", name: "Park Meadows Associate 2", storeId: "3905", role: "Key Sales Associate" },
+      { email: "pm_piercer@banter.com", name: "Park Meadows Piercer", storeId: "3905", role: "Body Piercer" },
+      { email: "aurora_assoc1@banter.com", name: "Aurora Associate 1", storeId: "242", role: "Key Sales Associate" },
+      { email: "aurora_assoc2@banter.com", name: "Aurora Associate 2", storeId: "242", role: "Key Sales Associate" },
+      { email: "chapel_assoc1@banter.com", name: "Chapel Hills Associate 1", storeId: "1241", role: "Key Sales Associate" },
+      { email: "chapel_assoc2@banter.com", name: "Chapel Hills Associate 2", storeId: "1241", role: "Key Sales Associate" }
+    ];
+
+    const individualMetrics = [
+      { email: "cc_assoc1@banter.com", sales: 1250, piercingSales: 120, esaSales: 180, piercings: 3, esaCount: 2 },
+      { email: "cc_assoc2@banter.com", sales: 890, piercingSales: 60, esaSales: 120, piercings: 2, esaCount: 1 },
+      { email: "cc_piercer@banter.com", sales: 0, piercingSales: 480, esaSales: 0, piercings: 12, esaCount: 0 },
+      { email: "brandy.a@banter.com", sales: 1620, piercingSales: 90, esaSales: 240, piercings: 2, esaCount: 3 },
+      { email: "pm_assoc1@banter.com", sales: 1050, piercingSales: 90, esaSales: 150, piercings: 2, esaCount: 2 },
+      { email: "pm_assoc2@banter.com", sales: 720, piercingSales: 45, esaSales: 100, piercings: 1, esaCount: 1 },
+      { email: "pm_piercer@banter.com", sales: 0, piercingSales: 360, esaSales: 0, piercings: 9, esaCount: 0 },
+      { email: "gina.g@banter.com", sales: 1480, piercingSales: 60, esaSales: 200, piercings: 1, esaCount: 2 },
+      { email: "aurora_assoc1@banter.com", sales: 980, piercingSales: 60, esaSales: 140, piercings: 2, esaCount: 1 },
+      { email: "aurora_assoc2@banter.com", sales: 650, piercingSales: 30, esaSales: 80, piercings: 1, esaCount: 1 },
+      { email: "hannah.f@banter.com", sales: 1350, piercingSales: 45, esaSales: 180, piercings: 1, esaCount: 2 },
+      { email: "chapel_assoc1@banter.com", sales: 860, piercingSales: 45, esaSales: 120, piercings: 1, esaCount: 1 },
+      { email: "chapel_assoc2@banter.com", sales: 540, piercingSales: 0, esaSales: 60, piercings: 0, esaCount: 1 },
+      { email: "steven.v@banter.com", sales: 1180, piercingSales: 30, esaSales: 150, piercings: 1, esaCount: 1 }
+    ];
+
+    const playbookDocs = [
+      "Banter Standards Employee Summary - FY25.pdf",
+      "Banter Standards Store Summary - FY25 Version (Store Level Tab Only) (1).pdf",
+      "Close Job Aid.pdf",
+      "Comm TK-107 Running A Balanced Business in FY27.pdf",
+      "Connect Job Aid.pdf",
+      "Continue Job Aid.pdf",
+      "Core Values.pdf",
+      "Curate Job Aid.pdf",
+      "Exceptional Piercing Experience.pdf",
+      "FY27 Commission Program Summary - Banter (1).pdf",
+      "Gold University.pdf",
+      "Power Phrases.pdf",
+      "St. Jude Donations Report (Date Range) (1).pdf",
+      "St. Jude Donations Report (Date Range) (2).pdf",
+      "U.S. Team Member Handbook .pdf",
+      "Who to Contact - Store – Elevated Business Needs.pdf"
+    ];
+
+    const accountSettings = [
+      ["profile", "👤", "Profile"],
+      ["notifications", "🔔", "Notifications"],
+      ["appearance", "◐", "Appearance"],
+      ["language", "🌐", "Language & Region"],
+      ["security", "🔐", "Security"],
+      ["connected", "🔗", "Connected Accounts"]
+    ];
+
+    const adminSettings = [
+      ["admin-general", "🏬", "General"],
+      ["admin-members", "👥", "Members"],
+      ["admin-teams", "🧩", "Teams"],
+      ["admin-roles", "🛡️", "Roles & Permissions"],
+      ["admin-security", "🔒", "Security"],
+      ["admin-integrations", "🔌", "Integrations"],
+      ["admin-billing", "💳", "Billing"],
+      ["admin-compliance", "📋", "Data & Compliance"],
+      ["admin-workflow", "⚙️", "Workflow Defaults"]
+    ];
+
+    const app = document.getElementById("app");
+    const esc = (value) => String(value).replace(/[&<>"']/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]));
+    const pct = (value) => `${Math.max(0, Math.min(100, value))}%`;
+
+    function setState(patch) {
+      Object.assign(state, patch);
+      render();
+    }
+
+    function showToast(text) {
+      state.toast = text;
+      render();
+      window.clearTimeout(showToast.timer);
+      showToast.timer = window.setTimeout(() => setState({ toast: "" }), 2200);
+    }
+
+    function wordmark(size = "") {
+      return `<div class="wordmark" ${size ? `style="font-size:${size}"` : ""}><strong>Banter</strong><span>ONE</span></div>`;
+    }
+
+    function activeUser() {
+      return users.find(user => user.email === state.selectedUserEmail) || users.find(user => user.email === "brandy.a@banter.com") || users[0];
+    }
+
+    function activeStore() {
+      const user = activeUser();
+      if (user.storeId === "DISTRICT") {
+        return { id: "DISTRICT", name: "All 11 Stores", manager: user.name, city: "CO + NM", state: "", mall: "District View", phone: "", dailyPlan: stores.reduce((sum, store) => sum + store.dailyPlan, 0) };
+      }
+      return stores.find(store => store.id === user.storeId) || stores[0];
+    }
+
+    function submissionForStore(storeId) {
+      if (storeId === "DISTRICT") {
+        return dailySubmissions.reduce((sum, row) => ({
+          storeId: "DISTRICT",
+          bold: sum.bold + row.bold,
+          ep: sum.ep + row.ep,
+          esa: sum.esa + row.esa,
+          avt: Math.round((sum.bold + row.bold) / Math.max(1, sum.trans + row.trans)),
+          trans: sum.trans + row.trans,
+          po: sum.po + row.po,
+          stj: sum.stj + row.stj
+        }), { storeId: "DISTRICT", bold: 0, ep: 0, esa: 0, avt: 0, trans: 0, po: 0, stj: 0 });
+      }
+      return dailySubmissions.find(row => row.storeId === storeId) || { storeId, bold: 0, ep: 0, esa: 0, avt: 0, trans: 0, po: 0, stj: 0 };
+    }
+
+    function initials(name) {
+      return String(name || "?").split(" ").filter(Boolean).map(part => part[0]).join("").slice(0, 2).toUpperCase();
+    }
+
+    function passwordInitials(name) {
+      const parts = String(name || "").replace(/[^a-zA-Z.\s]/g, " ").split(/\s+/).filter(part => /[a-zA-Z]/.test(part));
+      if (!parts.length) return "";
+      const first = parts[0].replace(/[^a-zA-Z]/g, "");
+      const last = (parts[parts.length - 1] || first).replace(/[^a-zA-Z]/g, "");
+      return `${first[0] || ""}${last[0] || ""}`.toUpperCase();
+    }
+
+    function userStoreLabel(user = activeUser()) {
+      if (user.storeId === "DISTRICT") return "District";
+      const store = stores.find(row => row.id === user.storeId);
+      return store ? `${store.name} · ${store.id}` : `Store ${user.storeId}`;
+    }
+
+    function topCluster() {
+      if (state.tab === "login") return "";
+      return `
+        <div class="top-cluster">
+          <button class="points-badge" data-action="noop" aria-label="St Jude points">
+            <span class="points-dot">$</span>
+            <span><span class="points-value">${state.rubies}</span><span class="points-label">ST JUDE</span></span>
+          </button>
+          <button class="icon-button" data-action="open-settings" aria-label="Settings">⚙️</button>
+          <button class="icon-button" data-action="open-notifications" aria-label="Notifications" style="position:relative">🔔${state.unread ? `<span class="badge">${state.unread}</span>` : ""}</button>
+        </div>`;
+    }
+
+    function loginScreen() {
+      const selected = activeUser();
+      return `
+        <section class="screen login">
+          <div class="login-logo">
+            ${wordmark("44px")}
+            <div class="muted-kicker" style="letter-spacing:.16em;margin-top:10px">District operations · Powered by Signet</div>
+          </div>
+          <div class="card login-card">
+            <div style="display:flex;justify-content:center;margin-bottom:14px">
+              <svg width="34" height="34" viewBox="0 0 24 24" aria-hidden="true"><rect x="1" y="1" width="10" height="10" fill="#f35325"/><rect x="13" y="1" width="10" height="10" fill="#81bc06"/><rect x="1" y="13" width="10" height="10" fill="#05a6f0"/><rect x="13" y="13" width="10" height="10" fill="#ffba08"/></svg>
+            </div>
+            <div style="text-align:center;font-weight:700;font-size:15px;margin-bottom:4px">Sign in with Microsoft</div>
+            <div style="text-align:center;color:var(--muted);font-size:11px;margin-bottom:18px">Use your Banter corporate account</div>
+            <div class="field" style="margin-bottom:10px">
+              <label>Select who you are</label>
+              <div class="select-wrap">
+                <select class="login-select" data-action="select-user">
+                  ${users.map(user => `<option value="${user.email}" ${user.email === selected.email ? "selected" : ""}>${user.name} · ${user.role}${user.storeId === "DISTRICT" ? "" : ` · Store ${user.storeId}`}</option>`).join("")}
+                </select>
+              </div>
+            </div>
+            <input class="login-input" placeholder="you@banter.com" value="${selected.email}" readonly>
+            <div style="position:relative">
+              <input class="login-input" data-field="password" type="${state.pwVisible ? "text" : "password"}" placeholder="Initials password, e.g. ${passwordInitials(selected.name)}" style="padding-right:42px">
+              <button data-action="toggle-pw" aria-label="Toggle password" style="position:absolute;right:10px;top:7px;border:0;background:transparent;color:var(--muted);font-size:16px">${state.pwVisible ? "🙈" : "👁"}</button>
+            </div>
+            ${state.loginError ? `<div style="color:var(--red);font-size:11px;font-weight:700;margin:-4px 0 12px">${state.loginError}</div>` : ""}
+            <label class="checkbox-row"><span class="check ${state.staySignedIn ? "on" : ""}">${state.staySignedIn ? "✓" : ""}</span><input type="checkbox" data-action="stay" hidden ${state.staySignedIn ? "checked" : ""}>Stay signed in on this browser</label>
+            <button class="primary" data-action="login">Continue</button>
+          </div>
+          <button class="secondary" data-action="toggle-demo">
+            <span style="display:inline-block;transform:${state.demoOpen ? "rotate(90deg)" : "rotate(0deg)"}">›</span>
+            <strong style="margin-left:8px">Demo credentials</strong>
+            ${state.demoOpen ? `<div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.08);font-family:'JetBrains Mono',monospace;color:var(--soft);line-height:1.7">${selected.email}<br>Password: ${passwordInitials(selected.name)}</div>` : ""}
+          </button>
+        </section>`;
+    }
+
+    function homeScreen() {
+      const user = activeUser();
+      const store = activeStore();
+      const submission = submissionForStore(store.id);
+      const districtPlan = stores.reduce((sum, row) => sum + row.dailyPlan, 0);
+      const districtActual = dailySubmissions.reduce((sum, row) => sum + row.bold, 0);
+      const districtPct = Math.round((districtActual / districtPlan) * 100);
+      const storePct = Math.round((submission.bold / store.dailyPlan) * 100);
+      const storeBoard = buildStoreBoard("today");
+      const rankIndex = store.id === "DISTRICT" ? 0 : storeBoard.findIndex(row => row.id === store.id);
+      const rankText = store.id === "DISTRICT" ? "#1" : `#${rankIndex + 1}`;
+      return `
+        <section class="screen">
+          <div style="display:flex;justify-content:space-between;margin-bottom:14px">
+            <div>${wordmark()}<div class="muted-kicker">${user.name} · ${store.id === "DISTRICT" ? "District" : `Store ${store.id}`}</div></div>
+          </div>
+          <div class="card store-card" style="position:relative">
+            <div class="eyebrow">${store.id === "DISTRICT" ? "District" : `Store ${store.id}`}</div>
+            <div class="serif store-title">${store.name}</div>
+            <div class="caption">${store.mall}${store.state ? ` · ${store.state}` : ""}</div>
+            <div class="store-card-cal"><button class="cal-icon-btn" data-action="open-calendar" aria-label="Calendar">📅</button></div>
+          </div>
+          <div class="neon-spacer compact"></div>
+          <div class="kpis">
+            ${kpi("District Today", money(districtActual), `of ${money(districtPlan)} · ${districtPct}%`, true)}
+            ${kpi("Store Today", money(submission.bold), `of ${money(store.dailyPlan)} · ${storePct}%`)}
+            ${kpi("MTD", money(submission.bold * 2), `vs ${money(store.dailyPlan * 2)} pace`)}
+            ${kpi("District Rank", rankText, store.id === "DISTRICT" ? "all stores" : "of 11 stores", true)}
+          </div>
+          <div class="neon-spacer left"></div>
+          <div class="section-row">
+            <div class="section-title">Daily Feed</div>
+            <button class="link-action" data-action="open-compose">New post<span class="plus">+</span></button>
+          </div>
+          ${state.feed.map(postCard).join("")}
+          <div style="height:12px"></div>
+        </section>`;
+    }
+
+    function kpi(label, value, note, lime = false) {
+      return `<div class="card kpi"><div class="kpi-label">${label}</div><div class="kpi-value ${lime ? "lime" : ""}">${value}</div><div class="kpi-note">${note}</div></div>`;
+    }
+
+    function postCard(post) {
+      return `
+        <article class="card post">
+          <div class="post-head">
+            <div class="avatar">${post.initials}</div>
+            <div style="flex:1;min-width:0"><div class="post-name">${esc(post.name)}</div><div class="post-time">${esc(post.time)}</div></div>
+            <span class="flair ${post.flair}">${post.flair.toUpperCase()}</span>
+            ${post.pinned ? `<span class="pinned">PINNED</span>` : ""}
+          </div>
+          <div class="post-body">${esc(post.text)}</div>
+          <div class="reactions">
+            ${reaction(post.id, "like", "👍", post.reactions.like)}
+            ${reaction(post.id, "heart", "❤️", post.reactions.heart)}
+            ${reaction(post.id, "laugh", "😂", post.reactions.laugh)}
+            ${reaction(post.id, "fire", "🔥", post.reactions.fire)}
+            ${reaction(post.id, "party", "🎉", post.reactions.party)}
+          </div>
+        </article>`;
+    }
+
+    function reaction(id, key, emoji, count) {
+      return `<button class="reaction" data-action="react" data-id="${id}" data-key="${key}"><span>${emoji}</span><span>${count}</span></button>`;
+    }
+
+    function storeScreen() {
+      const user = activeUser();
+      const store = activeStore();
+      const submission = submissionForStore(store.id);
+      const planPct = Math.round((submission.bold / store.dailyPlan) * 100);
+      return `
+        <section class="screen top-space">
+          <h1 class="serif" style="font-size:26px;margin:0 0 14px">${store.id === "DISTRICT" ? "District View" : "My Store"}</h1>
+          <div class="card store-card">
+            <div class="eyebrow">${store.id === "DISTRICT" ? "District" : `Store ${store.id}`}</div>
+            <div class="serif store-title">${store.name}</div>
+            <div class="caption">${store.mall}${store.city ? ` · ${store.city}${store.state ? `, ${store.state}` : ""}` : ""}</div>
+            <div class="caption">${store.id === "DISTRICT" ? `Signed in as ${user.name}` : `Manager: ${store.manager} · ${store.phone}`}</div>
+          </div>
+          <div class="neon-spacer compact"></div>
+          <div class="kpis">
+            ${kpi("Today Sales", money(submission.bold), `${planPct}% of ${money(store.dailyPlan)} plan`, planPct >= 100)}
+            ${kpi("Transactions", submission.trans, `${money(submission.avt)} average ticket`)}
+            ${kpi("Ear Piercings", submission.ep, `${submission.po} payment options`, true)}
+            ${kpi("St. Jude", money(submission.stj), "Today's round-ups")}
+          </div>
+          <div class="neon-spacer left"></div>
+          <div class="card post">
+            <div class="eyebrow">Weekly Targets</div>
+            <div class="serif store-title">Plan $25,000 · EP 28 · ESA 22 · PO 12</div>
+            <div class="caption">This mirrors the existing Store tab’s manager target area. Editing is still UI-only in this redesign build.</div>
+          </div>
+        </section>`;
+    }
+
+    function buddyScreen() {
+      const b = state.buddy;
+      return `
+        <section class="screen">
+          <div class="section-row" style="align-items:center;margin-bottom:14px">
+            <div><div class="serif" style="font-size:22px">My Banter Buddy</div><div style="font-size:11px;color:var(--muted)">Level ${b.level} · ${b.xp}/${b.xpNext} XP</div></div>
+            <button class="close" data-action="open-info" style="color:var(--lime);font-family:'Instrument Serif';font-style:italic">i</button>
+          </div>
+          <div class="charges">
+            ${charge("Feed", state.charges.feed)}
+            ${charge("Train", state.charges.train)}
+            ${charge("Cheer", state.charges.cheer)}
+          </div>
+          <button class="helper-link" data-action="open-info">How do I earn charges? <span>Learn more →</span></button>
+          <div class="neon-spacer compact"></div>
+          <div class="card buddy-card">
+            <div class="buddy-art"><span>BUDDY ART</span><span class="level-pill">LV.${b.level}</span></div>
+            <div class="buddy-inner">
+              <div class="kpi-label" style="margin-bottom:8px">Care</div>
+              ${stat("Care", b.care)}
+              ${stat("Spark", b.spark, true)}
+              ${stat("Bond", b.bond)}
+              <div class="buddy-actions">
+                <button data-action="feed-buddy" ${state.charges.feed <= 0 ? "disabled" : ""}>Feed${state.charges.feed <= 0 ? "" : ` (${state.charges.feed})`}</button>
+                <button data-action="start-train" ${state.charges.train <= 0 ? "disabled" : ""}>Train${state.charges.train <= 0 ? "" : ` (${state.charges.train})`}</button>
+                <button data-action="cheer-buddy" ${state.charges.cheer <= 0 ? "disabled" : ""}>Cheer${state.charges.cheer <= 0 ? "" : ` (${state.charges.cheer})`}</button>
+              </div>
+              ${state.charges.feed <= 0 || state.charges.train <= 0 || state.charges.cheer <= 0 ? `<div style="font-size:10px;color:var(--muted);margin-top:8px;line-height:1.5">${state.charges.feed <= 0 ? "📦 Sell $500+ to earn Feed charges<br>" : ""}${state.charges.train <= 0 ? "💎 Complete a piercing to earn Train charges<br>" : ""}${state.charges.cheer <= 0 ? "🛡️ Attach an ESA warranty to earn Cheer charges" : ""}</div>` : ""}
+            </div>
+          </div>
+          <button class="card evolution" data-action="open-info" style="width:100%;text-align:left;color:var(--text)">
+            <div class="section-row" style="margin-bottom:8px"><span class="kpi-label">Evolution</span><span class="link-action">How it works →</span></div>
+            <div class="serif" style="font-size:24px;color:var(--lime);font-style:italic">Styled</div>
+            <div class="track" style="margin:8px 0"><div class="fill" style="width:${pct((b.xp / b.xpNext) * 100)}"></div></div>
+            <div class="post-time">Needs Level 3 and 250 XP</div>
+          </button>
+        </section>`;
+    }
+
+    function charge(label, count) {
+      return `<div class="card charge"><span>${label.toUpperCase()}</span><strong>${count}</strong></div>`;
+    }
+
+    function stat(label, value, blue = false) {
+      return `<div class="stat"><div class="stat-row"><span>${label}</span><span>${value}%</span></div><div class="track"><div class="fill ${blue ? "blue" : ""}" style="width:${pct(value)}"></div></div></div>`;
+    }
+
+    function playbookScreen() {
+      return `
+        <section class="screen top-space">
+          <h1 class="serif" style="font-size:26px;margin:0 0 14px">Playbook</h1>
+          <div class="card post"><div class="eyebrow">Mall Security</div><div class="serif store-title">Call first for overnight issues</div><div class="caption">Use the manager line for after-hours lockbox, safety, or emergency escort requests.</div></div>
+          <div class="card post"><div class="eyebrow">FY27 Commission Ladder</div><div class="serif store-title">Rates, stretch tiers, and attach goals</div><div class="caption">Keep warranty and piercing attach conversations tied to customer care.</div></div>
+          <div class="neon-spacer left"></div>
+          <div class="section-row" style="margin-top:18px"><div class="section-title">Training Lessons</div></div>
+          ${lessons.map(l => `<button class="lesson" data-action="open-lesson" data-id="${l.id}"><strong>${l.title}</strong><div class="post-time" style="margin-top:4px">${l.meta}</div></button>`).join("")}
+          <div class="neon-spacer left"></div>
+          <div class="section-row" style="margin-top:18px"><div class="section-title">Source Documents</div></div>
+          ${playbookDocs.map(doc => `<a class="lesson" href="docs/${encodeURIComponent(doc)}" target="_blank" rel="noreferrer" style="display:block;text-decoration:none"><strong>${cleanDocName(doc)}</strong><div class="post-time" style="margin-top:4px">PDF · Source document</div></a>`).join("")}
+        </section>`;
+    }
+
+    function arenaScreen() {
+      const storeBoard = buildStoreBoard(state.arenaScope);
+      const individualBoard = buildIndividualBoard(state.individualMetric);
+      return `
+        <section class="screen top-space">
+          <h1 class="serif" style="font-size:28px;margin:0 0 4px">District Arena</h1>
+          <div class="caption" style="margin-bottom:12px">11-store CO + NM roster · seeded from the existing BanterONE data.</div>
+          <div class="neon-spacer left"></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:14px">
+            ${arenaTab("today", "Today")}
+            ${arenaTab("monthly", "Monthly")}
+            ${arenaTab("ytd", "YTD")}
+          </div>
+          <div class="section-row"><div class="section-title">Store Leaderboard</div><div class="post-time">${scopeLabel(state.arenaScope)}</div></div>
+          ${storeBoard.map(storeArenaRow).join("")}
+          <div class="neon-spacer"></div>
+          <div class="section-row" style="margin-top:18px"><div class="section-title">Individual Leaderboard</div></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:14px">
+            ${metricTab("sales", "Sales")}
+            ${metricTab("piercings", "Piercings")}
+            ${metricTab("esa", "ESA")}
+          </div>
+          ${individualBoard.map(individualArenaRow).join("")}
+        </section>`;
+    }
+
+    function money(value) {
+      return `$${Math.round(Number(value) || 0).toLocaleString()}`;
+    }
+
+    function cleanDocName(name) {
+      return name.replace(/\.pdf$/i, "").replace(/\s+\(\d+\)$/g, "");
+    }
+
+    function arenaTab(scope, label) {
+      const active = state.arenaScope === scope;
+      return `<button class="nav-btn ${active ? "active" : ""}" data-action="arena-scope" data-scope="${scope}" style="height:34px;border:1px solid rgba(255,255,255,.08)">${label}</button>`;
+    }
+
+    function metricTab(metric, label) {
+      const active = state.individualMetric === metric;
+      return `<button class="nav-btn ${active ? "active" : ""}" data-action="individual-metric" data-metric="${metric}" style="height:34px;border:1px solid rgba(255,255,255,.08)">${label}</button>`;
+    }
+
+    function scopeLabel(scope) {
+      if (scope === "today") return "Today $";
+      if (scope === "monthly") return "MTD $";
+      return "YTD $";
+    }
+
+    function scopeMultiplier(scope) {
+      if (scope === "today") return 1;
+      if (scope === "monthly") return 2;
+      return 13;
+    }
+
+    function buildStoreBoard(scope) {
+      const multiplier = scopeMultiplier(scope);
+      return stores.map(store => {
+        const sub = dailySubmissions.find(row => row.storeId === store.id) || {};
+        const bold = (sub.bold || 0) * multiplier;
+        const plan = store.dailyPlan * multiplier;
+        return {
+          ...store,
+          bold,
+          stj: (sub.stj || 0) * multiplier,
+          ep: (sub.ep || 0) * multiplier,
+          esa: (sub.esa || 0) * multiplier,
+          pct: plan ? Math.round((bold / plan) * 100) : 0
+        };
+      }).sort((a, b) => b.bold - a.bold);
+    }
+
+    function storeArenaRow(row, index) {
+      const user = activeUser();
+      const isMine = user.storeId === "DISTRICT" ? false : row.id === user.storeId;
+      return `
+        <div class="card leader-row">
+          <div class="rank">${index + 1}</div>
+          <div class="store-chip">#${row.id}</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:13px;font-weight:700">${row.name}${isMine ? ' <span style="color:var(--lime)">· YOU</span>' : ""}</div>
+            <div class="post-time">${row.mall}</div>
+            <div class="post-time">${row.manager} · EP ${row.ep} · ESA ${row.esa} · St. Jude ${money(row.stj)}</div>
+          </div>
+          <div style="text-align:right;flex-shrink:0">
+            <div style="font-size:13px;font-weight:800">${money(row.bold)}</div>
+            <div class="post-time" style="${row.pct >= 100 ? "color:var(--lime);font-weight:800" : ""}">${row.pct}%</div>
+          </div>
+        </div>`;
+    }
+
+    function buildIndividualBoard(metric) {
+      const valueKey = metric === "piercings" ? "piercings" : metric === "esa" ? "esaSales" : "sales";
+      return individualMetrics.map(row => {
+        const user = users.find(person => person.email === row.email) || {};
+        return { ...row, ...user, value: row[valueKey] || 0 };
+      }).sort((a, b) => b.value - a.value);
+    }
+
+    function individualArenaRow(row, index) {
+      const moneyMetric = state.individualMetric !== "piercings";
+      const value = moneyMetric ? money(row.value) : `${row.value}`;
+      const user = activeUser();
+      return `
+        <div class="card leader-row">
+          <div class="rank">${index + 1}</div>
+          <div class="avatar" style="width:32px;height:32px">${(row.name || "?").split(" ").map(part => part[0]).join("").slice(0,2)}</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:13px;font-weight:700">${row.name || row.email}${row.email === user.email ? ' <span style="color:var(--lime)">· YOU</span>' : ""}</div>
+            <div class="post-time">Store ${row.storeId || "—"} · ${row.role || "—"}</div>
+          </div>
+          <div style="font-size:13px;font-weight:800;color:var(--lime);text-align:right">${value}</div>
+        </div>`;
+    }
+
+    function nav() {
+      if (state.tab === "login") return "";
+      return `
+        <nav class="pill-nav" aria-label="Primary">
+          <div class="pill-nav-inner">
+            <div class="nav-slot">${navButton("home", "Home")}</div>
+            <div class="nav-slot">${navButton("store", "Store")}</div>
+            <div class="buddy-slot">
+              <button class="buddy-nav ${state.tab === "buddy" ? "active" : ""}" data-action="tab" data-tab="buddy" aria-label="Banter Buddy">B</button>
+            </div>
+            <div class="nav-slot">${navButton("playbook", "Playbook")}</div>
+            <div class="nav-slot">${navButton("arena", "Arena")}</div>
+          </div>
+        </nav>`;
+    }
+
+    function navButton(tab, label) {
+      return `<button class="nav-btn ${state.tab === tab ? "active" : ""}" data-action="tab" data-tab="${tab}">${label}</button>`;
+    }
+
+    function overlays() {
+      return [
+        state.notifOpen ? notificationsOverlay() : "",
+        state.infoOpen ? infoSheet() : "",
+        state.composeOpen ? composeSheet() : "",
+        state.flairOpen ? flairSheet() : "",
+        state.settingsOpen ? settingsOverlay() : "",
+        state.calendarOpen ? calendarOverlay() : "",
+        state.train ? trainOverlay() : "",
+        state.toast ? `<div class="toast">${esc(state.toast)}</div>` : ""
+      ].join("");
+    }
+
+    function notificationsOverlay() {
+      return `<section class="full-overlay"><div class="overlay-head"><h2 class="serif" style="font-size:24px;margin:0">Notifications</h2><button class="close" data-action="close-notifications">×</button></div>${state.notifications.map(n => `<div class="notif"><div style="display:flex;gap:10px"><div>${n.icon}</div><div><div style="font-size:13px;font-weight:800">${n.title}</div><div class="post-time">${n.time}</div><div style="font-size:12px;color:var(--body);margin-top:4px">${n.body}</div></div></div></div>`).join("")}</section>`;
+    }
+
+    function infoSheet() {
+      return `<div class="overlay" data-action="close-info-bg"><section class="sheet" data-stop><div class="overlay-head"><h2 class="serif" style="font-size:24px;margin:0">How Buddy works</h2><button class="close" data-action="close-info">×</button></div><p><strong>Earn charges from sales.</strong> Any sale can earn a Feed charge, piercing sales can earn Train charges, and ESA or warranty sales can earn Cheer charges.</p><p><strong>Spend charges to care for Buddy.</strong> Feed and Cheer apply instantly. Train takes you through a Playbook lesson and quiz.</p><p><strong>Level up together.</strong> XP unlocks new Buddy looks, and store milestones can award bonus XP to everyone on the team.</p></section></div>`;
+    }
+
+    function composeSheet() {
+      return `<div class="overlay"><section class="sheet"><div class="overlay-head"><h2 class="serif" style="font-size:24px;margin:0">New post</h2><button class="close" data-action="close-compose">×</button></div><textarea id="composeText" style="width:100%;min-height:116px;background:var(--bg);border:1px solid rgba(255,255,255,.1);border-radius:14px;color:var(--text);padding:12px;resize:none;font:13px Inter" placeholder="Share a win, update, or shoutout...">${esc(state.composeText)}</textarea><button class="primary" data-action="send-post" style="margin-top:12px" ${state.composeText.trim() ? "" : "disabled"}>Send</button></section></div>`;
+    }
+
+    function flairSheet() {
+      return `<div class="overlay"><section class="sheet"><div class="overlay-head"><h2 class="serif" style="font-size:24px;margin:0">Choose flair</h2><button class="close" data-action="skip-flair">×</button></div>${["news","shoutout","update"].map(f => `<button class="lesson" data-action="select-flair" data-flair="${f}" style="${state.pendingFlair === f ? "background:#1c2410;border-color:var(--lime)" : ""}"><span class="flair ${f}">${f.toUpperCase()}</span><div class="post-time" style="margin-top:7px">${f === "news" ? "Company or district news" : f === "shoutout" ? "Recognize a teammate" : "Store or task update"}</div></button>`).join("")}<button class="primary" data-action="publish-post" style="margin-top:8px">Post${state.pendingFlair ? " as " + state.pendingFlair.toUpperCase() : ""}</button><button class="secondary" data-action="skip-flair" style="margin-top:8px;text-align:center">Post without a flair</button></section></div>`;
+    }
+
+    function settingsOverlay() {
+      return `<section class="full-overlay">${state.settingsView === "menu" ? settingsMenu() : settingsDetail()}</section>`;
+    }
+
+    function settingsMenu() {
+      return `<div class="overlay-head"><h2 class="serif" style="font-size:24px;margin:0">Settings</h2><button class="close" data-action="close-settings">×</button></div><div class="settings-group-title">Account Settings</div><div class="card settings-group">${accountSettings.map(settingsRow).join("")}</div><div class="settings-group-title">Workplace Admin</div><div class="card settings-group">${adminSettings.map(settingsRow).join("")}</div>`;
+    }
+
+    function settingsRow(item) {
+      return `<button class="row-item" data-action="settings-item" data-key="${item[0]}"><span class="row-icon">${item[1]}</span><span>${item[2]}</span><span class="chev">›</span></button>`;
+    }
+
+    function settingsDetail() {
+      const title = [...accountSettings, ...adminSettings].find(i => i[0] === state.settingsView)?.[2] || "Settings";
+      return `<div class="overlay-head"><button class="close" data-action="settings-back">‹</button><h2 class="serif" style="font-size:22px;margin:0;flex:1;text-align:center">${title}</h2><button class="close" data-action="close-settings">×</button></div>${settingsFields(state.settingsView)}`;
+    }
+
+    function settingsFields(key) {
+      const t = state.toggles;
+      const user = activeUser();
+      const store = activeStore();
+      const toggle = (name, label, sub = "") => `<div class="field" style="display:flex;align-items:center;gap:12px"><div><strong style="font-size:13px">${label}</strong>${sub ? `<div class="post-time" style="margin-top:4px">${sub}</div>` : ""}</div><button class="toggle ${t[name] ? "on" : ""}" data-action="toggle-field" data-key="${name}" aria-label="${label}"><span></span></button></div>`;
+      const info = (label, value) => `<div class="field" style="display:flex;justify-content:space-between;gap:12px"><span style="font-size:13px">${label}</span><strong style="font-size:13px;color:var(--soft);text-align:right">${value}</strong></div>`;
+      const text = (label, value) => `<div class="field"><label>${label}</label><input value="${value}"></div>`;
+      const map = {
+        profile: [text("Full name", user.name), text("Email", user.email), info("Role", user.role), info("Store", userStoreLabel(user))],
+        notifications: [toggle("notifPush", "Push notifications", "Milestones, charges, shoutouts"), toggle("notifEmail", "Email digest", "Weekly summary email"), toggle("notifAchievements", "Achievement alerts", "When you or your store hit a milestone")],
+        appearance: [`<div class="field"><label>Theme</label><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><button class="primary" style="background:var(--panel);color:var(--muted);border:1px solid rgba(255,255,255,.08)">Light</button><button class="primary">Dark</button></div></div>`, toggle("soundOn", "App sounds", "Click sound on taps and reactions")],
+        language: [info("Language", "English (US)"), info("Region", "Colorado, US"), info("Time zone", "Mountain Time")],
+        security: [toggle("twoFactor", "Two-factor authentication", "Require a code at sign-in"), info("Change password", "Update"), info("Last sign-in", "Today, 9:41 AM")],
+        connected: [info("Microsoft", "Connected"), info("Point of sale", "Connect")],
+        "admin-general": [text("District name", "District 4 — Colorado"), info("Default time zone", "Mountain Time")],
+        "admin-members": [info("Active members", "24"), info("Invite a member", "Invite")],
+        "admin-teams": [info("Teams", "5 stores"), info("Create a team", "New team")],
+        "admin-roles": [toggle("roleManagerEdit", "Managers can edit playbook"), toggle("roleAssocView", "Associates can view district data")],
+        "admin-security": [toggle("adminReq2fa", "Require 2FA for all managers"), info("Session timeout", "12 hours")],
+        "admin-integrations": [toggle("intPos", "Point-of-sale sync", "Live sales and commission data"), toggle("intSlack", "Slack alerts", "Post milestones to #store-wins")],
+        "admin-billing": [info("Plan", "BanterONE Enterprise"), info("Billing contact", "Update")],
+        "admin-compliance": [toggle("compRetention", "Data retention (24 months)"), info("Export district data", "Export")],
+        "admin-workflow": [toggle("wfAutoCharges", "Auto-issue Buddy charges", "On qualifying sale sync"), toggle("wfAutoPost", "Auto-post store milestones to feed")]
+      };
+      return (map[key] || []).join("");
+    }
+
+    function calendarOverlay() {
+      const m = state.calendarMonth;
+      const y = state.calendarYear;
+      const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+      const daysInMonth = new Date(y, m + 1, 0).getDate();
+      const startDay = new Date(y, m, 1).getDay();
+      const today = new Date();
+      const isCurrentMonth = today.getMonth() === m && today.getFullYear() === y;
+      const todayDate = today.getDate();
+      const allEvents = [...calEvents, ...customCalEvents].filter(e => e.month === undefined || e.month === m);
+      const selectedDay = state.calendarSelectedDay || (isCurrentMonth ? todayDate : 1);
+      const dayEvents = allEvents.filter(e => e.day === selectedDay);
+
+      let cells = "";
+      for (let i = 0; i < startDay; i++) cells += `<div class="cal-cell empty"></div>`;
+      for (let d = 1; d <= daysInMonth; d++) {
+        const evts = allEvents.filter(e => e.day === d);
+        const isTd = isCurrentMonth && d === todayDate;
+        const isSel = d === selectedDay;
+        cells += `<div class="cal-cell ${isTd ? "today" : ""}" data-action="cal-select-day" data-day="${d}" style="${isSel ? "outline:1px solid var(--lime);outline-offset:-1px;border-radius:4px;" : ""}cursor:pointer;">
+          <div class="cal-day">${d}</div>
+          <div class="cal-dots">${evts.slice(0, 4).map(e => `<div class="cal-dot" style="background:${calCategories[e.cat]?.color || "#888"}"></div>`).join("")}${evts.length > 4 ? `<div style="font-size:7px;color:var(--muted)">+${evts.length - 4}</div>` : ""}</div>
+        </div>`;
+      }
+
+      const editForm = state.calendarEditEvent !== null ? `
+        <div class="cal-form">
+          <input data-field="cal-event-name" placeholder="Event name" value="">
+          <select data-field="cal-event-cat">
+            ${Object.entries(calCategories).map(([k, v]) => `<option value="${k}">${v.label}</option>`).join("")}
+          </select>
+          <div class="cal-form-actions">
+            <button style="background:var(--lime);color:var(--bg)" data-action="cal-save-event">Save</button>
+            <button style="background:rgba(255,255,255,.08);color:var(--text)" data-action="cal-cancel-event">Cancel</button>
+          </div>
+        </div>` : "";
+
+      return `
+        <section class="full-overlay" style="padding-top:48px">
+          <div class="overlay-head">
+            <h2 class="serif" style="font-size:22px;margin:0">Calendar</h2>
+            <button class="close" data-action="close-calendar">×</button>
+          </div>
+          <div class="cal-month-bar">
+            <button data-action="cal-prev">‹</button>
+            <div class="cal-month-title">${monthNames[m]} ${y}</div>
+            <button data-action="cal-next">›</button>
+          </div>
+          <div class="cal-grid">
+            ${["SUN","MON","TUE","WED","THU","FRI","SAT"].map(d => `<div class="cal-head">${d}</div>`).join("")}
+            ${cells}
+          </div>
+          <div class="cal-day-detail">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div class="section-title" style="font-size:13px">${monthNames[m]} ${selectedDay}</div>
+              <div style="font-size:11px;color:var(--muted)">${dayEvents.length} event${dayEvents.length !== 1 ? "s" : ""}</div>
+            </div>
+            ${dayEvents.length ? dayEvents.map(e => `
+              <div class="cal-event-row">
+                <div class="cal-event-dot" style="background:${calCategories[e.cat]?.color || "#888"}"></div>
+                <div style="flex:1"><div class="cal-event-text">${esc(e.text)}</div><div class="cal-event-cat">${calCategories[e.cat]?.label || e.cat}</div></div>
+              </div>`).join("") : `<div style="text-align:center;color:var(--muted);font-size:12px;padding:18px 0">No events</div>`}
+            <button class="cal-add-btn" data-action="cal-add-event">+ Add event</button>
+            ${editForm}
+          </div>
+          <div class="cal-legend">
+            ${Object.entries(calCategories).map(([k, v]) => `<div class="cal-legend-item"><div class="cal-legend-dot" style="background:${v.color}"></div>${v.label}</div>`).join("")}
+          </div>
+        </section>`;
+    }
+
+    function trainOverlay() {
+      const tr = state.train;
+      if (tr.step === "pick") {
+        return `<section class="full-overlay"><div class="overlay-head"><h2 class="serif" style="font-size:24px;margin:0">What would you like to learn?</h2><button class="close" data-action="close-train">×</button></div>${lessons.map(l => `<button class="lesson" data-action="choose-lesson" data-id="${l.id}"><strong>${l.title}</strong><div class="post-time" style="margin-top:4px">${l.meta}${l.pdf ? ' · <span style="color:var(--lime)">📄 PDF</span>' : ''}</div></button>`).join("")}</section>`;
+      }
+      const lesson = lessons.find(l => l.id === tr.lessonId) || lessons[0];
+      if (tr.step === "article") {
+        return `<section class="full-overlay"><div class="overlay-head"><div><div class="eyebrow">Playbook · Training</div><h2 class="serif" style="font-size:24px;margin:2px 0 0">${lesson.title}</h2></div><button class="close" data-action="close-train">×</button></div><p style="font-size:13px;line-height:1.55;color:var(--body)">${lesson.body}</p>${lesson.pdf ? `<a href="docs/${encodeURIComponent(lesson.pdf)}" target="_blank" rel="noreferrer" style="display:block;padding:10px 14px;background:rgba(198,255,58,.08);border:1px solid rgba(198,255,58,.2);border-radius:10px;color:var(--lime);font-size:12px;font-weight:700;text-decoration:none;margin-bottom:12px">📄 Open ${lesson.pdf.replace('.pdf','')}</a>` : ''}<button class="primary" data-action="train-next">Finished reading</button></section>`;
+      }
+      if (tr.step === "quiz") {
+        const allAnswered = tr.answers.filter(a => a !== undefined).length === lesson.quiz.length;
+        return `<div class="overlay"><section class="modal-card"><div class="overlay-head"><div><div class="eyebrow">Quiz · 3 questions</div><h2 class="serif" style="font-size:24px;margin:2px 0 0">${lesson.title}</h2></div><button class="close" data-action="close-train">×</button></div>${lesson.quiz.map((q, qi) => `<div style="margin-bottom:12px"><div style="font-size:13px;font-weight:700;margin-bottom:8px">${qi + 1}. ${q.q}</div>${q.options.map((opt, oi) => `<button class="answer ${tr.answers[qi] === oi ? "selected" : ""}" data-action="answer" data-q="${qi}" data-a="${oi}">${opt}</button>`).join("")}</div>`).join("")}<button class="primary" data-action="submit-quiz" ${allAnswered ? "" : "disabled"}>Submit answers</button></section></div>`;
+      }
+      return `<section class="full-overlay" style="display:grid;place-items:center;text-align:center"><div><div style="font-size:42px">${tr.perfect ? "🌟" : tr.passed ? "🎉" : "📖"}</div><h2 class="serif" style="font-size:28px;margin:8px 0">${tr.perfect ? "Perfect score!" : tr.passed ? "Training complete!" : "Not quite — review and retry"}</h2><p style="font-size:13px;color:var(--body);line-height:1.45">${tr.passed ? `Scored ${tr.correct}/3 · +${tr.xp} XP${tr.perfect ? " (double!)" : ""}, Bond +${tr.perfect ? 12 : 8}%` : `Scored ${tr.correct}/3 — need at least 2/3 to pass.`}</p><button class="primary" data-action="${tr.passed ? "close-train" : "retry-train"}">${tr.passed ? "Done" : "Retry quiz"}</button></div></section>`;
+    }
+
+    function render() {
+      const screens = { login: loginScreen, home: homeScreen, store: storeScreen, buddy: buddyScreen, playbook: playbookScreen, arena: arenaScreen };
+      app.innerHTML = `<div class="glow"></div>${topCluster()}${screens[state.tab]()}${nav()}${overlays()}`;
+      const compose = document.getElementById("composeText");
+      if (compose) {
+        compose.focus();
+        compose.selectionStart = compose.selectionEnd = compose.value.length;
+        compose.addEventListener("input", event => {
+          state.composeText = event.target.value;
+          const send = app.querySelector('[data-action="send-post"]');
+          if (send) send.disabled = !state.composeText.trim();
+        });
+      }
+    }
+
+    app.addEventListener("click", event => {
+      const stop = event.target.closest("[data-stop]");
+      if (stop) return;
+      const el = event.target.closest("[data-action]");
+      if (!el) return;
+      const action = el.dataset.action;
+      if (action === "login") {
+        const user = activeUser();
+        const entered = (app.querySelector('[data-field="password"]')?.value || "").trim().toUpperCase();
+        const expected = passwordInitials(user.name);
+        if (entered !== expected) {
+          setState({ loginError: `Use ${user.name}'s first and last initials.` });
+          return;
+        }
+        const store = activeStore();
+        const sub = submissionForStore(store.id);
+        const feedCharges = Math.min(3, Math.floor(sub.bold / 500));
+        const trainCharges = Math.min(2, sub.ep);
+        const cheerCharges = Math.min(3, sub.esa);
+        setState({ tab: "home", loginError: "", charges: { feed: feedCharges, train: trainCharges, cheer: cheerCharges }, chargesEarned: true });
+      }
+      if (action === "toggle-pw") setState({ pwVisible: !state.pwVisible });
+      if (action === "stay") setState({ staySignedIn: !state.staySignedIn });
+      if (action === "toggle-demo") setState({ demoOpen: !state.demoOpen });
+      if (action === "tab") setState({ tab: el.dataset.tab });
+      if (action === "arena-scope") setState({ arenaScope: el.dataset.scope });
+      if (action === "individual-metric") setState({ individualMetric: el.dataset.metric });
+      if (action === "open-notifications") setState({ notifOpen: true, unread: 0 });
+      if (action === "close-notifications") setState({ notifOpen: false });
+      if (action === "open-info") setState({ infoOpen: true });
+      if (action === "close-info" || action === "close-info-bg") setState({ infoOpen: false });
+      if (action === "open-settings") setState({ settingsOpen: true, settingsView: "menu" });
+      if (action === "close-settings") setState({ settingsOpen: false });
+      if (action === "settings-back") setState({ settingsView: "menu" });
+      if (action === "settings-item") setState({ settingsView: el.dataset.key });
+      if (action === "toggle-field") {
+        state.toggles[el.dataset.key] = !state.toggles[el.dataset.key];
+        render();
+      }
+      if (action === "react") {
+        const post = state.feed.find(p => p.id === Number(el.dataset.id));
+        if (post) post.reactions[el.dataset.key] += 1;
+        render();
+      }
+      if (action === "open-compose") setState({ composeOpen: true });
+      if (action === "close-compose") setState({ composeOpen: false, composeText: "" });
+      if (action === "send-post" && state.composeText.trim()) setState({ composeOpen: false, flairOpen: true });
+      if (action === "select-flair") setState({ pendingFlair: el.dataset.flair });
+      if (action === "publish-post" || action === "skip-flair") {
+        const flair = action === "skip-flair" ? "update" : state.pendingFlair;
+        const user = activeUser();
+        state.feed.unshift({ id: Date.now(), initials: initials(user.name), name: user.name, time: "now", flair, pinned: false, text: state.composeText.trim(), reactions: { like: 0, heart: 0, laugh: 0, fire: 0, party: 0 } });
+        setState({ flairOpen: false, composeText: "", pendingFlair: "shoutout" });
+      }
+      if (action === "feed-buddy" && state.charges.feed > 0) {
+        state.charges.feed -= 1; state.buddy.xp += 10; state.buddy.care = Math.min(100, state.buddy.care + 5);
+        showToast("Fed Buddy · +10 XP");
+      }
+      if (action === "cheer-buddy" && state.charges.cheer > 0) {
+        state.charges.cheer -= 1; state.buddy.xp += 15; state.buddy.spark = Math.min(100, state.buddy.spark + 6); state.buddy.bond = Math.min(100, state.buddy.bond + 3);
+        showToast("Cheered Buddy · +15 XP");
+      }
+      if (action === "start-train") setState({ train: { step: "pick", lessonId: null, answers: [] } });
+      if (action === "open-lesson") setState({ tab: "playbook", train: { step: "article", lessonId: el.dataset.id, answers: [] } });
+      if (action === "choose-lesson") setState({ train: { step: "article", lessonId: el.dataset.id, answers: [] } });
+      if (action === "train-next") setState({ train: { ...state.train, step: "quiz", answers: [] } });
+      if (action === "answer") {
+        state.train.answers[Number(el.dataset.q)] = Number(el.dataset.a);
+        render();
+      }
+      if (action === "submit-quiz") {
+        const lesson = lessons.find(l => l.id === state.train.lessonId);
+        if (!lesson || state.train.answers.filter(a => a !== undefined).length !== lesson.quiz.length) return;
+        const correct = lesson.quiz.reduce((sum, q, i) => sum + (state.train.answers[i] === q.correct ? 1 : 0), 0);
+        const passed = correct >= 2;
+        const perfect = correct === 3;
+        if (passed) {
+          state.charges.train -= 1;
+          state.buddy.xp += perfect ? 80 : 40;
+          state.buddy.bond = Math.min(100, state.buddy.bond + (perfect ? 12 : 8));
+        }
+        setState({ train: { ...state.train, step: "result", correct, passed, perfect, xp: perfect ? 80 : 40 } });
+      }
+      if (action === "retry-train") setState({ train: { ...state.train, step: "quiz", answers: [] } });
+      if (action === "close-train") setState({ train: null });
+      if (action === "open-calendar") setState({ calendarOpen: true, calendarSelectedDay: null });
+      if (action === "close-calendar") setState({ calendarOpen: false, calendarEditEvent: null });
+      if (action === "cal-prev") {
+        let nm = state.calendarMonth - 1, ny = state.calendarYear;
+        if (nm < 0) { nm = 11; ny--; }
+        setState({ calendarMonth: nm, calendarYear: ny, calendarSelectedDay: null });
+      }
+      if (action === "cal-next") {
+        let nm = state.calendarMonth + 1, ny = state.calendarYear;
+        if (nm > 11) { nm = 0; ny++; }
+        setState({ calendarMonth: nm, calendarYear: ny, calendarSelectedDay: null });
+      }
+      if (action === "cal-select-day") setState({ calendarSelectedDay: Number(el.dataset.day) });
+      if (action === "cal-add-event") setState({ calendarEditEvent: true });
+      if (action === "cal-cancel-event") setState({ calendarEditEvent: null });
+      if (action === "cal-save-event") {
+        const nameInput = app.querySelector('[data-field="cal-event-name"]');
+        const catSelect = app.querySelector('[data-field="cal-event-cat"]');
+        if (nameInput && nameInput.value.trim()) {
+          customCalEvents.push({ day: state.calendarSelectedDay || 1, cat: catSelect.value, text: nameInput.value.trim(), month: state.calendarMonth });
+          setState({ calendarEditEvent: null });
+          showToast("Event added");
+        }
+      }
+    });
+
+    app.addEventListener("change", event => {
+      const el = event.target.closest("[data-action]");
+      if (!el) return;
+      if (el.dataset.action === "select-user") {
+        setState({ selectedUserEmail: el.value, loginError: "" });
+      }
+    });
+
+    render();
+  </script>
+</body>
+</html>
