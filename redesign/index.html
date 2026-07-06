@@ -711,6 +711,8 @@
       toast: "",
       importedSubmissions: null,
       importedIndividualMetrics: null,
+      pendingImportConfirm: null,
+      confirmPrompt: "",
       calendarOpen: false,
       calendarMonth: 6,
       calendarYear: 2026,
@@ -2400,7 +2402,7 @@
             <div style="font-size:28px;margin-bottom:6px">🏪</div>
             <div style="font-size:13px;font-weight:600;color:var(--lime)">Upload Store CSV</div>
             <div class="caption" style="margin-top:4px">.csv file</div>
-            <input type="file" accept=".csv,text/csv" style="display:none" id="store-metrics-upload" data-action="store-metrics-file">
+            <input type="file" accept=".csv,.txt,text/csv,text/plain,text/comma-separated-values,application/vnd.ms-excel,*/*" style="display:none" id="store-metrics-upload" data-action="store-metrics-file">
           </label>
 
           <div class="section-title" style="margin-bottom:8px">Individual Metrics CSV</div>
@@ -2409,7 +2411,7 @@
             <div style="font-size:28px;margin-bottom:6px">👤</div>
             <div style="font-size:13px;font-weight:600;color:var(--lime)">Upload Employee CSV</div>
             <div class="caption" style="margin-top:4px">.csv file</div>
-            <input type="file" accept=".csv,text/csv" style="display:none" id="individual-metrics-upload" data-action="individual-metrics-file">
+            <input type="file" accept=".csv,.txt,text/csv,text/plain,text/comma-separated-values,application/vnd.ms-excel,*/*" style="display:none" id="individual-metrics-upload" data-action="individual-metrics-file">
           </label>
 
           ${importStatus ? `<div style="background:var(--panel);border-radius:10px;padding:12px;font-size:13px;color:var(--lime);margin-bottom:12px">${importStatus}</div>` : ""}
@@ -2649,6 +2651,16 @@
         state.reportsOpen ? reportsOverlay() : "",
         state.goalUploadOpen ? goalUploadSheet() : "",
         state.reactionsSheetPostId ? reactionsSheet() : "",
+        state.pendingImportConfirm ? `<div class="overlay"><section class="sheet" data-stop style="max-height:auto">
+          <div class="overlay-head"><h2 class="serif" style="font-size:18px;margin:0">Replace existing data?</h2></div>
+          <div style="padding:0 4px 16px">
+            <div style="font-size:14px;color:var(--soft);margin-bottom:20px;line-height:1.5">${esc(state.confirmPrompt)}</div>
+            <div style="display:flex;gap:10px">
+              <button style="flex:1;padding:13px;background:rgba(255,255,255,.06);color:var(--text);font-weight:600;font-size:14px;border:1px solid rgba(255,255,255,.1);border-radius:10px" data-action="cancel-overwrite-import">Keep existing</button>
+              <button style="flex:1;padding:13px;background:var(--lime);color:var(--bg);font-weight:700;font-size:14px;border:none;border-radius:10px" data-action="confirm-overwrite-import">Replace</button>
+            </div>
+          </div>
+        </section></div>` : "",
         state.inAppBanner ? inAppBannerEl() : "",
         state.toast ? `<div class="toast">${esc(state.toast)}</div>` : ""
       ].join("");
@@ -3129,19 +3141,39 @@
         const input = el;
         if (!input.files || !input.files[0]) return;
         const file = input.files[0];
-        const reader = new FileReader();
-        reader.onload = e => {
-          const rows = parseCSV(e.target.result);
-          if (!rows.length) { showToast("Could not parse CSV — check format"); return; }
-          if (action === "store-metrics-file") {
-            setState({ importedSubmissions: rows, lastImportStatus: `✓ Store metrics updated: ${rows.length} store(s) imported` });
-            showToast(`Store metrics updated for ${rows.length} store(s)`);
-          } else {
-            setState({ importedIndividualMetrics: rows, lastImportStatus: `✓ Employee metrics updated: ${rows.length} employee(s) imported` });
-            showToast(`Employee metrics updated for ${rows.length} employee(s)`);
-          }
+        const isStore = action === "store-metrics-file";
+        const alreadyHasData = isStore ? !!state.importedSubmissions : !!state.importedIndividualMetrics;
+        const doImport = () => {
+          const reader = new FileReader();
+          reader.onload = e => {
+            const rows = parseCSV(e.target.result);
+            if (!rows.length) { showToast("Could not parse CSV — check format"); return; }
+            if (isStore) {
+              setState({ importedSubmissions: rows, lastImportStatus: `✓ Store metrics updated: ${rows.length} store(s) imported from ${file.name}` });
+              showToast(`Store metrics updated for ${rows.length} store(s)`);
+            } else {
+              setState({ importedIndividualMetrics: rows, lastImportStatus: `✓ Employee metrics updated: ${rows.length} employee(s) imported from ${file.name}` });
+              showToast(`Employee metrics updated for ${rows.length} employee(s)`);
+            }
+          };
+          reader.readAsText(file);
         };
-        reader.readAsText(file);
+        if (alreadyHasData) {
+          const label = isStore ? "store metrics" : "employee metrics";
+          setState({ pendingImportConfirm: { action, file, doImport }, confirmPrompt: `You already have ${label} imported. Replace with "${file.name}"?` });
+        } else {
+          doImport();
+        }
+        input.value = "";
+      }
+      if (action === "confirm-overwrite-import") {
+        if (state.pendingImportConfirm) {
+          state.pendingImportConfirm.doImport();
+          setState({ pendingImportConfirm: null, confirmPrompt: "" });
+        }
+      }
+      if (action === "cancel-overwrite-import") {
+        setState({ pendingImportConfirm: null, confirmPrompt: "" });
       }
       if (action === "open-reports") setState({ reportsOpen: true });
       if (action === "close-reports") setState({ reportsOpen: false, newReportOpen: false });
