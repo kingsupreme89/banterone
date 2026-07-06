@@ -639,6 +639,23 @@
       border-radius: 8px;
       font-size: 16px;
       display: grid; place-items: center;
+      overflow: hidden;
+    }
+    .cal-icon-inner {
+      display: flex; flex-direction: column; align-items: center;
+      width: 22px; height: 22px; border-radius: 4px;
+      overflow: hidden; border: 1.5px solid var(--lime);
+    }
+    .cal-icon-month {
+      width: 100%; background: var(--lime); color: var(--bg);
+      font-size: 5.5px; font-weight: 800; text-align: center;
+      letter-spacing: .06em; line-height: 1; padding: 2px 0;
+      font-family: Inter, sans-serif; text-transform: uppercase;
+    }
+    .cal-icon-day {
+      flex: 1; display: grid; place-items: center;
+      font-size: 10px; font-weight: 800; line-height: 1;
+      color: var(--lime); font-family: Inter, sans-serif;
     }
   </style>
 </head>
@@ -885,7 +902,7 @@
         id: "esa",
         title: "ESA Warranty Program",
         meta: "3 min · Protection plans",
-        body: "A strong ESA explanation connects protection to real life. Use the piece in front of you: daily wear, travel, gifting, resizing, or cleaning. Keep it specific and brief, then pause. The best warranty attach often comes from making the value concrete instead of reading a long list of features.",
+        body: "A strong ESA explanation connects protection to real life. ESA covers damage and breakage — not loss. When a piece comes in broken, we replace or repair it as long as 75% of the item is returned. Use the piece in front of you: daily wear, travel, resizing, or cleaning. Keep it specific and brief, then pause. The best warranty attach comes from making the value concrete — not reading a feature list.",
         quiz: [
           { q: "ESA should connect to...", options: ["Real life use", "A long feature list", "Only the receipt"], correct: 0 },
           { q: "After explaining value, you should...", options: ["Keep talking forever", "Pause", "Change the subject"], correct: 1 },
@@ -1214,7 +1231,7 @@
       { title: "Your Buddy misses you 🦊", body: "It's been a while — pop in and give them some love before the shift ends." },
       { title: "Cherry Creek just passed Park Meadows! 🏆", body: "Your store moved to #1 in the district. Keep the momentum going!" },
       { title: "Halfway to stretch goal 💰", body: "You're 65% to plan and climbing. One more big ticket could flip the board green." },
-      { title: "ESA reminder 🛡", body: "3 transactions in and no ESA yet — next customer, lead with the 'lost or broken' story." },
+      { title: "ESA reminder 🛡", body: "3 transactions in and no ESA yet — next customer, lead with the damage and breakage story. Remind them 75% of the item back gets it replaced." },
       { title: "Your Buddy leveled up! ✨", body: "Crystal Fox just hit Level 5. Check out the new accessories you've unlocked." },
       { title: "St. Jude opportunity ❤️", body: "You're $4 away from today's St. Jude goal. Every dollar counts for the kids." },
       { title: "Piercing station alert 🪡", body: "No piercings yet today — is the station visible and stocked? A quick check can add 2 walk-ups." },
@@ -1272,6 +1289,13 @@
       render();
       window.clearTimeout(showToast.timer);
       showToast.timer = window.setTimeout(() => setState({ toast: "" }), 2200);
+    }
+
+    function calIcon() {
+      const d = new Date();
+      const month = d.toLocaleDateString("en-US", { month: "short" }).toUpperCase();
+      const day = d.getDate();
+      return `<div class="cal-icon-inner"><div class="cal-icon-month">${month}</div><div class="cal-icon-day">${day}</div></div>`;
     }
 
     function wordmark(size = "") {
@@ -1404,7 +1428,7 @@
               <div class="serif store-title">${store.name}</div>
               <div class="caption">${store.mall}${store.state ? ` · ${store.state}` : ""}</div>
             </div>
-            <div class="store-card-cal" style="position:static;margin-left:auto"><button class="cal-icon-btn" data-action="open-calendar" aria-label="Calendar">📅</button></div>
+            <div class="store-card-cal" style="position:static;margin-left:auto"><button class="cal-icon-btn" data-action="open-calendar" aria-label="Calendar">${calIcon()}</button></div>
           </div>
           <div class="neon-spacer compact"></div>
           <div class="kpis">
@@ -1558,7 +1582,7 @@
                 </div>` : ""}
               </div>
               <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
-                <button class="cal-icon-btn" data-action="open-calendar" aria-label="Calendar">📅</button>
+                <button class="cal-icon-btn" data-action="open-calendar" aria-label="Calendar">${calIcon()}</button>
                 ${(user.role === "Store Manager" || user.role === "District Manager" || user.role === "Assistant Manager") ? `<button class="cal-icon-btn" data-action="open-goal-upload" aria-label="Upload goal sheet" title="Upload goal sheet">📋</button>` : ""}
               </div>
             </div>
@@ -2104,7 +2128,7 @@
         }
 
         if (esaPct < 40) {
-          insights.push({ urgency: "high", icon: "🛡", title: `${store.name} — ESA Rate Critical`, body: `${prefix}ESA at ${esaPct}% vs 50% target. Only ${sub.esa} of ${sub.trans} transactions protected. Role-play the ESA conversation at next huddle — lead with the "lost or broken" scenario.` });
+          insights.push({ urgency: "high", icon: "🛡", title: `${store.name} — ESA Rate Critical`, body: `${prefix}ESA at ${esaPct}% vs 50% target. Only ${sub.esa} of ${sub.trans} transactions protected. Role-play the ESA conversation at next huddle — lead with the damage and breakage scenario. Remind team: 75% of the item back gets it replaced, no questions asked.` });
         } else if (esaPct < 50) {
           insights.push({ urgency: "medium", icon: "🛡", title: `${store.name} — ESA Below Target`, body: `${prefix}ESA at ${esaPct}% — just ${Math.ceil(sub.trans * 0.5) - sub.esa} more attach${Math.ceil(sub.trans * 0.5) - sub.esa !== 1 ? "es" : ""} needed to hit 50%. Remind team during the next floor check.` });
         }
