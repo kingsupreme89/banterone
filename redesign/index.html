@@ -713,6 +713,7 @@
       importedIndividualMetrics: null,
       pendingImportConfirm: null,
       confirmPrompt: "",
+      balancedBusinessOpen: false,
       calendarOpen: false,
       calendarMonth: 6,
       calendarYear: 2026,
@@ -1088,7 +1089,22 @@
       { email: "aurora_assoc1@banter.com", name: "Sofia Reyes", storeId: "242", role: "Sales Associate", employeeNumber: "242-003" },
       { email: "aurora_assoc2@banter.com", name: "Derek Thompson", storeId: "242", role: "Sales Associate", employeeNumber: "242-004" },
       { email: "chapel_assoc1@banter.com", name: "Aaliyah Johnson", storeId: "1241", role: "Sales Associate", employeeNumber: "1241-003" },
-      { email: "chapel_assoc2@banter.com", name: "Nathan Park", storeId: "1241", role: "Sales Associate", employeeNumber: "1241-004" }
+      { email: "chapel_assoc2@banter.com", name: "Nathan Park", storeId: "1241", role: "Sales Associate", employeeNumber: "1241-004" },
+      { email: "santafe_assoc1@banter.com", name: "Marisol Chavez", storeId: "123", role: "Sales Associate", employeeNumber: "123-002" },
+      { email: "santafe_assoc2@banter.com", name: "Diego Romero", storeId: "123", role: "Sales Associate", employeeNumber: "123-003" },
+      { email: "cottonwood_assoc1@banter.com", name: "Priya Nair", storeId: "907", role: "Sales Associate", employeeNumber: "907-002" },
+      { email: "cottonwood_assoc2@banter.com", name: "Jordan Castillo", storeId: "907", role: "Sales Associate", employeeNumber: "907-003" },
+      { email: "cottonwood_piercer@banter.com", name: "Alex Duran", storeId: "907", role: "Piercing Specialist", employeeNumber: "907-004" },
+      { email: "bassett_assoc1@banter.com", name: "Monique Bell", storeId: "1026", role: "Sales Associate", employeeNumber: "1026-002" },
+      { email: "bassett_assoc2@banter.com", name: "Travis Nguyen", storeId: "1026", role: "Sales Associate", employeeNumber: "1026-003" },
+      { email: "southlands_assoc1@banter.com", name: "Keisha Monroe", storeId: "1332", role: "Sales Associate", employeeNumber: "1332-002" },
+      { email: "southlands_assoc2@banter.com", name: "Eric Sandoval", storeId: "1332", role: "Sales Associate", employeeNumber: "1332-003" },
+      { email: "flatiron_assoc1@banter.com", name: "Brianna Walsh", storeId: "2595", role: "Sales Associate", employeeNumber: "2595-002" },
+      { email: "flatiron_assoc2@banter.com", name: "Marcus Webb", storeId: "2595", role: "Sales Associate", employeeNumber: "2595-003" },
+      { email: "coronado_assoc1@banter.com", name: "Vanessa Torres", storeId: "3739", role: "Sales Associate", employeeNumber: "3739-002" },
+      { email: "coronado_assoc2@banter.com", name: "Isaiah Grant", storeId: "3739", role: "Sales Associate", employeeNumber: "3739-003" },
+      { email: "mesa_assoc1@banter.com", name: "Amber Rios", storeId: "3709", role: "Sales Associate", employeeNumber: "3709-002" },
+      { email: "mesa_assoc2@banter.com", name: "Caleb Stone", storeId: "3709", role: "Sales Associate", employeeNumber: "3709-003" }
     ];
 
     const individualMetrics = [
@@ -1105,7 +1121,29 @@
       { email: "hannah.f@banter.com", sales: 1350, piercingSales: 45, esaSales: 180, piercings: 1, esaCount: 2, stjude: 18, hours: 8 },
       { email: "chapel_assoc1@banter.com", sales: 860, piercingSales: 45, esaSales: 120, piercings: 1, esaCount: 1, stjude: 12, hours: 6 },
       { email: "chapel_assoc2@banter.com", sales: 540, piercingSales: 0, esaSales: 60, piercings: 0, esaCount: 1, stjude: 6, hours: 5 },
-      { email: "steven.v@banter.com", sales: 1180, piercingSales: 30, esaSales: 150, piercings: 1, esaCount: 1, stjude: 16, hours: 8 }
+      { email: "steven.v@banter.com", sales: 1180, piercingSales: 30, esaSales: 150, piercings: 1, esaCount: 1, stjude: 16, hours: 8 },
+      { email: "trinity.b@banter.com", sales: 1320, piercingSales: 80, esaSales: 190, piercings: 2, esaCount: 2, stjude: 14, hours: 8 },
+      { email: "santafe_assoc1@banter.com", sales: 940, piercingSales: 55, esaSales: 130, piercings: 1, esaCount: 1, stjude: 10, hours: 6 },
+      { email: "santafe_assoc2@banter.com", sales: 680, piercingSales: 30, esaSales: 90, piercings: 1, esaCount: 1, stjude: 7, hours: 5 },
+      { email: "estrella.m@banter.com", sales: 1580, piercingSales: 95, esaSales: 220, piercings: 2, esaCount: 3, stjude: 20, hours: 8 },
+      { email: "cottonwood_assoc1@banter.com", sales: 1100, piercingSales: 70, esaSales: 160, piercings: 2, esaCount: 2, stjude: 13, hours: 6 },
+      { email: "cottonwood_assoc2@banter.com", sales: 780, piercingSales: 40, esaSales: 100, piercings: 1, esaCount: 1, stjude: 9, hours: 5 },
+      { email: "cottonwood_piercer@banter.com", sales: 0, piercingSales: 520, esaSales: 0, piercings: 13, esaCount: 0, stjude: 10, hours: 7 },
+      { email: "claudia.g@banter.com", sales: 1440, piercingSales: 60, esaSales: 200, piercings: 1, esaCount: 2, stjude: 18, hours: 8 },
+      { email: "bassett_assoc1@banter.com", sales: 1080, piercingSales: 50, esaSales: 150, piercings: 1, esaCount: 2, stjude: 12, hours: 6 },
+      { email: "bassett_assoc2@banter.com", sales: 760, piercingSales: 35, esaSales: 100, piercings: 1, esaCount: 1, stjude: 8, hours: 5 },
+      { email: "marlena.r@banter.com", sales: 1560, piercingSales: 85, esaSales: 230, piercings: 2, esaCount: 3, stjude: 22, hours: 8 },
+      { email: "southlands_assoc1@banter.com", sales: 1020, piercingSales: 60, esaSales: 140, piercings: 1, esaCount: 2, stjude: 11, hours: 6 },
+      { email: "southlands_assoc2@banter.com", sales: 700, piercingSales: 40, esaSales: 95, piercings: 1, esaCount: 1, stjude: 8, hours: 5 },
+      { email: "evyn.j@banter.com", sales: 1380, piercingSales: 70, esaSales: 195, piercings: 2, esaCount: 2, stjude: 19, hours: 8 },
+      { email: "flatiron_assoc1@banter.com", sales: 950, piercingSales: 55, esaSales: 130, piercings: 1, esaCount: 1, stjude: 11, hours: 6 },
+      { email: "flatiron_assoc2@banter.com", sales: 660, piercingSales: 30, esaSales: 85, piercings: 1, esaCount: 1, stjude: 7, hours: 4 },
+      { email: "emily.m@banter.com", sales: 1490, piercingSales: 75, esaSales: 210, piercings: 2, esaCount: 2, stjude: 21, hours: 8 },
+      { email: "coronado_assoc1@banter.com", sales: 1010, piercingSales: 50, esaSales: 145, piercings: 1, esaCount: 2, stjude: 12, hours: 6 },
+      { email: "coronado_assoc2@banter.com", sales: 690, piercingSales: 35, esaSales: 90, piercings: 1, esaCount: 1, stjude: 8, hours: 5 },
+      { email: "dionne.f@banter.com", sales: 1200, piercingSales: 50, esaSales: 160, piercings: 1, esaCount: 2, stjude: 15, hours: 8 },
+      { email: "mesa_assoc1@banter.com", sales: 820, piercingSales: 40, esaSales: 110, piercings: 1, esaCount: 1, stjude: 9, hours: 6 },
+      { email: "mesa_assoc2@banter.com", sales: 560, piercingSales: 25, esaSales: 70, piercings: 0, esaCount: 1, stjude: 6, hours: 4 }
     ];
 
     const playbookDocs = [
@@ -1761,10 +1799,11 @@
             ${kpi("St. Jude Today", money(sub.stj), `Goal $${stjGoal}/day`, sub.stj >= stjGoal)}
             ${kpi("Conversion", `${convRate}%`, `${sub.trans + 8} traffic est.`, convRate >= 35)}
           </div>
-          <div style="margin:8px 0;padding:8px 12px;background:rgba(198,255,58,.06);border-radius:10px;border:1px solid rgba(198,255,58,.12);font-size:11px;color:var(--muted)">
-            <strong style="color:var(--lime)">Company Expectations: </strong>
-            Sales ${planPct >= 100 ? '✅' : '⚠️'} ${planPct}% · ESA ${esaPct >= 50 ? '✅' : '⚠️'} ${esaPct}% · PO ${poPct >= 18 ? '✅' : '⚠️'} ${poPct}% · Avg Ticket ${sub.avt >= 155 ? '✅' : '⚠️'} ${money(sub.avt)}
-          </div>` : state.storeScope === 'mtd' ? `
+          <button data-action="open-balanced-business" style="width:100%;margin:8px 0;padding:10px 14px;background:rgba(198,255,58,.06);border-radius:10px;border:1px solid rgba(198,255,58,.18);font-size:11px;color:var(--muted);text-align:left;cursor:pointer;display:flex;align-items:center;justify-content:space-between">
+            <span><strong style="color:var(--lime)">Company Expectations</strong>&nbsp;&nbsp;
+            Sales ${planPct >= 100 ? '✅' : '⚠️'} ${planPct}% · ESA ${esaPct >= 50 ? '✅' : '⚠️'} ${esaPct}% · PO ${poPct >= 18 ? '✅' : '⚠️'} ${poPct}% · Avg Ticket ${sub.avt >= 155 ? '✅' : '⚠️'} ${money(sub.avt)}</span>
+            <span style="color:var(--lime);font-size:14px;margin-left:8px">›</span>
+          </button>` : state.storeScope === 'mtd' ? `
           <div class="kpis">
             ${kpi("MTD Sales", money(mtdSales), `${mtdPct}% · Goal ${money(mtdPlan)}`, mtdPct >= 100)}
             ${kpi("MTD Stretch", money(Math.round(mtdPlan * 1.30)), `Beat plan × 1.30`, mtdSales >= mtdPlan * 1.30)}
@@ -2388,6 +2427,62 @@
       </div>`;
     }
 
+    function balancedBusinessSheet() {
+      if (!state.balancedBusinessOpen) return "";
+      const store = activeStore();
+      const sub = submissionForStore(store.id);
+      const today = new Date();
+      const dayOfMonth = today.getDate();
+      const effectiveDailyPlan = Math.max(store.dailyPlan, store.lyDailyPlan || 0);
+      const epGoal = Math.max((store.dailyPlan > 4000 ? 5 : 4), (store.lyEP || 0) + 1);
+      const esaPct = sub.trans ? Math.round((sub.esa / sub.trans) * 100) : 0;
+      const poPct = sub.trans ? Math.round((sub.po / sub.trans) * 100) : 0;
+      const planPct = effectiveDailyPlan ? Math.round((sub.bold / effectiveDailyPlan) * 100) : 0;
+      const epPct = epGoal ? Math.round((sub.ep / epGoal) * 100) : 0;
+      const goldPct = sub.goldPct || 0;
+
+      const row = (label, target, actual, met, unit = "", note = "") => {
+        const clr = met ? "var(--lime)" : "#e5484d";
+        const icon = met ? "✅" : "❌";
+        return `
+        <div style="display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid rgba(255,255,255,.06)">
+          <div style="font-size:18px;width:24px;text-align:center">${icon}</div>
+          <div style="flex:1">
+            <div style="font-size:13px;font-weight:700">${label}</div>
+            ${note ? `<div style="font-size:10px;color:var(--muted);margin-top:2px">${note}</div>` : ""}
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:14px;font-weight:800;color:${clr}">${unit}${actual}</div>
+            <div style="font-size:9px;color:var(--muted)">Target: ${target}</div>
+          </div>
+        </div>`;
+      };
+
+      return `<div class="overlay" data-action="close-balanced-business-bg"><section class="sheet" data-stop style="max-height:90%">
+        <div class="overlay-head">
+          <h2 class="serif" style="font-size:20px;margin:0">Running a Balanced Business</h2>
+          <button class="close" data-action="close-balanced-business">×</button>
+        </div>
+        <div style="padding:0 4px 20px">
+          <div class="eyebrow" style="margin-bottom:4px">Company Expectations · ${store.name} · Today</div>
+          <div class="caption" style="margin-bottom:16px">All KPIs must meet target to run a balanced business. Green = at or above expectation.</div>
+
+          ${row("Sales vs Plan", "≥ 100% of plan", `${planPct}%`, planPct >= 100, "", `Goal: ${money(effectiveDailyPlan)} · Today: ${money(sub.bold)}`)}
+          ${row("ESA Attach Rate", "≥ 50% of transactions", `${esaPct}%`, esaPct >= 50, "", `${sub.esa} ESA on ${sub.trans} transactions`)}
+          ${row("Payment Options", "≥ 18% of transactions", `${poPct}%`, poPct >= 18, "", `${money(sub.po)} PO on ${sub.trans} transactions`)}
+          ${row("Avg Ticket", "≥ $155", money(sub.avt), sub.avt >= 155, "$", "Higher ticket = more value per customer")}
+          ${row("Ear Piercings", `≥ ${epGoal} units (beat LY)`, sub.ep, epPct >= 100, "", `Plan: ${epGoal} · LY baseline: ${store.lyEP || 0}`)}
+          ${row("Gold Attach Rate", "≥ 80% gold mix", `${goldPct}%`, goldPct >= 80, "", "% of piercing sales that are gold")}
+          ${row("St. Jude Daily", "≥ $10 per day", money(sub.stj), sub.stj >= 10, "$", "Charity donation attach at register")}
+
+          <div style="margin-top:18px;padding:14px;background:rgba(198,255,58,.05);border:1px solid rgba(198,255,58,.15);border-radius:12px">
+            <div style="font-size:11px;font-weight:700;color:var(--lime);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">What "Balanced" Means</div>
+            <div style="font-size:12px;color:var(--soft);line-height:1.6">A balanced business hits <strong>every</strong> metric — not just sales. A store that hits $2,000 in sales with 0% ESA is not running a balanced business. All pillars must be green before end of day.</div>
+          </div>
+        </div>
+      </section></div>`;
+    }
+
     function goalUploadSheet() {
       if (!state.goalUploadOpen) return "";
       const importStatus = state.lastImportStatus || "";
@@ -2651,6 +2746,7 @@
         state.reportsOpen ? reportsOverlay() : "",
         state.goalUploadOpen ? goalUploadSheet() : "",
         state.reactionsSheetPostId ? reactionsSheet() : "",
+        state.balancedBusinessOpen ? balancedBusinessSheet() : "",
         state.pendingImportConfirm ? `<div class="overlay"><section class="sheet" data-stop style="max-height:auto">
           <div class="overlay-head"><h2 class="serif" style="font-size:18px;margin:0">Replace existing data?</h2></div>
           <div style="padding:0 4px 16px">
@@ -3131,6 +3227,8 @@
         setState({ postMenuId: null });
         showToast("Post reported");
       }
+      if (action === "open-balanced-business") setState({ balancedBusinessOpen: true });
+      if (action === "close-balanced-business" || action === "close-balanced-business-bg") setState({ balancedBusinessOpen: false });
       if (action === "open-goal-upload") setState({ goalUploadOpen: true });
       if (action === "close-goal-upload" || action === "close-goal-upload-bg") setState({ goalUploadOpen: false });
       if (action === "clear-imported-data") {
