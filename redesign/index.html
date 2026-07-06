@@ -709,6 +709,8 @@
       composeText: "",
       pendingFlair: "shoutout",
       toast: "",
+      importedSubmissions: null,
+      importedIndividualMetrics: null,
       calendarOpen: false,
       calendarMonth: 6,
       calendarYear: 2026,
@@ -1073,16 +1075,16 @@
       { email: "dionne.f@banter.com", name: "Dionne F.", storeId: "3709", role: "Store Manager" },
       { email: "emily.m@banter.com", name: "Emily M.", storeId: "3739", role: "Store Manager" },
       { email: "gina.g@banter.com", name: "Gina G.", storeId: "3905", role: "Store Manager" },
-      { email: "cc_assoc1@banter.com", name: "Cherry Creek Associate 1", storeId: "3922", role: "Key Sales Associate" },
-      { email: "cc_assoc2@banter.com", name: "Cherry Creek Associate 2", storeId: "3922", role: "Key Sales Associate" },
-      { email: "cc_piercer@banter.com", name: "Cherry Creek Piercer", storeId: "3922", role: "Body Piercer" },
-      { email: "pm_assoc1@banter.com", name: "Park Meadows Associate 1", storeId: "3905", role: "Key Sales Associate" },
-      { email: "pm_assoc2@banter.com", name: "Park Meadows Associate 2", storeId: "3905", role: "Key Sales Associate" },
+      { email: "cc_assoc1@banter.com", name: "Jasmine Rivera", storeId: "3922", role: "Sales Associate" },
+      { email: "cc_assoc2@banter.com", name: "Marcus Chen", storeId: "3922", role: "Sales Associate" },
+      { email: "cc_piercer@banter.com", name: "Taylor Brooks", storeId: "3922", role: "Piercing Specialist" },
+      { email: "pm_assoc1@banter.com", name: "Destiny Williams", storeId: "3905", role: "Sales Associate" },
+      { email: "pm_assoc2@banter.com", name: "Ryan Kowalski", storeId: "3905", role: "Sales Associate" },
       { email: "pm_piercer@banter.com", name: "Park Meadows Piercer", storeId: "3905", role: "Body Piercer" },
-      { email: "aurora_assoc1@banter.com", name: "Aurora Associate 1", storeId: "242", role: "Key Sales Associate" },
-      { email: "aurora_assoc2@banter.com", name: "Aurora Associate 2", storeId: "242", role: "Key Sales Associate" },
-      { email: "chapel_assoc1@banter.com", name: "Chapel Hills Associate 1", storeId: "1241", role: "Key Sales Associate" },
-      { email: "chapel_assoc2@banter.com", name: "Chapel Hills Associate 2", storeId: "1241", role: "Key Sales Associate" }
+      { email: "aurora_assoc1@banter.com", name: "Sofia Reyes", storeId: "242", role: "Sales Associate" },
+      { email: "aurora_assoc2@banter.com", name: "Derek Thompson", storeId: "242", role: "Sales Associate" },
+      { email: "chapel_assoc1@banter.com", name: "Aaliyah Johnson", storeId: "1241", role: "Sales Associate" },
+      { email: "chapel_assoc2@banter.com", name: "Nathan Park", storeId: "1241", role: "Sales Associate" }
     ];
 
     const individualMetrics = [
@@ -1363,19 +1365,28 @@
     }
 
     function submissionForStore(storeId) {
+      // imported data overrides baseline for that store
+      const src = id => (state.importedSubmissions && state.importedSubmissions.find(r => r.storeId === id)) || dailySubmissions.find(r => r.storeId === id);
       if (storeId === "DISTRICT") {
-        return dailySubmissions.reduce((sum, row) => ({
+        const all = stores.map(s => src(s.id)).filter(Boolean);
+        return all.reduce((sum, row) => ({
           storeId: "DISTRICT",
-          bold: sum.bold + row.bold,
-          ep: sum.ep + row.ep,
-          esa: sum.esa + row.esa,
-          avt: Math.round((sum.bold + row.bold) / Math.max(1, sum.trans + row.trans)),
-          trans: sum.trans + row.trans,
-          po: sum.po + row.po,
-          stj: sum.stj + row.stj
+          bold: sum.bold + (row.bold || 0),
+          ep: sum.ep + (row.ep || 0),
+          esa: sum.esa + (row.esa || 0),
+          avt: Math.round((sum.bold + (row.bold || 0)) / Math.max(1, sum.trans + (row.trans || 0))),
+          trans: sum.trans + (row.trans || 0),
+          po: sum.po + (row.po || 0),
+          stj: sum.stj + (row.stj || 0)
         }), { storeId: "DISTRICT", bold: 0, ep: 0, esa: 0, avt: 0, trans: 0, po: 0, stj: 0 });
       }
-      return dailySubmissions.find(row => row.storeId === storeId) || { storeId, bold: 0, ep: 0, esa: 0, avt: 0, trans: 0, po: 0, stj: 0 };
+      return src(storeId) || { storeId, bold: 0, ep: 0, esa: 0, avt: 0, trans: 0, po: 0, stj: 0 };
+    }
+
+    function individualMetricFor(email) {
+      return (state.importedIndividualMetrics && state.importedIndividualMetrics.find(r => r.email === email))
+        || individualMetrics.find(r => r.email === email)
+        || { email, sales: 0, piercingSales: 0, esaSales: 0, piercings: 0, esaCount: 0, stjude: 0, hours: 6 };
     }
 
     function initials(name) {
@@ -1739,7 +1750,7 @@
 
           ${teamMetrics.length > 0 ? `
           <div class="neon-spacer"></div>
-          <div class="section-row"><div class="section-title">Team Roster</div><div class="post-time">${teamMetrics.length} members · ${totalTeamHours}h total</div></div>
+          <div class="section-row"><div class="section-title">Team Roster — Store #${store.id}</div><div class="post-time">${teamMetrics.length} members · ${totalTeamHours}h total</div></div>
           ${teamMetrics.map(tm => {
             const goalClr = tm.indivGoalPct >= 100 ? 'var(--lime)' : tm.indivGoalPct >= 80 ? 'var(--text)' : 'var(--red)';
             const displayRole = tm.role === 'Body Piercer' ? 'Piercing Specialist' : tm.role;
@@ -2303,31 +2314,47 @@
 
     function goalUploadSheet() {
       if (!state.goalUploadOpen) return "";
-      const user = activeUser();
-      const store = activeStore();
+      const importStatus = state.lastImportStatus || "";
       return `<div class="overlay" data-action="close-goal-upload-bg"><section class="sheet" data-stop>
-        <div class="overlay-head"><h2 class="serif" style="font-size:20px;margin:0">Upload Goal Sheet</h2><button class="close" data-action="close-goal-upload">×</button></div>
-        <div style="padding:0 4px 8px">
-          <div class="caption" style="margin-bottom:16px">Take a photo of your daily goal sheet or Plan-of-Week PDF. Numbers will be parsed automatically.</div>
-          <label style="display:block;background:var(--panel);border:2px dashed rgba(198,255,58,.3);border-radius:12px;padding:28px 16px;text-align:center;cursor:pointer;margin-bottom:14px">
-            <div style="font-size:32px;margin-bottom:8px">📋</div>
-            <div style="font-size:14px;font-weight:600;color:var(--lime)">Tap to upload</div>
-            <div class="caption" style="margin-top:4px">Photo, screenshot, or PDF</div>
-            <input type="file" accept="image/*,application/pdf" style="display:none" id="goal-sheet-upload" data-action="goal-sheet-file">
+        <div class="overlay-head"><h2 class="serif" style="font-size:20px;margin:0">Import Data</h2><button class="close" data-action="close-goal-upload">×</button></div>
+        <div style="padding:0 4px 16px">
+          <div class="caption" style="margin-bottom:12px">Upload a CSV to update store sales metrics or individual employee metrics. Data updates live across Arena and Store views.</div>
+
+          <div class="section-title" style="margin-bottom:8px">Store Metrics CSV</div>
+          <div class="caption" style="margin-bottom:10px">Columns: <code style="background:var(--panel);padding:1px 5px;border-radius:4px;font-size:11px">storeId,bold,ep,esa,avt,trans,po,stj</code></div>
+          <label style="display:block;background:var(--panel);border:2px dashed rgba(198,255,58,.3);border-radius:12px;padding:20px 16px;text-align:center;cursor:pointer;margin-bottom:14px">
+            <div style="font-size:28px;margin-bottom:6px">🏪</div>
+            <div style="font-size:13px;font-weight:600;color:var(--lime)">Upload Store CSV</div>
+            <div class="caption" style="margin-top:4px">.csv file</div>
+            <input type="file" accept=".csv,text/csv" style="display:none" id="store-metrics-upload" data-action="store-metrics-file">
           </label>
-          <div class="section-title" style="margin-bottom:10px">Or enter manually</div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
-            ${["Sales Goal","Stretch Goal","EP Goal","ESA Goal","Avg Ticket Goal","St. Jude Goal"].map((label, i) => {
-              const keys = ["manualSales","manualStretch","manualEP","manualESA","manualAVT","manualSTJ"];
-              return `<div>
-                <div style="font-size:10px;color:var(--muted);margin-bottom:4px">${label}</div>
-                <input type="number" class="dm-input" placeholder="${label}" data-goal-key="${keys[i]}" value="${state.goalOverrides?.[keys[i]] || ""}" style="width:100%;padding:8px 10px;background:var(--panel);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:var(--text);font-size:13px">
-              </div>`;
-            }).join("")}
-          </div>
-          <button class="pill-btn" style="width:100%;padding:14px;background:var(--lime);color:var(--bg);font-weight:700;font-size:14px;border:none;border-radius:12px" data-action="save-goal-overrides">Save Goals</button>
+
+          <div class="section-title" style="margin-bottom:8px">Individual Metrics CSV</div>
+          <div class="caption" style="margin-bottom:10px">Columns: <code style="background:var(--panel);padding:1px 5px;border-radius:4px;font-size:11px">email,sales,piercings,esaCount,hours,stjude</code></div>
+          <label style="display:block;background:var(--panel);border:2px dashed rgba(198,255,58,.3);border-radius:12px;padding:20px 16px;text-align:center;cursor:pointer;margin-bottom:14px">
+            <div style="font-size:28px;margin-bottom:6px">👤</div>
+            <div style="font-size:13px;font-weight:600;color:var(--lime)">Upload Employee CSV</div>
+            <div class="caption" style="margin-top:4px">.csv file</div>
+            <input type="file" accept=".csv,text/csv" style="display:none" id="individual-metrics-upload" data-action="individual-metrics-file">
+          </label>
+
+          ${importStatus ? `<div style="background:var(--panel);border-radius:10px;padding:12px;font-size:13px;color:var(--lime);margin-bottom:12px">${importStatus}</div>` : ""}
+          ${(state.importedSubmissions || state.importedIndividualMetrics) ? `
+          <button style="width:100%;padding:12px;background:rgba(229,72,77,.15);color:#e5484d;font-weight:600;font-size:13px;border:1px solid rgba(229,72,77,.3);border-radius:10px" data-action="clear-imported-data">Clear imported data</button>` : ""}
         </div>
       </section></div>`;
+    }
+
+    function parseCSV(text) {
+      const lines = text.trim().split(/\r?\n/);
+      if (lines.length < 2) return [];
+      const headers = lines[0].split(",").map(h => h.trim());
+      return lines.slice(1).map(line => {
+        const vals = line.split(",").map(v => v.trim());
+        const obj = {};
+        headers.forEach((h, i) => { obj[h] = isNaN(vals[i]) ? vals[i] : Number(vals[i]); });
+        return obj;
+      }).filter(o => Object.values(o).some(v => v !== "" && v !== undefined));
     }
 
     function nav() {
@@ -3010,12 +3037,27 @@
       }
       if (action === "open-goal-upload") setState({ goalUploadOpen: true });
       if (action === "close-goal-upload" || action === "close-goal-upload-bg") setState({ goalUploadOpen: false });
-      if (action === "save-goal-overrides") {
-        const inputs = overlayWrap.querySelectorAll("[data-goal-key]");
-        const overrides = { ...state.goalOverrides };
-        inputs.forEach(inp => { if (inp.value) overrides[inp.dataset.goalKey] = Number(inp.value); });
-        setState({ goalOverrides: overrides, goalUploadOpen: false });
-        showToast("Goals saved!");
+      if (action === "clear-imported-data") {
+        setState({ importedSubmissions: null, importedIndividualMetrics: null, lastImportStatus: "" });
+        showToast("Imported data cleared");
+      }
+      if (action === "store-metrics-file" || action === "individual-metrics-file") {
+        const input = el;
+        if (!input.files || !input.files[0]) return;
+        const file = input.files[0];
+        const reader = new FileReader();
+        reader.onload = e => {
+          const rows = parseCSV(e.target.result);
+          if (!rows.length) { showToast("Could not parse CSV — check format"); return; }
+          if (action === "store-metrics-file") {
+            setState({ importedSubmissions: rows, lastImportStatus: `✓ Store metrics updated: ${rows.length} store(s) imported` });
+            showToast(`Store metrics updated for ${rows.length} store(s)`);
+          } else {
+            setState({ importedIndividualMetrics: rows, lastImportStatus: `✓ Employee metrics updated: ${rows.length} employee(s) imported` });
+            showToast(`Employee metrics updated for ${rows.length} employee(s)`);
+          }
+        };
+        reader.readAsText(file);
       }
       if (action === "open-reports") setState({ reportsOpen: true });
       if (action === "close-reports") setState({ reportsOpen: false, newReportOpen: false });
