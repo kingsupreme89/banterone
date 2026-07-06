@@ -1192,9 +1192,9 @@
         if (!raw) return;
         const d = JSON.parse(raw);
         if (d.email) state.selectedUserEmail = d.email;
-        if (d.tab && d.tab !== "login") state.tab = d.tab;
+        // Always open to home — never restore a mid-session tab
+        if (d.email && d.tab && d.tab !== "login") state.tab = "home";
       } catch(e) {}
-      // Clear old localStorage format
       localStorage.removeItem("banterone_state");
     }
 
@@ -1225,30 +1225,30 @@
       const batch = db.batch();
       const m = (minAgo) => firebase.firestore.Timestamp.fromMillis(Date.now() - minAgo * 60 * 1000);
       [
-        // 1 — DM milestone alert (pinned)
-        { name: "Tasha Gerold", initials: "TG", authorEmail: "dm@banter.com", timestamp: m(8), flair: "news", pinned: true, text: "District hit $14,460 today — 100% of combined plan across all 11 stores. First time we've done that on a Sunday. Every single store contributed. This is what district looks like when we move as one.", reactions: { like: 18, heart: 14, laugh: 0, fire: 11, party: 9 } },
-        // 2 — Cherry Creek #1
-        { name: "Brandy A.", initials: "BA", authorEmail: "brandy.a@banter.com", timestamp: m(14), flair: "shoutout", pinned: false, text: "Cherry Creek closed at $1,780 today — 123% of plan. We had 4 ear piercings, 3 ESA attaches, and $25 toward St. Jude. Natalia carried the floor and Kimberly ran the tightest opening checklist I've seen all month. Proud of this crew.", reactions: { like: 21, heart: 16, laugh: 0, fire: 13, party: 11 } },
-        // 3 — Park Meadows chasing CC
-        { name: "Gina G.", initials: "GG", authorEmail: "gina.g@banter.com", timestamp: m(22), flair: "shoutout", pinned: false, text: "Park Meadows at $1,620 — 117% of our $1,380 plan. ESA rate hit 20% today. We're sitting at #2 in the district and coming for #1. Cherry Creek better sleep with one eye open 😤", reactions: { like: 15, heart: 9, laugh: 7, fire: 14, party: 6 } },
-        // 4 — ESA coaching from DM
-        { name: "Tasha Gerold", initials: "TG", authorEmail: "dm@banter.com", timestamp: m(41), flair: "coaching", pinned: false, text: "District ESA average is sitting at 27% today. Company expectation is 50%. Quick reminder on the pitch: ESA covers damage and breakage — not loss. Customer brings in at least 75% of the piece and we make it right. That story lands every time when you tell it at the moment of purchase, not as an afterthought.", reactions: { like: 11, heart: 5, laugh: 0, fire: 3, party: 2 } },
-        // 5 — Flatiron avg ticket
-        { name: "Evyn J.", initials: "EJ", authorEmail: "evyn.j@banter.com", timestamp: m(63), flair: "shoutout", pinned: false, text: "Flatiron avg ticket hit $152 today on 10 transactions — just $3 short of the $155 target. Team did a great job bundling piercings with earring purchases. $1,490 total, 113% of plan. We're moving in the right direction.", reactions: { like: 12, heart: 7, laugh: 0, fire: 8, party: 5 } },
-        // 6 — St. Jude district leader
-        { name: "Emily M.", initials: "EM", authorEmail: "emily.m@banter.com", timestamp: m(88), flair: "shoutout", pinned: false, text: "Coronado South leads the district in St. Jude today — $32 collected. Our goal is $10/day and we more than tripled it. Every single transaction got the ask. Team decided to make it a competition: whoever gets the last add-on of the day buys the team coffee tomorrow.", reactions: { like: 19, heart: 17, laugh: 3, fire: 10, party: 14 } },
-        // 7 — Cottonwood store record
-        { name: "Estrella M.", initials: "EM", authorEmail: "estrella.m@banter.com", timestamp: m(112), flair: "milestone", pinned: false, text: "Cottonwood just had our best Sunday of the year — $1,310 against a $1,070 plan. That's 122%. Three ear piercings, 2 ESA attaches, and the team closed back-to-back Gold transactions in the last hour. So proud of this Albuquerque crew.", reactions: { like: 16, heart: 12, laugh: 0, fire: 9, party: 8 } },
-        // 8 — Chapel Hills streak
-        { name: "Steven V.", initials: "SV", authorEmail: "steven.v@banter.com", timestamp: m(145), flair: "milestone", pinned: false, text: "Chapel Hills is now on a 4-day sales streak — hit plan every day this week. $1,240 today on a $1,100 goal. The team has been setting a daily stretch target 30% above plan and chasing it. Starting to become habit.", reactions: { like: 14, heart: 10, laugh: 0, fire: 12, party: 7 } },
-        // 9 — Aurora avg ticket improvement
-        { name: "Hannah F.", initials: "HF", authorEmail: "hannah.f@banter.com", timestamp: m(178), flair: "coaching", pinned: false, text: "Aurora avg ticket went from $138 last week to $144 today. Still below the $155 target but the trend is real. What moved it: we started asking about the occasion at the beginning of every conversation instead of jumping straight to product. Sharing this because it's working and the district should try it.", reactions: { like: 17, heart: 9, laugh: 0, fire: 6, party: 4 } },
-        // 10 — Mesa Mall comeback
-        { name: "Dionne F.", initials: "DF", authorEmail: "dionne.f@banter.com", timestamp: m(215), flair: "shoutout", pinned: false, text: "Mesa Mall bounced back today — $1,050 on a $880 plan, that's 119%. We were the smallest store by plan in the district and we still beat 4 bigger stores today. Grand Junction represents 💪 Proud of every associate who showed up and gave everything.", reactions: { like: 22, heart: 18, laugh: 0, fire: 16, party: 12 } },
-        // 11 — Piercing university update
-        { name: "Tasha Gerold", initials: "TG", authorEmail: "dm@banter.com", timestamp: m(260), flair: "news", pinned: false, text: "District piercing total for today: 27 units across 11 stores. Our combined daily goal is 44 (beats last year). That's 61% — room to grow. Reminder that Piercing University runs July 7–17. Every store should have at least one associate completing a module this week. Check the Playbook for the full schedule.", reactions: { like: 9, heart: 4, laugh: 0, fire: 3, party: 2 } },
-        // 12 — Brandy Gold rate
-        { name: "Brandy A.", initials: "BA", authorEmail: "brandy.a@banter.com", timestamp: m(310), flair: "coaching", pinned: false, text: "Quick tip from Cherry Creek: Gold rate improved when we stopped treating it as a separate conversation. We lead with the metal naturally — 'this is 10K gold, which means it holds up to daily wear' — and let the customer ask about alternatives rather than us offering them first. Gold ≥80% is the expectation. We hit 82% today.", reactions: { like: 13, heart: 8, laugh: 0, fire: 7, party: 3 } }
+        // 1 — DM district summary (pinned) — real numbers: 14710 total, 12596 plan = 117%
+        { name: "Tasha Gerold", initials: "TG", authorEmail: "dm@banter.com", timestamp: m(8), flair: "news", pinned: true, text: "District update: $14,710 across all 11 stores today against a combined plan of $12,596 — 117%. 10 of 11 stores are above plan. Santa Fe is at $980 against a $1,000 goal and the only store below. 27 ear piercings district-wide and $216 collected for St. Jude. ESA is the area to watch — district average is well below the 50% target.", reactions: { like: 14, heart: 9, laugh: 0, fire: 8, party: 6 } },
+        // 2 — Cherry Creek real numbers: 1780, plan 1446 = 123%, 4 EP, 3 ESA, 25 STJ, avt 165, 11 trans
+        { name: "Brandy A.", initials: "BA", authorEmail: "brandy.a@banter.com", timestamp: m(15), flair: "shoutout", pinned: false, text: "Cherry Creek: $1,780 today on a $1,446 plan — 123%. 4 ear piercings, 3 ESA attaches on 11 transactions (27% attach rate), avg ticket $165, $25 to St. Jude. Kimberly and the team had a strong floor day.", reactions: { like: 18, heart: 13, laugh: 0, fire: 11, party: 9 } },
+        // 3 — Park Meadows: 1620, plan 1380 = 117%, 3 EP, 2 ESA, 22 STJ, avt 158, 10 trans
+        { name: "Gina G.", initials: "GG", authorEmail: "gina.g@banter.com", timestamp: m(28), flair: "shoutout", pinned: false, text: "Park Meadows at $1,620 — 117% of our $1,380 plan. 3 ear piercings, avg ticket $158, $22 to St. Jude. Sitting at #2 in the district today behind Cherry Creek.", reactions: { like: 12, heart: 8, laugh: 0, fire: 9, party: 5 } },
+        // 4 — Coronado South: 1420, plan 1040 = 137%, 2 EP, 3 ESA, 32 STJ — St. Jude leader
+        { name: "Emily M.", initials: "EM", authorEmail: "emily.m@banter.com", timestamp: m(45), flair: "shoutout", pinned: false, text: "Coronado South at $1,420 — 137% of our $1,040 plan. Also leading the district in St. Jude today at $32. 3 ESA attaches on 9 transactions and 2 ear piercings.", reactions: { like: 16, heart: 14, laugh: 0, fire: 10, party: 8 } },
+        // 5 — ESA coaching from DM — real district ESA data
+        { name: "Tasha Gerold", initials: "TG", authorEmail: "dm@banter.com", timestamp: m(60), flair: "coaching", pinned: false, text: "ESA reminder for the district: most stores are running 20–27% attach rate today. Company expectation is 50%. ESA covers damage and breakage only — not loss. Customer returns at least 75% of the piece and we make it right. That's the story. Tell it at point of sale, not as an afterthought.", reactions: { like: 10, heart: 5, laugh: 0, fire: 4, party: 2 } },
+        // 6 — Flatiron: 1490, plan 1320 = 113%, 3 EP, 2 ESA, avt 152
+        { name: "Evyn J.", initials: "EJ", authorEmail: "evyn.j@banter.com", timestamp: m(80), flair: "shoutout", pinned: false, text: "Flatiron: $1,490 on a $1,320 plan — 113%. Avg ticket at $152, 3 ear piercings, 10 transactions. $18 to St. Jude.", reactions: { like: 11, heart: 7, laugh: 0, fire: 6, party: 4 } },
+        // 7 — Cottonwood: 1310, plan 1070 = 122%, 3 EP, 2 ESA, avt 146
+        { name: "Estrella M.", initials: "EM2", authorEmail: "estrella.m@banter.com", timestamp: m(100), flair: "shoutout", pinned: false, text: "Cottonwood at $1,310 — 122% of our $1,070 plan. 3 ear piercings, avg ticket $146, $20 to St. Jude. Strong day for Albuquerque.", reactions: { like: 13, heart: 9, laugh: 0, fire: 7, party: 5 } },
+        // 8 — Mesa Mall: 1050, plan 880 = 119%, 2 EP, 1 ESA, avt 135
+        { name: "Dionne F.", initials: "DF", authorEmail: "dionne.f@banter.com", timestamp: m(125), flair: "shoutout", pinned: false, text: "Mesa Mall: $1,050 on an $880 plan — 119%. 2 ear piercings, avg ticket $135, $22 to St. Jude. Grand Junction showing up today.", reactions: { like: 15, heart: 11, laugh: 0, fire: 10, party: 7 } },
+        // 9 — Aurora: 1380, plan 1190 = 116%, avt 144 below 155 target
+        { name: "Hannah F.", initials: "HF", authorEmail: "hannah.f@banter.com", timestamp: m(150), flair: "update", pinned: false, text: "Aurora at $1,380 — 116% of plan. Avg ticket is $144 today, working toward the $155 target. 2 ear piercings, 10 transactions, $18 to St. Jude.", reactions: { like: 10, heart: 6, laugh: 0, fire: 5, party: 3 } },
+        // 10 — Chapel Hills: 1240, plan 1100 = 113%, 2 EP, 1 ESA only — ESA low
+        { name: "Steven V.", initials: "SV", authorEmail: "steven.v@banter.com", timestamp: m(180), flair: "update", pinned: false, text: "Chapel Hills at $1,240 — 113% of our $1,100 plan. 2 ear piercings, avg ticket $138, $15 to St. Jude. ESA is 1 attach on 9 transactions today — that's the focus area for the rest of the week.", reactions: { like: 8, heart: 5, laugh: 0, fire: 3, party: 2 } },
+        // 11 — Santa Fe: 980, plan 1000 = 98% — only store below plan
+        { name: "Trinity B.", initials: "TB", authorEmail: "trinity.b@banter.com", timestamp: m(210), flair: "update", pinned: false, text: "Santa Fe at $980 against a $1,000 plan — 98%, the only store in the district below goal today. 1 ear piercing, avg ticket $140, $12 to St. Jude. Working to close the gap before end of day.", reactions: { like: 7, heart: 6, laugh: 0, fire: 2, party: 1 } },
+        // 12 — Piercing University reminder from DM — real: runs July 7-17 per calendar
+        { name: "Tasha Gerold", initials: "TG", authorEmail: "dm@banter.com", timestamp: m(260), flair: "news", pinned: false, text: "Piercing University runs July 7–17. District total today is 27 ear piercings across 11 stores. Each store's daily EP goal must beat last year. Make sure piercing conversations are happening on every visit. Details in the Playbook.", reactions: { like: 8, heart: 4, laugh: 0, fire: 3, party: 2 } }
       ].forEach(p => batch.set(db.collection("feed").doc(), p));
       batch.commit().catch(console.error);
     }
@@ -1468,7 +1468,9 @@
             ${topCluster()}
           </div>
           <div class="card store-card" style="position:relative;display:flex;align-items:center;gap:12px">
-            <div style="width:54px;height:54px;border-radius:12px;background:linear-gradient(135deg,rgba(198,255,58,.15),rgba(198,255,58,.04));border:1px solid rgba(198,255,58,.2);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0">🏪</div>
+            <button data-action="tab" data-tab="buddy" aria-label="Go to Buddy" style="width:54px;height:54px;border-radius:12px;overflow:hidden;border:2px solid rgba(198,255,58,.3);background:var(--panel);flex-shrink:0;padding:0;cursor:pointer">
+              ${state.userPhoto ? `<img src="${state.userPhoto}" style="width:100%;height:100%;object-fit:cover">` : `<div style="width:100%;height:100%;display:grid;place-items:center;font-size:20px;font-weight:800;color:var(--lime)">${initials(user.name)}</div>`}
+            </button>
             <div style="flex:1;min-width:0">
               <div class="eyebrow">${store.id === "DISTRICT" ? "District" : `Store ${store.id}`}</div>
               <div class="serif store-title">${store.name}</div>
@@ -1481,7 +1483,7 @@
             ${kpi("District Today", money(districtActual), `of ${money(districtPlan)} · ${districtPct}%`, true, "go-arena")}
             ${kpi("Store Today", money(submission.bold), `of ${money(store.dailyPlan)} · ${storePct}%`, false, "go-store")}
             ${kpi("MTD", money(submission.bold * 2), `vs ${money(store.dailyPlan * 2)} pace`, false, "go-store")}
-            ${kpi("District Rank", rankText, store.id === "DISTRICT" ? "all stores" : "of 11 stores", true, "go-arena")}
+            ${kpi("District Rank", rankText, store.id === "DISTRICT" ? "all stores" : "of 11 stores", true, "go-arena-map")}
           </div>
           ${(activeUser().storeId === "DISTRICT" || activeUser().role === "Store Manager" || activeUser().role === "Assistant Manager") ? (() => {
             const sub = submissionForStore(activeStore().id);
@@ -2108,7 +2110,15 @@
     }
 
     function buildIndividualBoard(metric) {
-      return individualMetrics.map(row => {
+      const viewer = activeUser();
+      const isDM = viewer.storeId === "DISTRICT";
+      const isManager = isDM || viewer.role === "Store Manager" || viewer.role === "Assistant Manager";
+      const visibleEmails = isDM
+        ? individualMetrics.map(r => r.email)
+        : isManager
+          ? individualMetrics.filter(r => { const u = users.find(p => p.email === r.email); return u && u.storeId === viewer.storeId; }).map(r => r.email)
+          : [viewer.email];
+      return individualMetrics.filter(r => visibleEmails.includes(r.email)).map(row => {
         const u = users.find(person => person.email === row.email) || {};
         const store = stores.find(s => s.id === u.storeId) || {};
         const totalHours = individualMetrics.filter(m => {
@@ -2982,7 +2992,8 @@
         state.inAppBanner = null; render();
       }
       if (action === "go-store") setState({ tab: "store" });
-      if (action === "go-arena") setState({ tab: "arena" });
+      if (action === "go-arena") setState({ tab: "arena", mapView: false });
+      if (action === "go-arena-map") setState({ tab: "arena", mapView: true });
       if (action === "open-post-menu") setState({ postMenuId: el.dataset.id });
       if (action === "close-post-menu" || action === "close-post-menu-bg") setState({ postMenuId: null });
       if (action === "delete-post") {
