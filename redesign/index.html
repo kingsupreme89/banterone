@@ -1053,97 +1053,201 @@
       { id: "3905", name: "Park Meadows", manager: "Gina G.", city: "Littleton", state: "CO", mall: "Park Meadows", phone: "(234) 206-3202", dailyPlan: 1380, monthlyPlan: 42780, lyDailyPlan: 1310, lyEP: 3, mascot: "Meadow Fox", streak: 7 }
     ];
 
+    // Daily data from Banter Standards Store Summary Report — Business Date 7/5/26
     const dailySubmissions = [
-      { storeId: "3922", bold: 1780, ep: 4, esa: 3, avt: 165, trans: 11, po: 2, stj: 25 },
-      { storeId: "3905", bold: 1620, ep: 3, esa: 2, avt: 158, trans: 10, po: 2, stj: 22 },
-      { storeId: "242", bold: 1380, ep: 2, esa: 2, avt: 144, trans: 10, po: 1, stj: 18 },
-      { storeId: "1241", bold: 1240, ep: 2, esa: 1, avt: 138, trans: 9, po: 1, stj: 15 },
-      { storeId: "907", bold: 1310, ep: 3, esa: 2, avt: 146, trans: 9, po: 2, stj: 20 },
-      { storeId: "3739", bold: 1420, ep: 2, esa: 3, avt: 158, trans: 9, po: 2, stj: 32 },
-      { storeId: "2595", bold: 1490, ep: 3, esa: 2, avt: 152, trans: 10, po: 2, stj: 18 },
-      { storeId: "1332", bold: 1180, ep: 2, esa: 1, avt: 142, trans: 8, po: 1, stj: 14 },
-      { storeId: "1026", bold: 1260, ep: 2, esa: 2, avt: 145, trans: 9, po: 2, stj: 16 },
-      { storeId: "3709", bold: 1050, ep: 2, esa: 1, avt: 135, trans: 8, po: 1, stj: 22 },
-      { storeId: "123", bold: 980, ep: 1, esa: 1, avt: 140, trans: 7, po: 1, stj: 12 }
+      { storeId: "907",  bold: 1919, ep: 203, esa: 0, avt: 320, trans: 6,  po: 0, stj: 0 },
+      { storeId: "1026", bold: 2664, ep: 65,  esa: 0, avt: 444, trans: 6,  po: 0, stj: 0 },
+      { storeId: "1332", bold: 3011, ep: 270, esa: 0, avt: 335, trans: 9,  po: 0, stj: 0 },
+      { storeId: "123",  bold: 2418, ep: 285, esa: 0, avt: 242, trans: 10, po: 0, stj: 0 },
+      { storeId: "1241", bold: 1008, ep: 0,   esa: 0, avt: 101, trans: 10, po: 0, stj: 0 },
+      { storeId: "2595", bold: 1692, ep: 265, esa: 0, avt: 113, trans: 15, po: 0, stj: 0 },
+      { storeId: "3922", bold: 1017, ep: 65,  esa: 0, avt: 102, trans: 10, po: 0, stj: 0 },
+      { storeId: "3905", bold: 974,  ep: 105, esa: 0, avt: 81,  trans: 12, po: 0, stj: 0 },
+      { storeId: "3739", bold: 1196, ep: 100, esa: 0, avt: 299, trans: 4,  po: 0, stj: 0 },
+      { storeId: "3709", bold: 306,  ep: 93,  esa: 0, avt: 61,  trans: 5,  po: 0, stj: 0 },
+      { storeId: "242",  bold: 0,    ep: 0,   esa: 0, avt: 0,   trans: 0,  po: 0, stj: 0 }
     ];
 
     const users = [
+      // District
       { email: "dm@banter.com", name: "Tasha Gerold", storeId: "DISTRICT", role: "District Manager" },
-      { email: "brandy.a@banter.com", name: "Brandy A.", storeId: "3922", role: "Store Manager", employeeNumber: "3922-001" },
-      { email: "kimberly.t@banter.com", name: "Kimberly Toledo", storeId: "3922", role: "Assistant Manager", employeeNumber: "3922-002" },
-      { email: "trinity.b@banter.com", name: "Trinity B.", storeId: "123", role: "Store Manager" },
-      { email: "hannah.f@banter.com", name: "Hannah F.", storeId: "242", role: "Store Manager" },
-      { email: "estrella.m@banter.com", name: "Estrella M.", storeId: "907", role: "Store Manager" },
-      { email: "claudia.g@banter.com", name: "Claudia G.", storeId: "1026", role: "Store Manager" },
-      { email: "steven.v@banter.com", name: "Steven V.", storeId: "1241", role: "Store Manager" },
-      { email: "marlena.r@banter.com", name: "Marlena R.", storeId: "1332", role: "Store Manager" },
-      { email: "evyn.j@banter.com", name: "Evyn J.", storeId: "2595", role: "Store Manager" },
-      { email: "dionne.f@banter.com", name: "Dionne F.", storeId: "3709", role: "Store Manager" },
-      { email: "emily.m@banter.com", name: "Emily M.", storeId: "3739", role: "Store Manager" },
-      { email: "gina.g@banter.com", name: "Gina G.", storeId: "3905", role: "Store Manager" },
-      { email: "carolina@banter.com", name: "Carolina", storeId: "3922", role: "Sales Associate", employeeNumber: "3922-003" },
-      { email: "cali@banter.com", name: "Cali", storeId: "3922", role: "Sales Associate", employeeNumber: "3922-004" },
-      { email: "pm_assoc1@banter.com", name: "Destiny Williams", storeId: "3905", role: "Sales Associate", employeeNumber: "3905-003" },
-      { email: "pm_assoc2@banter.com", name: "Ryan Kowalski", storeId: "3905", role: "Sales Associate", employeeNumber: "3905-004" },
-      { email: "pm_piercer@banter.com", name: "Park Meadows Piercer", storeId: "3905", role: "Piercing Specialist", employeeNumber: "3905-005" },
-      { email: "aurora_assoc1@banter.com", name: "Sofia Reyes", storeId: "242", role: "Sales Associate", employeeNumber: "242-003" },
-      { email: "aurora_assoc2@banter.com", name: "Derek Thompson", storeId: "242", role: "Sales Associate", employeeNumber: "242-004" },
-      { email: "chapel_assoc1@banter.com", name: "Aaliyah Johnson", storeId: "1241", role: "Sales Associate", employeeNumber: "1241-003" },
-      { email: "chapel_assoc2@banter.com", name: "Nathan Park", storeId: "1241", role: "Sales Associate", employeeNumber: "1241-004" },
-      { email: "santafe_assoc1@banter.com", name: "Marisol Chavez", storeId: "123", role: "Sales Associate", employeeNumber: "123-002" },
-      { email: "santafe_assoc2@banter.com", name: "Diego Romero", storeId: "123", role: "Sales Associate", employeeNumber: "123-003" },
-      { email: "cottonwood_assoc1@banter.com", name: "Priya Nair", storeId: "907", role: "Sales Associate", employeeNumber: "907-002" },
-      { email: "cottonwood_assoc2@banter.com", name: "Jordan Castillo", storeId: "907", role: "Sales Associate", employeeNumber: "907-003" },
-      { email: "cottonwood_piercer@banter.com", name: "Alex Duran", storeId: "907", role: "Piercing Specialist", employeeNumber: "907-004" },
-      { email: "bassett_assoc1@banter.com", name: "Monique Bell", storeId: "1026", role: "Sales Associate", employeeNumber: "1026-002" },
-      { email: "bassett_assoc2@banter.com", name: "Travis Nguyen", storeId: "1026", role: "Sales Associate", employeeNumber: "1026-003" },
-      { email: "southlands_assoc1@banter.com", name: "Keisha Monroe", storeId: "1332", role: "Sales Associate", employeeNumber: "1332-002" },
-      { email: "southlands_assoc2@banter.com", name: "Eric Sandoval", storeId: "1332", role: "Sales Associate", employeeNumber: "1332-003" },
-      { email: "flatiron_assoc1@banter.com", name: "Brianna Walsh", storeId: "2595", role: "Sales Associate", employeeNumber: "2595-002" },
-      { email: "flatiron_assoc2@banter.com", name: "Marcus Webb", storeId: "2595", role: "Sales Associate", employeeNumber: "2595-003" },
-      { email: "coronado_assoc1@banter.com", name: "Vanessa Torres", storeId: "3739", role: "Sales Associate", employeeNumber: "3739-002" },
-      { email: "coronado_assoc2@banter.com", name: "Isaiah Grant", storeId: "3739", role: "Sales Associate", employeeNumber: "3739-003" },
-      { email: "mesa_assoc1@banter.com", name: "Amber Rios", storeId: "3709", role: "Sales Associate", employeeNumber: "3709-002" },
-      { email: "mesa_assoc2@banter.com", name: "Caleb Stone", storeId: "3709", role: "Sales Associate", employeeNumber: "3709-003" }
+      // Store 3922 - Cherry Creek
+      { email: "brandy.a@banter.com",         name: "Brandy Arguello",         storeId: "3922", role: "Store Manager",      employeeNumber: "13617876" },
+      { email: "kimberly.t@banter.com",        name: "Kimberly Toledo",          storeId: "3922", role: "Assistant Manager",  employeeNumber: "13619302" },
+      { email: "carolina.rodriguez@banter.com",name: "Carolina Rodriguez",       storeId: "3922", role: "Sales Associate",    employeeNumber: "13630705" },
+      { email: "cali.willis@banter.com",       name: "Cali Willis",              storeId: "3922", role: "Sales Associate",    employeeNumber: "13632038" },
+      // Store 907 - Cottonwood
+      { email: "estrella.m@banter.com",        name: "Estrella Montano",         storeId: "907",  role: "Store Manager",      employeeNumber: "13623535" },
+      { email: "ahtziri.rodriguez@banter.com", name: "Ahtziri Rodriguez",        storeId: "907",  role: "Sales Associate",    employeeNumber: "13630623" },
+      { email: "brianna.sutton@banter.com",    name: "Brianna Sutton",           storeId: "907",  role: "Sales Associate",    employeeNumber: "13626691" },
+      { email: "victoria.chavez@banter.com",   name: "Victoria Chavez Duarte",   storeId: "907",  role: "Sales Associate",    employeeNumber: "13634312" },
+      { email: "leyamae.palomino@banter.com",  name: "Leya-mae Palomino",        storeId: "907",  role: "Sales Associate",    employeeNumber: "13629986" },
+      // Store 1026 - Bassett Creek
+      { email: "claudia.g@banter.com",         name: "Claudia Garcia",           storeId: "1026", role: "Store Manager",      employeeNumber: "13612006" },
+      { email: "elisabeth.free@banter.com",    name: "Elisabeth Free",           storeId: "1026", role: "Sales Associate",    employeeNumber: "13609109" },
+      { email: "christina.harps@banter.com",   name: "Christina Harps",          storeId: "1026", role: "Sales Associate",    employeeNumber: "13629582" },
+      { email: "ashley.botello@banter.com",    name: "Ashley Botello",           storeId: "1026", role: "Sales Associate",    employeeNumber: "13612918" },
+      { email: "katiana.santos@banter.com",    name: "Katiana Santos",           storeId: "1026", role: "Sales Associate",    employeeNumber: "13626173" },
+      { email: "christina.johnson@banter.com", name: "Christina Johnson",        storeId: "1026", role: "Sales Associate",    employeeNumber: "13634046" },
+      { email: "annabelle.taylor@banter.com",  name: "Annabelle Taylor",         storeId: "1026", role: "Sales Associate",    employeeNumber: "13605206" },
+      { email: "casandra.desir@banter.com",    name: "Casandra Desir",           storeId: "1026", role: "Sales Associate",    employeeNumber: "13632725" },
+      // Store 1332 - Southlands
+      { email: "marlena.r@banter.com",         name: "Marlena Rodriguez",        storeId: "1332", role: "Store Manager",      employeeNumber: "13569617" },
+      { email: "kiona.keith@banter.com",       name: "Kiona Keith",              storeId: "1332", role: "Sales Associate",    employeeNumber: "13616292" },
+      { email: "naomi.marquez@banter.com",     name: "Naomi Marquez",            storeId: "1332", role: "Sales Associate",    employeeNumber: "13587727" },
+      { email: "isabella.lesher@banter.com",   name: "Isabella Lesher",          storeId: "1332", role: "Sales Associate",    employeeNumber: "13634282" },
+      { email: "ximena.ahuja@banter.com",      name: "Ximena Ahuja",             storeId: "1332", role: "Sales Associate",    employeeNumber: "13605416" },
+      { email: "faith.valentina@banter.com",   name: "Faith Valentina",          storeId: "1332", role: "Sales Associate",    employeeNumber: "13633826" },
+      // Store 123 - Santa Fe Place
+      { email: "trinity.b@banter.com",         name: "Trinity Estrada-Parra",    storeId: "123",  role: "Store Manager",      employeeNumber: "13627121" },
+      { email: "tanya.lucero@banter.com",      name: "Tanya Lucero",             storeId: "123",  role: "Sales Associate",    employeeNumber: "13634113" },
+      { email: "trescelle.rodriguez@banter.com",name:"Trescelle Rodriguez",      storeId: "123",  role: "Sales Associate",    employeeNumber: "13632327" },
+      { email: "yahzmin.ortega@banter.com",    name: "Yahzmin Ortega",           storeId: "123",  role: "Sales Associate",    employeeNumber: "13627604" },
+      { email: "aron.neely@banter.com",        name: "Aron Neely",               storeId: "123",  role: "Sales Associate",    employeeNumber: "13597188" },
+      // Store 1241 - Chapel Hills
+      { email: "steven.v@banter.com",          name: "Steven Vasquez",           storeId: "1241", role: "Store Manager",      employeeNumber: "13612560" },
+      { email: "leuree.martinez@banter.com",   name: "Leuree Martinez",          storeId: "1241", role: "Sales Associate",    employeeNumber: "13626803" },
+      { email: "karalynn.stevens@banter.com",  name: "Karalynn Stevens",         storeId: "1241", role: "Sales Associate",    employeeNumber: "13633099" },
+      { email: "marilynn.vasquez@banter.com",  name: "Marilynn Vasquez",         storeId: "1241", role: "Sales Associate",    employeeNumber: "13625073" },
+      { email: "miles.thornbery@banter.com",   name: "Miles Thornbery",          storeId: "1241", role: "Sales Associate",    employeeNumber: "13634820" },
+      { email: "katelyn.kirkby@banter.com",    name: "Katelyn Kirkby",           storeId: "1241", role: "Sales Associate",    employeeNumber: "13628975" },
+      // Store 2595 - FlatIron
+      { email: "leigh.jones@banter.com",       name: "Leigh Jones",              storeId: "2595", role: "Store Manager",      employeeNumber: "13632788" },
+      { email: "carmen.espinoza@banter.com",   name: "Carmen Espinoza",          storeId: "2595", role: "Sales Associate",    employeeNumber: "13629547" },
+      { email: "izabella.gomez@banter.com",    name: "Izabella Gomez",           storeId: "2595", role: "Sales Associate",    employeeNumber: "13634551" },
+      { email: "justine.sierra@banter.com",    name: "Justine Sierra",           storeId: "2595", role: "Sales Associate",    employeeNumber: "13628551" },
+      { email: "sara.leighton@banter.com",     name: "Sara Leighton",            storeId: "2595", role: "Sales Associate",    employeeNumber: "13628960" },
+      { email: "lily.kassen@banter.com",       name: "Lily Kassen",              storeId: "2595", role: "Sales Associate",    employeeNumber: "13631073" },
+      { email: "spencer.barrineau@banter.com", name: "Spencer Barrineau",        storeId: "2595", role: "Sales Associate",    employeeNumber: "13628027" },
+      { email: "erika.david@banter.com",       name: "Erika David",              storeId: "2595", role: "Sales Associate",    employeeNumber: "13635123" },
+      // Store 3739 - Coronado Center
+      { email: "emily.m@banter.com",           name: "Emily Mindes",             storeId: "3739", role: "Store Manager",      employeeNumber: "13618459" },
+      { email: "jared.blalock@banter.com",     name: "Jared Blalock",            storeId: "3739", role: "Sales Associate",    employeeNumber: "13609773" },
+      { email: "mollie.grubbs@banter.com",     name: "Mollie Grubbs",            storeId: "3739", role: "Sales Associate",    employeeNumber: "13601478" },
+      { email: "victoria.castro@banter.com",   name: "Victoria Castro Castañeda",storeId: "3739", role: "Sales Associate",    employeeNumber: "13626312" },
+      { email: "vivian.lopez@banter.com",      name: "Vivian Lopez-Cortina",     storeId: "3739", role: "Sales Associate",    employeeNumber: "13631893" },
+      { email: "ysareli.pardo@banter.com",     name: "Ysareli Pardo",            storeId: "3739", role: "Sales Associate",    employeeNumber: "13629273" },
+      { email: "kosi.mbelu@banter.com",        name: "Kosisochukwu Mbelu",       storeId: "3739", role: "Sales Associate",    employeeNumber: "13634197" },
+      { email: "cruz.padilla@banter.com",      name: "Cruz Padilla",             storeId: "3739", role: "Sales Associate",    employeeNumber: "13633512" },
+      { email: "lori.lelugas@banter.com",      name: "Lori Lelugas",             storeId: "3739", role: "Sales Associate",    employeeNumber: "13635044" },
+      // Store 3905 - Park Meadows
+      { email: "gina.g@banter.com",            name: "Gina Gutierrez",           storeId: "3905", role: "Store Manager",      employeeNumber: "13575895" },
+      { email: "rebecca.johnson@banter.com",   name: "Rebecca Johnson",          storeId: "3905", role: "Sales Associate",    employeeNumber: "13613219" },
+      { email: "lauren.brown@banter.com",      name: "Lauren Brown",             storeId: "3905", role: "Sales Associate",    employeeNumber: "13620641" },
+      { email: "jada.king@banter.com",         name: "Jada King",                storeId: "3905", role: "Sales Associate",    employeeNumber: "13633527" },
+      { email: "edwin.benitez@banter.com",     name: "Edwin Benitez",            storeId: "3905", role: "Sales Associate",    employeeNumber: "13633726" },
+      { email: "miles.armstrong@banter.com",   name: "Miles Armstrong",          storeId: "3905", role: "Sales Associate",    employeeNumber: "13629102" },
+      { email: "dana.fakhro@banter.com",       name: "Dana Fakhro",              storeId: "3905", role: "Sales Associate",    employeeNumber: "13635100" },
+      // Store 3709 - Mesa del Sol
+      { email: "kylie.malone@banter.com",      name: "Kylie Malone",             storeId: "3709", role: "Store Manager",      employeeNumber: "13615804" },
+      { email: "tatum.bassett@banter.com",     name: "Tatum Bassett",            storeId: "3709", role: "Sales Associate",    employeeNumber: "13629736" },
+      { email: "martin.france@banter.com",     name: "Martin France",            storeId: "3709", role: "Sales Associate",    employeeNumber: "13615890" },
+      { email: "alison.hebein@banter.com",     name: "Alison Hebein",            storeId: "3709", role: "Sales Associate",    employeeNumber: "13631042" },
+      { email: "dionne.f@banter.com",          name: "Dionne Franson",           storeId: "3709", role: "Sales Associate",    employeeNumber: "13620839" },
+      { email: "alyana.ibarra@banter.com",     name: "Alyana Ibarra",            storeId: "3709", role: "Sales Associate",    employeeNumber: "13635001" },
+      { email: "ashley.s@banter.com",          name: "Ashley Satterwhite",       storeId: "3709", role: "Sales Associate",    employeeNumber: "13634901" },
+      // Store 242 - Aurora Mall
+      { email: "hannah.f@banter.com",          name: "Hannah Fultz",             storeId: "242",  role: "Store Manager",      employeeNumber: "13617295" },
+      { email: "jhordan.clark@banter.com",     name: "Jhordan Clark",            storeId: "242",  role: "Sales Associate",    employeeNumber: "13625946" },
+      { email: "rossel.amaya@banter.com",      name: "Rossel Amaya",             storeId: "242",  role: "Sales Associate",    employeeNumber: "13620127" },
+      { email: "kobe.garcia@banter.com",       name: "Kobe Garcia",              storeId: "242",  role: "Sales Associate",    employeeNumber: "13605785" },
+      { email: "danyale.taylor@banter.com",    name: "DanYale Taylor",           storeId: "242",  role: "Sales Associate",    employeeNumber: "13609018" },
+      { email: "alyssa.vanegas@banter.com",    name: "Alyssa Vanegas",           storeId: "242",  role: "Sales Associate",    employeeNumber: "13629684" },
+      { email: "jei.woods@banter.com",         name: "Jei Woods",                storeId: "242",  role: "Sales Associate",    employeeNumber: "13610254" },
+      { email: "luis.guzman@banter.com",       name: "Luis Guzman",              storeId: "242",  role: "Sales Associate",    employeeNumber: "13628379" },
+      { email: "gabriela.miranda@banter.com",  name: "Gabriela Miranda",         storeId: "242",  role: "Sales Associate",    employeeNumber: "13630452" },
+      { email: "bijou.mbenga@banter.com",      name: "Bijou Mbenga",             storeId: "242",  role: "Sales Associate",    employeeNumber: "13635205" }
     ];
 
+    // PTD = Period-to-date (current month), QTD = Quarter-to-date, YTD = Year-to-date
+    // Data sourced from Banter Standards Employee Summary Report — Business Date 7/5/26
     const individualMetrics = [
-      { email: "carolina@banter.com", sales: 1250, piercingSales: 120, esaSales: 180, piercings: 3, esaCount: 2, stjude: 18, hours: 6.5 },
-      { email: "cali@banter.com", sales: 890, piercingSales: 60, esaSales: 120, piercings: 2, esaCount: 1, stjude: 10, hours: 5 },
-      { email: "brandy.a@banter.com", sales: 1620, piercingSales: 90, esaSales: 240, piercings: 2, esaCount: 3, stjude: 25, hours: 8 },
-      { email: "kimberly.t@banter.com", sales: 1420, piercingSales: 75, esaSales: 210, piercings: 2, esaCount: 2, stjude: 20, hours: 6 },
-      { email: "pm_assoc1@banter.com", sales: 1050, piercingSales: 90, esaSales: 150, piercings: 2, esaCount: 2, stjude: 15, hours: 6 },
-      { email: "pm_assoc2@banter.com", sales: 720, piercingSales: 45, esaSales: 100, piercings: 1, esaCount: 1, stjude: 8, hours: 4 },
-      { email: "pm_piercer@banter.com", sales: 0, piercingSales: 360, esaSales: 0, piercings: 9, esaCount: 0, stjude: 12, hours: 6 },
-      { email: "gina.g@banter.com", sales: 1480, piercingSales: 60, esaSales: 200, piercings: 1, esaCount: 2, stjude: 22, hours: 8 },
-      { email: "aurora_assoc1@banter.com", sales: 980, piercingSales: 60, esaSales: 140, piercings: 2, esaCount: 1, stjude: 14, hours: 6 },
-      { email: "aurora_assoc2@banter.com", sales: 650, piercingSales: 30, esaSales: 80, piercings: 1, esaCount: 1, stjude: 8, hours: 4 },
-      { email: "hannah.f@banter.com", sales: 1350, piercingSales: 45, esaSales: 180, piercings: 1, esaCount: 2, stjude: 18, hours: 8 },
-      { email: "chapel_assoc1@banter.com", sales: 860, piercingSales: 45, esaSales: 120, piercings: 1, esaCount: 1, stjude: 12, hours: 6 },
-      { email: "chapel_assoc2@banter.com", sales: 540, piercingSales: 0, esaSales: 60, piercings: 0, esaCount: 1, stjude: 6, hours: 5 },
-      { email: "steven.v@banter.com", sales: 1180, piercingSales: 30, esaSales: 150, piercings: 1, esaCount: 1, stjude: 16, hours: 8 },
-      { email: "trinity.b@banter.com", sales: 1320, piercingSales: 80, esaSales: 190, piercings: 2, esaCount: 2, stjude: 14, hours: 8 },
-      { email: "santafe_assoc1@banter.com", sales: 940, piercingSales: 55, esaSales: 130, piercings: 1, esaCount: 1, stjude: 10, hours: 6 },
-      { email: "santafe_assoc2@banter.com", sales: 680, piercingSales: 30, esaSales: 90, piercings: 1, esaCount: 1, stjude: 7, hours: 5 },
-      { email: "estrella.m@banter.com", sales: 1580, piercingSales: 95, esaSales: 220, piercings: 2, esaCount: 3, stjude: 20, hours: 8 },
-      { email: "cottonwood_assoc1@banter.com", sales: 1100, piercingSales: 70, esaSales: 160, piercings: 2, esaCount: 2, stjude: 13, hours: 6 },
-      { email: "cottonwood_assoc2@banter.com", sales: 780, piercingSales: 40, esaSales: 100, piercings: 1, esaCount: 1, stjude: 9, hours: 5 },
-      { email: "cottonwood_piercer@banter.com", sales: 0, piercingSales: 520, esaSales: 0, piercings: 13, esaCount: 0, stjude: 10, hours: 7 },
-      { email: "claudia.g@banter.com", sales: 1440, piercingSales: 60, esaSales: 200, piercings: 1, esaCount: 2, stjude: 18, hours: 8 },
-      { email: "bassett_assoc1@banter.com", sales: 1080, piercingSales: 50, esaSales: 150, piercings: 1, esaCount: 2, stjude: 12, hours: 6 },
-      { email: "bassett_assoc2@banter.com", sales: 760, piercingSales: 35, esaSales: 100, piercings: 1, esaCount: 1, stjude: 8, hours: 5 },
-      { email: "marlena.r@banter.com", sales: 1560, piercingSales: 85, esaSales: 230, piercings: 2, esaCount: 3, stjude: 22, hours: 8 },
-      { email: "southlands_assoc1@banter.com", sales: 1020, piercingSales: 60, esaSales: 140, piercings: 1, esaCount: 2, stjude: 11, hours: 6 },
-      { email: "southlands_assoc2@banter.com", sales: 700, piercingSales: 40, esaSales: 95, piercings: 1, esaCount: 1, stjude: 8, hours: 5 },
-      { email: "evyn.j@banter.com", sales: 1380, piercingSales: 70, esaSales: 195, piercings: 2, esaCount: 2, stjude: 19, hours: 8 },
-      { email: "flatiron_assoc1@banter.com", sales: 950, piercingSales: 55, esaSales: 130, piercings: 1, esaCount: 1, stjude: 11, hours: 6 },
-      { email: "flatiron_assoc2@banter.com", sales: 660, piercingSales: 30, esaSales: 85, piercings: 1, esaCount: 1, stjude: 7, hours: 4 },
-      { email: "emily.m@banter.com", sales: 1490, piercingSales: 75, esaSales: 210, piercings: 2, esaCount: 2, stjude: 21, hours: 8 },
-      { email: "coronado_assoc1@banter.com", sales: 1010, piercingSales: 50, esaSales: 145, piercings: 1, esaCount: 2, stjude: 12, hours: 6 },
-      { email: "coronado_assoc2@banter.com", sales: 690, piercingSales: 35, esaSales: 90, piercings: 1, esaCount: 1, stjude: 8, hours: 5 },
-      { email: "dionne.f@banter.com", sales: 1200, piercingSales: 50, esaSales: 160, piercings: 1, esaCount: 2, stjude: 15, hours: 8 },
-      { email: "mesa_assoc1@banter.com", sales: 820, piercingSales: 40, esaSales: 110, piercings: 1, esaCount: 1, stjude: 9, hours: 6 },
-      { email: "mesa_assoc2@banter.com", sales: 560, piercingSales: 25, esaSales: 70, piercings: 0, esaCount: 1, stjude: 6, hours: 4 }
+      // Store 3922 - Cherry Creek
+      { email: "brandy.a@banter.com",          sales: 444,  piercingSales: 65,   piercings: 1, esaCount: 0, stjude: 0, hours: 8,   ptdSales: 4245,  ptdPiercings: 290,  ptdESA: 6,  ptdTrans: 25,  qtdSales: 64031, ytdSales: 77820 },
+      { email: "kimberly.t@banter.com",         sales: 574,  piercingSales: 0,    piercings: 0, esaCount: 0, stjude: 0, hours: 8,   ptdSales: 5216,  ptdPiercings: 202,  ptdESA: 6,  ptdTrans: 22,  qtdSales: 32291, ytdSales: 41058 },
+      { email: "carolina.rodriguez@banter.com", sales: 0,    piercingSales: 0,    piercings: 0, esaCount: 0, stjude: 0, hours: 6,   ptdSales: 2028,  ptdPiercings: 0,    ptdESA: 0,  ptdTrans: 12,  qtdSales: 19863, ytdSales: 22105 },
+      { email: "cali.willis@banter.com",        sales: 0,    piercingSales: 70,   piercings: 2, esaCount: 0, stjude: 0, hours: 5,   ptdSales: 555,   ptdPiercings: 70,   ptdESA: 2,  ptdTrans: 6,   qtdSales: 15571, ytdSales: 18020 },
+      // Store 907 - Cottonwood
+      { email: "estrella.m@banter.com",         sales: 190,  piercingSales: 0,    piercings: 0, esaCount: 0, stjude: 0, hours: 8,   ptdSales: 1378,  ptdPiercings: 0,    ptdESA: 0,  ptdTrans: 10,  qtdSales: 25362, ytdSales: 66726 },
+      { email: "ahtziri.rodriguez@banter.com",  sales: 462,  piercingSales: 100,  piercings: 2, esaCount: 1, stjude: 0, hours: 7,   ptdSales: 3133,  ptdPiercings: 425,  ptdESA: 8,  ptdTrans: 17,  qtdSales: 22924, ytdSales: 48773 },
+      { email: "brianna.sutton@banter.com",     sales: 380,  piercingSales: 103,  piercings: 3, esaCount: 1, stjude: 0, hours: 7,   ptdSales: 1568,  ptdPiercings: 572,  ptdESA: 11, ptdTrans: 15,  qtdSales: 25733, ytdSales: 65882 },
+      { email: "victoria.chavez@banter.com",    sales: 688,  piercingSales: 0,    piercings: 0, esaCount: 0, stjude: 0, hours: 6,   ptdSales: 1475,  ptdPiercings: 229,  ptdESA: 5,  ptdTrans: 14,  qtdSales: 7934,  ytdSales: 19742 },
+      { email: "leyamae.palomino@banter.com",   sales: 0,    piercingSales: 0,    piercings: 0, esaCount: 0, stjude: 0, hours: 6,   ptdSales: 1152,  ptdPiercings: 337,  ptdESA: 7,  ptdTrans: 13,  qtdSales: 25968, ytdSales: 63200 },
+      // Store 1026 - Bassett Creek
+      { email: "claudia.g@banter.com",          sales: 0,    piercingSales: 0,    piercings: 0, esaCount: 0, stjude: 0, hours: 8,   ptdSales: -261,  ptdPiercings: 228,  ptdESA: 5,  ptdTrans: 5,   qtdSales: 19000, ytdSales: 53284 },
+      { email: "elisabeth.free@banter.com",     sales: 380,  piercingSales: 0,    piercings: 0, esaCount: 0, stjude: 0, hours: 7,   ptdSales: 1532,  ptdPiercings: 153,  ptdESA: 4,  ptdTrans: 14,  qtdSales: 24277, ytdSales: 57391 },
+      { email: "christina.harps@banter.com",    sales: 1112, piercingSales: 65,   piercings: 1, esaCount: 1, stjude: 0, hours: 7,   ptdSales: 3912,  ptdPiercings: 433,  ptdESA: 13, ptdTrans: 18,  qtdSales: 25197, ytdSales: 62088 },
+      { email: "ashley.botello@banter.com",     sales: 0,    piercingSales: 0,    piercings: 0, esaCount: 0, stjude: 0, hours: 5,   ptdSales: 427,   ptdPiercings: 0,    ptdESA: 0,  ptdTrans: 2,   qtdSales: 11911, ytdSales: 29152 },
+      { email: "katiana.santos@banter.com",     sales: 1172, piercingSales: 0,    piercings: 0, esaCount: 0, stjude: 0, hours: 7,   ptdSales: 2298,  ptdPiercings: 160,  ptdESA: 4,  ptdTrans: 24,  qtdSales: 19396, ytdSales: 42907 },
+      { email: "christina.johnson@banter.com",  sales: 0,    piercingSales: 0,    piercings: 0, esaCount: 0, stjude: 0, hours: 4,   ptdSales: 190,   ptdPiercings: 88,   ptdESA: 2,  ptdTrans: 3,   qtdSales: 1343,  ytdSales: 3904  },
+      { email: "annabelle.taylor@banter.com",   sales: 0,    piercingSales: 0,    piercings: 0, esaCount: 0, stjude: 0, hours: 5,   ptdSales: 0,     ptdPiercings: 0,    ptdESA: 0,  ptdTrans: 0,   qtdSales: 3725,  ytdSales: 9840  },
+      { email: "casandra.desir@banter.com",     sales: 0,    piercingSales: 0,    piercings: 0, esaCount: 0, stjude: 0, hours: 5,   ptdSales: 0,     ptdPiercings: 0,    ptdESA: 0,  ptdTrans: 0,   qtdSales: 0,     ytdSales: 0     },
+      // Store 1332 - Southlands
+      { email: "marlena.r@banter.com",          sales: 206,  piercingSales: 200,  piercings: 3, esaCount: 1, stjude: 0, hours: 8,   ptdSales: 1512,  ptdPiercings: 200,  ptdESA: 4,  ptdTrans: 10,  qtdSales: 25189, ytdSales: 88889 },
+      { email: "kiona.keith@banter.com",        sales: 1054, piercingSales: 270,  piercings: 5, esaCount: 2, stjude: 0, hours: 8,   ptdSales: 4648,  ptdPiercings: 653,  ptdESA: 14, ptdTrans: 21,  qtdSales: 42314, ytdSales: 116515},
+      { email: "naomi.marquez@banter.com",      sales: 822,  piercingSales: 0,    piercings: 0, esaCount: 0, stjude: 0, hours: 7,   ptdSales: 2796,  ptdPiercings: 363,  ptdESA: 9,  ptdTrans: 24,  qtdSales: 36573, ytdSales: 86490 },
+      { email: "isabella.lesher@banter.com",    sales: 928,  piercingSales: 0,    piercings: 0, esaCount: 0, stjude: 0, hours: 7,   ptdSales: 3642,  ptdPiercings: 210,  ptdESA: 6,  ptdTrans: 19,  qtdSales: 17676, ytdSales: 41048 },
+      { email: "ximena.ahuja@banter.com",       sales: 0,    piercingSales: 0,    piercings: 0, esaCount: 0, stjude: 0, hours: 5,   ptdSales: 1140,  ptdPiercings: 0,    ptdESA: 0,  ptdTrans: 6,   qtdSales: 23227, ytdSales: 53406 },
+      { email: "faith.valentina@banter.com",    sales: 0,    piercingSales: 0,    piercings: 0, esaCount: 0, stjude: 0, hours: 5,   ptdSales: 0,     ptdPiercings: 0,    ptdESA: 0,  ptdTrans: 0,   qtdSales: 0,     ytdSales: 0     },
+      // Store 123 - Santa Fe Place
+      { email: "trinity.b@banter.com",          sales: 618,  piercingSales: 150,  piercings: 2, esaCount: 1, stjude: 0, hours: 8,   ptdSales: 3389,  ptdPiercings: 150,  ptdESA: 4,  ptdTrans: 21,  qtdSales: 40865, ytdSales: 99155 },
+      { email: "tanya.lucero@banter.com",       sales: 1202, piercingSales: 285,  piercings: 4, esaCount: 1, stjude: 0, hours: 8,   ptdSales: 5764,  ptdPiercings: 656,  ptdESA: 15, ptdTrans: 35,  qtdSales: 28961, ytdSales: 64210 },
+      { email: "trescelle.rodriguez@banter.com",sales: 598,  piercingSales: 0,    piercings: 0, esaCount: 0, stjude: 0, hours: 7,   ptdSales: 2962,  ptdPiercings: 225,  ptdESA: 7,  ptdTrans: 25,  qtdSales: 33240, ytdSales: 72018 },
+      { email: "yahzmin.ortega@banter.com",     sales: 0,    piercingSales: 0,    piercings: 0, esaCount: 0, stjude: 0, hours: 6,   ptdSales: 0,     ptdPiercings: 0,    ptdESA: 0,  ptdTrans: 0,   qtdSales: 29389, ytdSales: 68142 },
+      { email: "aron.neely@banter.com",         sales: 0,    piercingSales: 0,    piercings: 0, esaCount: 0, stjude: 0, hours: 6,   ptdSales: 0,     ptdPiercings: 0,    ptdESA: 0,  ptdTrans: 0,   qtdSales: 48346, ytdSales: 87918 },
+      // Store 1241 - Chapel Hills
+      { email: "steven.v@banter.com",           sales: 0,    piercingSales: 0,    piercings: 0, esaCount: 0, stjude: 0, hours: 8,   ptdSales: 443,   ptdPiercings: 0,    ptdESA: 0,  ptdTrans: 3,   qtdSales: 13758, ytdSales: 37241 },
+      { email: "leuree.martinez@banter.com",    sales: 386,  piercingSales: 0,    piercings: 0, esaCount: 0, stjude: 0, hours: 7,   ptdSales: 1398,  ptdPiercings: 235,  ptdESA: 6,  ptdTrans: 17,  qtdSales: 25257, ytdSales: 64198 },
+      { email: "karalynn.stevens@banter.com",   sales: 622,  piercingSales: 0,    piercings: 0, esaCount: 0, stjude: 0, hours: 7,   ptdSales: 1629,  ptdPiercings: 652,  ptdESA: 17, ptdTrans: 19,  qtdSales: 17526, ytdSales: 38274 },
+      { email: "marilynn.vasquez@banter.com",   sales: 0,    piercingSales: 0,    piercings: 0, esaCount: 0, stjude: 0, hours: 6,   ptdSales: 1111,  ptdPiercings: 215,  ptdESA: 5,  ptdTrans: 11,  qtdSales: 7540,  ytdSales: 14991 },
+      { email: "miles.thornbery@banter.com",    sales: 0,    piercingSales: 0,    piercings: 0, esaCount: 0, stjude: 0, hours: 5,   ptdSales: 562,   ptdPiercings: 380,  ptdESA: 10, ptdTrans: 5,   qtdSales: 562,   ytdSales: 562   },
+      { email: "katelyn.kirkby@banter.com",     sales: 0,    piercingSales: 0,    piercings: 0, esaCount: 0, stjude: 0, hours: 6,   ptdSales: 0,     ptdPiercings: 0,    ptdESA: 0,  ptdTrans: 0,   qtdSales: 21591, ytdSales: 49031 },
+      // Store 2595 - FlatIron
+      { email: "leigh.jones@banter.com",        sales: 428,  piercingSales: 265,  piercings: 4, esaCount: 1, stjude: 0, hours: 8,   ptdSales: 1984,  ptdPiercings: 715,  ptdESA: 20, ptdTrans: 24,  qtdSales: 34926, ytdSales: 56515 },
+      { email: "carmen.espinoza@banter.com",    sales: 1264, piercingSales: 0,    piercings: 0, esaCount: 1, stjude: 0, hours: 8,   ptdSales: 6244,  ptdPiercings: 858,  ptdESA: 21, ptdTrans: 49,  qtdSales: 34490, ytdSales: 34490 },
+      { email: "izabella.gomez@banter.com",     sales: 0,    piercingSales: 0,    piercings: 0, esaCount: 0, stjude: 0, hours: 6,   ptdSales: 0,     ptdPiercings: 0,    ptdESA: 0,  ptdTrans: 0,   qtdSales: 52242, ytdSales: 88106 },
+      { email: "justine.sierra@banter.com",     sales: 0,    piercingSales: 0,    piercings: 0, esaCount: 0, stjude: 0, hours: 6,   ptdSales: 0,     ptdPiercings: 0,    ptdESA: 0,  ptdTrans: 0,   qtdSales: 34375, ytdSales: 71028 },
+      { email: "sara.leighton@banter.com",      sales: 0,    piercingSales: 0,    piercings: 0, esaCount: 0, stjude: 0, hours: 5,   ptdSales: 0,     ptdPiercings: 0,    ptdESA: 0,  ptdTrans: 0,   qtdSales: 5636,  ytdSales: 12149 },
+      { email: "lily.kassen@banter.com",        sales: 0,    piercingSales: 0,    piercings: 0, esaCount: 0, stjude: 0, hours: 6,   ptdSales: 0,     ptdPiercings: 0,    ptdESA: 0,  ptdTrans: 0,   qtdSales: 26599, ytdSales: 59140 },
+      { email: "spencer.barrineau@banter.com",  sales: 0,    piercingSales: 0,    piercings: 0, esaCount: 0, stjude: 0, hours: 6,   ptdSales: 0,     ptdPiercings: 0,    ptdESA: 0,  ptdTrans: 0,   qtdSales: 42170, ytdSales: 77481 },
+      { email: "erika.david@banter.com",        sales: 0,    piercingSales: 0,    piercings: 0, esaCount: 0, stjude: 0, hours: 4,   ptdSales: 0,     ptdPiercings: 0,    ptdESA: 0,  ptdTrans: 0,   qtdSales: 473,   ytdSales: 1046  },
+      // Store 3739 - Coronado Center
+      { email: "emily.m@banter.com",            sales: 1196, piercingSales: 100,  piercings: 1, esaCount: 0, stjude: 0, hours: 8,   ptdSales: 3249,  ptdPiercings: 415,  ptdESA: 11, ptdTrans: 24,  qtdSales: 37935, ytdSales: 115647},
+      { email: "jared.blalock@banter.com",      sales: 0,    piercingSales: 0,    piercings: 0, esaCount: 0, stjude: 0, hours: 7,   ptdSales: 0,     ptdPiercings: 0,    ptdESA: 0,  ptdTrans: 0,   qtdSales: 24626, ytdSales: 59040 },
+      { email: "mollie.grubbs@banter.com",      sales: 0,    piercingSales: 0,    piercings: 0, esaCount: 0, stjude: 0, hours: 7,   ptdSales: 0,     ptdPiercings: 0,    ptdESA: 0,  ptdTrans: 0,   qtdSales: 53016, ytdSales: 89420 },
+      { email: "victoria.castro@banter.com",    sales: 0,    piercingSales: 0,    piercings: 0, esaCount: 0, stjude: 0, hours: 7,   ptdSales: 2670,  ptdPiercings: 185,  ptdESA: 4,  ptdTrans: 14,  qtdSales: 22280, ytdSales: 48820 },
+      { email: "vivian.lopez@banter.com",       sales: 0,    piercingSales: 0,    piercings: 0, esaCount: 0, stjude: 0, hours: 7,   ptdSales: 3058,  ptdPiercings: 283,  ptdESA: 6,  ptdTrans: 19,  qtdSales: 11509, ytdSales: 29608 },
+      { email: "ysareli.pardo@banter.com",      sales: 0,    piercingSales: 0,    piercings: 0, esaCount: 0, stjude: 0, hours: 5,   ptdSales: 0,     ptdPiercings: 0,    ptdESA: 0,  ptdTrans: 0,   qtdSales: 26127, ytdSales: 57309 },
+      { email: "kosi.mbelu@banter.com",         sales: 0,    piercingSales: 0,    piercings: 0, esaCount: 0, stjude: 0, hours: 5,   ptdSales: 711,   ptdPiercings: 80,   ptdESA: 2,  ptdTrans: 11,  qtdSales: 17049, ytdSales: 35062 },
+      { email: "cruz.padilla@banter.com",       sales: 0,    piercingSales: 0,    piercings: 0, esaCount: 0, stjude: 0, hours: 5,   ptdSales: 0,     ptdPiercings: 0,    ptdESA: 0,  ptdTrans: 0,   qtdSales: 8580,  ytdSales: 19840 },
+      { email: "lori.lelugas@banter.com",       sales: 0,    piercingSales: 0,    piercings: 0, esaCount: 0, stjude: 0, hours: 4,   ptdSales: 0,     ptdPiercings: 0,    ptdESA: 0,  ptdTrans: 0,   qtdSales: 1278,  ytdSales: 2884  },
+      // Store 3905 - Park Meadows
+      { email: "gina.g@banter.com",             sales: 974,  piercingSales: 105,  piercings: 2, esaCount: 1, stjude: 0, hours: 8,   ptdSales: 4764,  ptdPiercings: 1310, ptdESA: 32, ptdTrans: 40,  qtdSales: 49702, ytdSales: 100908},
+      { email: "rebecca.johnson@banter.com",    sales: 0,    piercingSales: 0,    piercings: 0, esaCount: 0, stjude: 0, hours: 7,   ptdSales: 0,     ptdPiercings: 0,    ptdESA: 0,  ptdTrans: 0,   qtdSales: 28360, ytdSales: 61093 },
+      { email: "lauren.brown@banter.com",       sales: 0,    piercingSales: 0,    piercings: 0, esaCount: 0, stjude: 0, hours: 7,   ptdSales: 2078,  ptdPiercings: 430,  ptdESA: 10, ptdTrans: 26,  qtdSales: 14262, ytdSales: 37804 },
+      { email: "jada.king@banter.com",          sales: 0,    piercingSales: 0,    piercings: 0, esaCount: 0, stjude: 0, hours: 6,   ptdSales: 600,   ptdPiercings: 100,  ptdESA: 2,  ptdTrans: 9,   qtdSales: 10542, ytdSales: 22007 },
+      { email: "edwin.benitez@banter.com",      sales: 0,    piercingSales: 0,    piercings: 0, esaCount: 0, stjude: 0, hours: 6,   ptdSales: 915,   ptdPiercings: 0,    ptdESA: 0,  ptdTrans: 8,   qtdSales: 915,   ytdSales: 915   },
+      { email: "miles.armstrong@banter.com",    sales: 0,    piercingSales: 0,    piercings: 0, esaCount: 0, stjude: 0, hours: 5,   ptdSales: 0,     ptdPiercings: 0,    ptdESA: 0,  ptdTrans: 0,   qtdSales: 7989,  ytdSales: 18040 },
+      { email: "dana.fakhro@banter.com",        sales: 0,    piercingSales: 0,    piercings: 0, esaCount: 0, stjude: 0, hours: 5,   ptdSales: 0,     ptdPiercings: 0,    ptdESA: 0,  ptdTrans: 0,   qtdSales: 9250,  ytdSales: 20814 },
+      // Store 3709 - Mesa del Sol
+      { email: "kylie.malone@banter.com",       sales: 306,  piercingSales: 93,   piercings: 2, esaCount: 0, stjude: 0, hours: 8,   ptdSales: 1179,  ptdPiercings: 105,  ptdESA: 2,  ptdTrans: 7,   qtdSales: 17962, ytdSales: 55596 },
+      { email: "tatum.bassett@banter.com",      sales: 0,    piercingSales: 0,    piercings: 0, esaCount: 0, stjude: 0, hours: 7,   ptdSales: 2270,  ptdPiercings: 93,   ptdESA: 2,  ptdTrans: 12,  qtdSales: 9505,  ytdSales: 22071 },
+      { email: "martin.france@banter.com",      sales: 0,    piercingSales: 0,    piercings: 0, esaCount: 0, stjude: 0, hours: 7,   ptdSales: 1483,  ptdPiercings: 150,  ptdESA: 4,  ptdTrans: 14,  qtdSales: 12767, ytdSales: 29190 },
+      { email: "alison.hebein@banter.com",      sales: 0,    piercingSales: 0,    piercings: 0, esaCount: 0, stjude: 0, hours: 5,   ptdSales: 500,   ptdPiercings: 120,  ptdESA: 2,  ptdTrans: 6,   qtdSales: 2850,  ytdSales: 6814  },
+      { email: "dionne.f@banter.com",           sales: 0,    piercingSales: 0,    piercings: 0, esaCount: 0, stjude: 0, hours: 5,   ptdSales: 0,     ptdPiercings: 0,    ptdESA: 0,  ptdTrans: 0,   qtdSales: 1749,  ytdSales: 4182  },
+      { email: "alyana.ibarra@banter.com",      sales: 0,    piercingSales: 0,    piercings: 0, esaCount: 0, stjude: 0, hours: 4,   ptdSales: 0,     ptdPiercings: 0,    ptdESA: 0,  ptdTrans: 0,   qtdSales: 220,   ytdSales: 528   },
+      { email: "ashley.s@banter.com",           sales: 0,    piercingSales: 0,    piercings: 0, esaCount: 0, stjude: 0, hours: 4,   ptdSales: 0,     ptdPiercings: 0,    ptdESA: 0,  ptdTrans: 0,   qtdSales: 18,    ytdSales: 44    },
+      // Store 242 - Aurora Mall
+      { email: "hannah.f@banter.com",           sales: 0,    piercingSales: 0,    piercings: 0, esaCount: 0, stjude: 0, hours: 8,   ptdSales: 370,   ptdPiercings: 98,   ptdESA: 2,  ptdTrans: 4,   qtdSales: 30213, ytdSales: 68004 },
+      { email: "jhordan.clark@banter.com",      sales: 0,    piercingSales: 0,    piercings: 0, esaCount: 0, stjude: 0, hours: 7,   ptdSales: 1619,  ptdPiercings: 595,  ptdESA: 12, ptdTrans: 14,  qtdSales: 37574, ytdSales: 82390 },
+      { email: "rossel.amaya@banter.com",       sales: 0,    piercingSales: 0,    piercings: 0, esaCount: 0, stjude: 0, hours: 7,   ptdSales: 1347,  ptdPiercings: 468,  ptdESA: 9,  ptdTrans: 10,  qtdSales: 32882, ytdSales: 78066 },
+      { email: "kobe.garcia@banter.com",        sales: 0,    piercingSales: 0,    piercings: 0, esaCount: 0, stjude: 0, hours: 7,   ptdSales: 0,     ptdPiercings: 0,    ptdESA: 0,  ptdTrans: 0,   qtdSales: 67746, ytdSales: 107580},
+      { email: "danyale.taylor@banter.com",     sales: 0,    piercingSales: 0,    piercings: 0, esaCount: 0, stjude: 0, hours: 7,   ptdSales: 0,     ptdPiercings: 0,    ptdESA: 0,  ptdTrans: 0,   qtdSales: 64372, ytdSales: 104892},
+      { email: "alyssa.vanegas@banter.com",     sales: 0,    piercingSales: 0,    piercings: 0, esaCount: 0, stjude: 0, hours: 6,   ptdSales: 933,   ptdPiercings: 100,  ptdESA: 2,  ptdTrans: 8,   qtdSales: 19802, ytdSales: 42610 },
+      { email: "jei.woods@banter.com",          sales: 0,    piercingSales: 0,    piercings: 0, esaCount: 0, stjude: 0, hours: 6,   ptdSales: 0,     ptdPiercings: 0,    ptdESA: 0,  ptdTrans: 0,   qtdSales: 45364, ytdSales: 74810 },
+      { email: "luis.guzman@banter.com",        sales: 0,    piercingSales: 0,    piercings: 0, esaCount: 0, stjude: 0, hours: 7,   ptdSales: 3327,  ptdPiercings: 305,  ptdESA: 6,  ptdTrans: 27,  qtdSales: 19559, ytdSales: 42209 },
+      { email: "gabriela.miranda@banter.com",   sales: 0,    piercingSales: 0,    piercings: 0, esaCount: 0, stjude: 0, hours: 6,   ptdSales: 0,     ptdPiercings: 0,    ptdESA: 0,  ptdTrans: 0,   qtdSales: 24553, ytdSales: 52184 },
+      { email: "bijou.mbenga@banter.com",       sales: 110,  piercingSales: 0,    piercings: 0, esaCount: 0, stjude: 0, hours: 5,   ptdSales: 110,   ptdPiercings: 0,    ptdESA: 0,  ptdTrans: 2,   qtdSales: 110,   ytdSales: 110   }
     ];
 
     const playbookDocs = [
@@ -1732,7 +1836,7 @@
               </div>
               <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
                 <button class="cal-icon-btn" data-action="open-calendar" aria-label="Calendar">${calIcon()}</button>
-                ${(user.role === "Store Manager" || user.role === "District Manager" || user.role === "Assistant Manager") ? `<button class="cal-icon-btn" data-action="open-goal-upload" aria-label="Upload goal sheet" title="Upload goal sheet">📋</button>` : ""}
+                ${(user.role === "Store Manager" || user.role === "District Manager" || user.role === "Assistant Manager") ? `<button class="cal-icon-btn" data-action="open-goal-upload" aria-label="Import data" title="Import sales data">📋</button>` : ""}
               </div>
             </div>
           </div>
@@ -1777,7 +1881,26 @@
                   <div style="font-size:8px;color:var(--muted);text-transform:uppercase">Pierce $</div>
                 </div>
               </div>
-            </div>`;
+              ${(me.ptdSales || me.qtdSales || me.ytdSales) ? `
+              <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:8px">
+                <div style="text-align:center;padding:6px 4px;background:var(--bg);border-radius:8px">
+                  <div style="font-size:13px;font-weight:700;color:var(--lime)">${me.ptdSales ? money(me.ptdSales) : "—"}</div>
+                  <div style="font-size:8px;color:var(--muted);text-transform:uppercase">PTD Sales</div>
+                </div>
+                <div style="text-align:center;padding:6px 4px;background:var(--bg);border-radius:8px">
+                  <div style="font-size:13px;font-weight:700;color:var(--lime)">${me.qtdSales ? money(me.qtdSales) : "—"}</div>
+                  <div style="font-size:8px;color:var(--muted);text-transform:uppercase">QTD Sales</div>
+                </div>
+                <div style="text-align:center;padding:6px 4px;background:var(--bg);border-radius:8px">
+                  <div style="font-size:13px;font-weight:700;color:var(--lime)">${me.ytdSales ? money(me.ytdSales) : "—"}</div>
+                  <div style="font-size:8px;color:var(--muted);text-transform:uppercase">YTD Sales</div>
+                </div>
+              </div>` : ""}
+            </div>
+            <button data-action="open-balanced-business" style="width:100%;margin-top:8px;padding:10px 14px;background:rgba(198,255,58,.06);border-radius:10px;border:1px solid rgba(198,255,58,.18);font-size:11px;color:var(--muted);text-align:left;cursor:pointer;display:flex;align-items:center;justify-content:space-between">
+              <span><strong style="color:var(--lime)">Company Expectations</strong>&nbsp;&nbsp;Tap to view balanced business standards</span>
+              <span style="color:var(--lime);font-size:14px;margin-left:8px">›</span>
+            </button>`;
           })()}
           <div class="neon-spacer compact"></div>
           <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:14px">
@@ -2500,8 +2623,8 @@
             <input type="file" accept=".csv,.txt,text/csv,text/plain,text/comma-separated-values,application/vnd.ms-excel,*/*" style="display:none" id="store-metrics-upload" data-action="store-metrics-file">
           </label>
 
-          <div class="section-title" style="margin-bottom:8px">Individual Metrics CSV</div>
-          <div class="caption" style="margin-bottom:10px">Columns: <code style="background:var(--panel);padding:1px 5px;border-radius:4px;font-size:11px">email,sales,piercings,esaCount,hours,stjude</code></div>
+          <div class="section-title" style="margin-bottom:8px">Individual Sales CSV</div>
+          <div class="caption" style="margin-bottom:10px">Columns: <code style="background:var(--panel);padding:1px 5px;border-radius:4px;font-size:11px">email,sales,piercings,esaCount,hours,ptdSales,ptdPiercings,ptdESA,ptdTrans,qtdSales,ytdSales</code></div>
           <label style="display:block;background:var(--panel);border:2px dashed rgba(198,255,58,.3);border-radius:12px;padding:20px 16px;text-align:center;cursor:pointer;margin-bottom:14px">
             <div style="font-size:28px;margin-bottom:6px">👤</div>
             <div style="font-size:13px;font-weight:600;color:var(--lime)">Upload Employee CSV</div>
@@ -2613,7 +2736,7 @@
     function profileOverlay() {
       if (!state.profileOpen || !state.profileEmail) return "";
       const pu = users.find(u => u.email === state.profileEmail) || {};
-      const pm = individualMetrics.find(m => m.email === state.profileEmail) || {};
+      const pm = individualMetricFor(state.profileEmail);
       const store = stores.find(s => s.id === pu.storeId) || {};
       const overrides = state.userOverrides[state.profileEmail] || {};
       const displayName = overrides.name || pu.name || state.profileEmail;
@@ -2654,10 +2777,10 @@
             <div class="track" style="margin-top:4px;height:3px"><div class="fill" style="width:${Math.min(100, buddyXP)}%"></div></div>
           </div>
         </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:14px">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px">
           <div style="padding:8px 4px;background:var(--bg);border-radius:8px;text-align:center">
             <div style="font-size:14px;font-weight:700">${pm.sales ? money(pm.sales) : "—"}</div>
-            <div style="font-size:9px;color:var(--muted);text-transform:uppercase">Sales</div>
+            <div style="font-size:9px;color:var(--muted);text-transform:uppercase">Today</div>
             ${indivGoal ? `<div style="font-size:8px;color:var(--eyebrow)">Goal ${money(indivGoal)}</div>` : ""}
           </div>
           <div style="padding:8px 4px;background:var(--bg);border-radius:8px;text-align:center">
@@ -2667,6 +2790,22 @@
           <div style="padding:8px 4px;background:var(--bg);border-radius:8px;text-align:center">
             <div style="font-size:14px;font-weight:700">${pm.esaCount || 0}</div>
             <div style="font-size:9px;color:var(--muted);text-transform:uppercase">ESA</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:14px">
+          <div style="padding:8px 4px;background:var(--bg);border-radius:8px;text-align:center">
+            <div style="font-size:13px;font-weight:700;color:var(--lime)">${pm.ptdSales ? money(pm.ptdSales) : "—"}</div>
+            <div style="font-size:9px;color:var(--muted);text-transform:uppercase">PTD Sales</div>
+            ${pm.ptdTrans ? `<div style="font-size:8px;color:var(--eyebrow)">${pm.ptdTrans} trans</div>` : ""}
+          </div>
+          <div style="padding:8px 4px;background:var(--bg);border-radius:8px;text-align:center">
+            <div style="font-size:13px;font-weight:700;color:var(--lime)">${pm.qtdSales ? money(pm.qtdSales) : "—"}</div>
+            <div style="font-size:9px;color:var(--muted);text-transform:uppercase">QTD Sales</div>
+          </div>
+          <div style="padding:8px 4px;background:var(--bg);border-radius:8px;text-align:center">
+            <div style="font-size:13px;font-weight:700;color:var(--lime)">${pm.ytdSales ? money(pm.ytdSales) : "—"}</div>
+            <div style="font-size:9px;color:var(--muted);text-transform:uppercase">YTD Sales</div>
+            ${pm.ptdPiercings ? `<div style="font-size:8px;color:var(--eyebrow)">${money(pm.ptdPiercings)} pierce PTD</div>` : ""}
           </div>
         </div>
         <div style="padding:10px 12px;background:rgba(229,72,77,.08);border-radius:10px;border:1px solid rgba(229,72,77,.2);margin-bottom:12px;display:flex;align-items:center;gap:10px">
@@ -2763,7 +2902,7 @@
     }
 
     function notificationsOverlay() {
-      return `<section class="full-overlay"><div class="overlay-head"><h2 class="serif" style="font-size:24px;margin:0">Notifications</h2><button class="close" data-action="close-notifications">×</button></div>${state.notifications.map(n => `<div class="notif"><div style="display:flex;gap:10px"><div>${n.icon}</div><div><div style="font-size:13px;font-weight:800">${n.title}</div><div class="post-time">${n.time}</div><div style="font-size:12px;color:var(--body);margin-top:4px">${n.body}</div></div></div></div>`).join("")}</section>`;
+      return `<section class="full-overlay" style="padding-top:env(safe-area-inset-top)"><div class="overlay-head"><h2 class="serif" style="font-size:24px;margin:0">Notifications</h2><button class="close" data-action="close-notifications">×</button></div>${state.notifications.map(n => `<div class="notif"><div style="display:flex;gap:10px"><div>${n.icon}</div><div><div style="font-size:13px;font-weight:800">${n.title}</div><div class="post-time">${n.time}</div><div style="font-size:12px;color:var(--body);margin-top:4px">${n.body}</div></div></div></div>`).join("")}</section>`;
     }
 
     function infoSheet() {
@@ -3364,8 +3503,38 @@
     app.addEventListener("change", event => {
       const el = event.target.closest("[data-action]");
       if (!el) return;
-      if (el.dataset.action === "select-user") {
+      const action = el.dataset.action;
+      if (action === "select-user") {
         setState({ selectedUserEmail: el.value, loginError: "" });
+      }
+      if (action === "store-metrics-file" || action === "individual-metrics-file") {
+        const input = el;
+        if (!input.files || !input.files[0]) return;
+        const file = input.files[0];
+        const isStore = action === "store-metrics-file";
+        const alreadyHasData = isStore ? !!state.importedSubmissions : !!state.importedIndividualMetrics;
+        const doImport = () => {
+          const reader = new FileReader();
+          reader.onload = e => {
+            const rows = parseCSV(e.target.result);
+            if (!rows.length) { showToast("Could not parse CSV — check format"); return; }
+            if (isStore) {
+              setState({ importedSubmissions: rows, lastImportStatus: `✓ Store metrics updated: ${rows.length} store(s) imported from ${file.name}` });
+              showToast(`Store metrics updated for ${rows.length} store(s)`);
+            } else {
+              setState({ importedIndividualMetrics: rows, lastImportStatus: `✓ Employee metrics updated: ${rows.length} employee(s) imported from ${file.name}` });
+              showToast(`Employee metrics updated for ${rows.length} employee(s)`);
+            }
+          };
+          reader.readAsText(file);
+        };
+        if (alreadyHasData) {
+          const label = isStore ? "store metrics" : "employee metrics";
+          setState({ pendingImportConfirm: { action, file, doImport }, confirmPrompt: `You already have ${label} imported. Replace with "${file.name}"?` });
+        } else {
+          doImport();
+        }
+        input.value = "";
       }
     });
 
