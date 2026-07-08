@@ -1,16 +1,17 @@
 # BanterONE — Session Handoff
 
-Last updated: **2026-07-03**
+Last updated: **2026-07-07**
 
 ---
 
 ## Links & Repo
 
-- **Live URL:** `banterone.netlify.app` (auto-deploys from GitHub on every push)
-- **Repo:** `https://github.com/kingsupreme89/banterone.git` (branch: `main`)
+- **Live URL:** `https://banter1ne.github.io/BanterOne/` (GitHub Pages — auto-deploys on push via GitHub Actions)
+- **Repo:** `https://github.com/Banter1ne/BanterOne.git` (branch: `main`)
+- **Old repo (redirect):** `https://github.com/kingsupreme89/banterone.git`
 - **Primary file:** `/Users/user/Claude/Projects/BanterONE/redesign/index.html`
 - **Always sync after every edit:** `cp redesign/index.html /Users/user/Documents/BanterONE/index.html`
-- **Netlify deploys from:** `redesign/` folder (see `netlify.toml`)
+- **GitHub Pages deploys from:** `redesign/` folder (via `.github/workflows/deploy.yml`)
 - **Preview server config:** `/Users/user/Claude/Projects/BanterONE/.claude/launch.json`
   - Name: `banterone-redesign`, port 4175, serves `/Users/user/Documents/BanterONE/`
 
@@ -45,7 +46,7 @@ The three wrapper divs are **never removed from the DOM** — only their `innerH
 ### Tech stack
 - Vanilla HTML/JS/CSS (no React, no build step)
 - Firebase Firestore compat SDK v10.12.2 via CDN
-- Netlify for hosting
+- GitHub Pages for hosting (via GitHub Actions workflow)
 - PWA (Add to Home Screen) — manifest, apple-touch-icon, `100dvh`, `viewport-fit=cover`
 
 ---
