@@ -1,61 +1,58 @@
 # BanterONE
 
-Premium gamified district operations app for Banter — district reporting, leaderboards,
-and the **Bantagachi** RPG character system. $0 dev + test.
+Retail district operations mobile web app for **Banter** (Signet jewelry brand).
+District reporting, leaderboards, disciplinary tools, and the **Banter Buddy** RPG
+companion — built as a single vanilla HTML/JS/CSS file with real-time Firebase
+Firestore sync.
 
-## Run
+## Live
+
+- **App:** <https://banter1ne.github.io/BanterOne/>
+- **Repo:** <https://github.com/Banter1ne/BanterOne> (branch: `main`)
+- **Hosting:** GitHub Pages, auto-deployed on every push to `main` via
+  `.github/workflows/deploy.yml` (publishes the `redesign/` folder)
+
+## Stack
+
+- **Frontend:** vanilla HTML/CSS/JS — no framework, no build step
+- **Backend:** Firebase Firestore (compat SDK v10.12.2 via CDN), real-time sync
+- **PWA:** installable, fullscreen, no-zoom on iOS
+- **Deploy:** GitHub Pages via GitHub Actions
+
+## Run locally
+
+Open `redesign/index.html` directly in a browser, or serve the folder:
 
 ```bash
-pip install -r requirements.txt
-streamlit run app.py
+cd redesign
+python3 -m http.server 4175
+# visit http://127.0.0.1:4175/
 ```
 
-## Demo credentials
+## Login
 
-All demo users share password: `Banter123`
+Password is the user's **first + last initials, uppercase**
+(e.g. Brandy Arguello → `BA`, Tasha Gerold → `TG`). Pick a user from the
+dropdown on the login screen. See `HANDOFF.md` for the full roster.
 
-| Role | Email |
-|---|---|
-| District Manager | `dm@banter.com` |
-| Store Manager (any of the 11 SMs) | `brandy.a@banter.com`, `trinity.b@banter.com`, `hannah.f@banter.com`, `estrella.m@banter.com`, `claudia.g@banter.com`, `steven.v@banter.com`, `marlena.r@banter.com`, `evyn.j@banter.com`, `dionne.f@banter.com`, `emily.m@banter.com`, `gina.g@banter.com` |
-| Key Sales Associate | `associate1@banter.com` … `associate5@banter.com` |
-| Body Piercer | `piercer1@banter.com`, `piercer2@banter.com` |
+## Structure
 
-Edit `data/users.csv` to swap in real emails and add per-store associates before the demo.
+```
+redesign/
+  index.html        # entire app — HTML, CSS, JS
+  manifest.json     # PWA manifest
+  icon-192.png      # app icon
+  buddy-gem.png     # Buddy character art
+  docs/             # Playbook source PDFs (linked from the app)
+.github/workflows/
+  deploy.yml        # GitHub Pages deploy — publishes redesign/ on push to main
+HANDOFF.md          # full session handoff & architecture notes
+```
 
-## District roster (from field roster photo)
+## Develop
 
-11 stores across CO + NM. Store IDs are real: 3922, 123, 242, 907, 1026, 1241, 1332, 2595, 3709, 3739, 3905.
+1. Edit `redesign/index.html` (the entire app lives here).
+2. Commit and push to `main` — GitHub Pages redeploys automatically.
 
-## Architecture
-
-- `app.py` — entry, session gate, tab dispatch
-- `lib/auth.py` — mock Microsoft SSO login (swap for `streamlit-msal` for real Azure AD)
-- `lib/db.py` — CSV storage adapter (swap for `st.connection("gsheets")` for real Sheets)
-- `lib/standards.py` — FY27 commission tiers, monthly targets, store bonus payout scale
-- `lib/ui.py` — global premium theme (rose gold / diamond silver on midnight)
-- `tabs/` — one file per app tab
-- `data/` — local CSV backend (mimics Google Sheets 1:1)
-- `docs/` — source PDFs
-
-## Bantagachi character system
-
-- No preset creatures. Human M / F / Non-binary picker on first login.
-- Ready Player Me iframe = full color-wheel hair customization, skin tone, face, outfit.
-- Banter jewelry unlocks via camera scan → wardrobe → CSS-overlay layer on top of RPM avatar.
-- XP + Level progression driven by real sales metrics. No Pokémon vocabulary.
-
-## Phase status
-
-- ✅ Phase 0 — Foundation, login, tab skeleton, 11-store roster, FY27 commission engine
-- ⏳ Phase 1 — Home Feed (Performance Island, check-in drawer, social feed)
-- ⏳ Phase 2 — My Store (analytics + editable targets)
-- ⏳ Phase 3 — District Arena (nested leaderboards, 11 stores)
-- ⏳ Phase 4 — Playbook
-- ⏳ Phase 5 — Bantagachi RPG (RPM avatar + Banter jewelry overlay + Commission Countdown)
-- ⏳ Phase 6 — Real fiancée-store data + Streamlit Cloud deploy
-
-## Deploy (when ready)
-
-Push to GitHub → connect at [share.streamlit.io](https://share.streamlit.io) →
-pick the repo → free public URL. Shareable to any of the 11 stores.
+> See `HANDOFF.md` for the full architecture, Firestore schema, state shape,
+> feature list, and known issues.

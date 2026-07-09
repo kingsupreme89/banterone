@@ -1,16 +1,3 @@
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-.venv/
-venv/
-env/
-
-# Streamlit
-.streamlit/secrets.toml
-
 # OS
 .DS_Store
 Thumbs.db
@@ -19,17 +6,11 @@ Thumbs.db
 .vscode/
 .idea/
 *.swp
-
-# Uploads (don't commit user avatars — they're user-generated)
-assets/avatars/*
-!assets/avatars/.gitkeep
-assets/daily_uploads/*
-!assets/daily_uploads/.gitkeep
+.claude/
 
 # Local dev
+.venv/
+venv/
+env/
 scratchpad/
 *.log
-data/remember_tokens.json
-
-# Editor
-.claude/
